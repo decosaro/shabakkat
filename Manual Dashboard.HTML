@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Interactive Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #0056b3;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        input, button {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            transition: 0.3s ease-in-out;
+        }
+
+        input {
+            width: 250px;
+            background: white;
+            color: #333;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        /* Dashboard Layout */
+        #dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 1300px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .chart-row {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            transition: 0.3s ease-in-out;
+            min-width: 500px;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 1100px) {
+            .chart-row {
+                flex-direction: column;
+            }
+
+            .chart-card {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📊 Modern Interactive Dashboard</h2>
+
+    <div class="upload-section">
+        <input type="file" id="fileUpload" accept=".xlsx">
+        <input type="text" id="fileUrl" placeholder="Enter XLSX file URL">
+        <button onclick="loadFile()">Load Data</button>
+    </div>
+
+    <div id="dashboard">
+        <div class="chart-row">
+            <div class="chart-card"><div id="statusPie"></div></div>
+            <div class="chart-card"><div id="regionPie"></div></div>
+        </div>
+        <div class="chart-row">
+            <div class="chart-card"><div id="faultLevelBar"></div></div>
+            <div class="chart-card"><div id="priorityPie"></div></div>
+        </div>
+        <div class="chart-row">
+            <div class="chart-card"><div id="powerTypePie"></div></div>
+            <div class="chart-card"><div id="siteImpactBar"></div></div>
+        </div>
+    </div>
+
+    <script>
+        function loadFile() {
+            const fileInput = document.getElementById('fileUpload').files[0];
+            const fileUrl = document.getElementById('fileUrl').value;
+
+            if (fileInput) {
+                readFile(fileInput);
+            } else if (fileUrl) {
+                fetch(fileUrl)
+                    .then(response => response.blob())
+                    .then(blob => readFile(blob));
+            } else {
+                alert("Please upload a file or enter a valid URL!");
+            }
+        }
+
+        function readFile(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                generateDashboard(jsonData);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function generateDashboard(data) {
+            let statusCounts = { "Resolved": 0, "Running": 0, "Cancelled/Escalated": 0 };
+            let regionCounts = {};
+            let faultLevelCounts = {};
+            let priorityCounts = {};
+            let powerTypeCounts = {};
+            let impactCounts = {};
+
+            data.forEach(row => {
+                let status = row["Status"];
+                let region = row["Region"];
+                let faultLevel = row["Fault Level"];
+                let priority = row["Priority"];
+                let powerType = row["Power Type"];
+                let impact = row["Impact"];
+
+                if (["Escalated", "Cancel_API"].includes(status)) {
+                    statusCounts["Cancelled/Escalated"]++;
+                } else if (["NOC_Resolved", "Confirmed_Resolved", "Request_Resolved"].includes(status)) {
+                    statusCounts["Resolved"]++;
+                } else {
+                    statusCounts["Running"]++;
+                }
+
+                regionCounts[region] = (regionCounts[region] || 0) + 1;
+                faultLevelCounts[faultLevel] = (faultLevelCounts[faultLevel] || 0) + 1;
+                priorityCounts[priority] = (priorityCounts[priority] || 0) + 1;
+                powerTypeCounts[powerType] = (powerTypeCounts[powerType] || 0) + 1;
+                impactCounts[impact] = (impactCounts[impact] || 0) + 1;
+            });
+
+            let layout = {
+                height: 350,
+                paper_bgcolor: '#ffffff',
+                plot_bgcolor: '#ffffff',
+                font: { color: "#333", size: 12 },
+                margin: { l: 50, r: 30, t: 50, b: 50 }
+            };
+
+            let animationConfig = {
+                transition: { duration: 500 },
+                frame: { duration: 500 }
+            };
+
+            Plotly.newPlot("statusPie", [{ labels: Object.keys(statusCounts), values: Object.values(statusCounts), type: "pie", hole: 0.4 }], { ...layout, title: "Status Distribution" }, animationConfig);
+            Plotly.newPlot("regionPie", [{ labels: Object.keys(regionCounts), values: Object.values(regionCounts), type: "pie", hole: 0.4 }], { ...layout, title: "PCM ID Distribution per Region" }, animationConfig);
+            Plotly.newPlot("faultLevelBar", [{ x: Object.keys(faultLevelCounts), y: Object.values(faultLevelCounts), type: "bar" }], { ...layout, title: "PCM ID Distribution per Fault Level" }, animationConfig);
+            Plotly.newPlot("priorityPie", [{ labels: Object.keys(priorityCounts), values: Object.values(priorityCounts), type: "pie", hole: 0.4 }], { ...layout, title: "Priority Distribution" }, animationConfig);
+            Plotly.newPlot("powerTypePie", [{ labels: Object.keys(powerTypeCounts), values: Object.values(powerTypeCounts), type: "pie", hole: 0.4 }], { ...layout, title: "Power Type Distribution" }, animationConfig);
+        }
+    </script>
+
+</body>
+</html>
