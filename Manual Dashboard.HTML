@@ -3,107 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Interactive Dashboard</title>
+    <title>Modern Animated Dashboard</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
-        /* Global Styles */
+        /* Global Styling */
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f4f7fc;
-            color: #333;
+            /*background-color: #2c3e50;*/
+            color: #ecf0f1;
             margin: 0;
             padding: 20px;
             text-align: center;
+            overflow-x: hidden;
         }
 
         h2 {
-            color: #0056b3;
-            font-size: 28px;
-            margin-bottom: 15px;
+            color: #3498db;
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
         }
 
         /* Upload Section */
         .upload-section {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 25px;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 10px;
         }
 
         input, button {
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            transition: 0.3s ease-in-out;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            border: none;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
         input {
             width: 250px;
-            background: white;
-            color: #333;
+            background: #34495e;
+            color: #ecf0f1;
+        }
+
+        input::placeholder {
+            color: #bdc3c7;
         }
 
         button {
-            background: #007bff;
+            background: #3498db;
             color: white;
-            cursor: pointer;
             font-weight: bold;
-            border: none;
+            cursor: pointer;
         }
 
         button:hover {
-            background: #0056b3;
+            background: #2980b9;
+            transform: scale(1.05);
         }
 
-        /* Dashboard Layout */
+        /* Dashboard Grid */
         #dashboard {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 20px;
             max-width: 1300px;
             margin: auto;
-            padding: 20px;
         }
 
-        .chart-row {
-            display: flex;
-            gap: 20px;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .chart-card {
-            background: white;
+        /* Chart Card Styling */
+        .chart {
+            background: #34495e;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            flex: 1;
-            transition: 0.3s ease-in-out;
-            min-width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #16a085;
         }
 
-        .chart-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+        .chart:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
-        @media (max-width: 1100px) {
-            .chart-row {
-                flex-direction: column;
-            }
+        /* Enhanced Pie/Bar Chart Legends */
+        .chart .plotly-legend {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
 
-            .chart-card {
-                min-width: 100%;
-            }
+        /* Customize Plotly Tooltip */
+        .chart .plotly-tooltip {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
 
-    <h2>📊 Modern Interactive Dashboard</h2>
+    <h2>📊 Shabakkat Dashboard</h2>
 
     <div class="upload-section">
         <input type="file" id="fileUpload" accept=".xlsx">
@@ -112,18 +122,12 @@
     </div>
 
     <div id="dashboard">
-        <div class="chart-row">
-            <div class="chart-card"><div id="statusPie"></div></div>
-            <div class="chart-card"><div id="regionPie"></div></div>
-        </div>
-        <div class="chart-row">
-            <div class="chart-card"><div id="faultLevelBar"></div></div>
-            <div class="chart-card"><div id="priorityPie"></div></div>
-        </div>
-        <div class="chart-row">
-            <div class="chart-card"><div id="powerTypePie"></div></div>
-            <div class="chart-card"><div id="siteImpactBar"></div></div>
-        </div>
+        <div id="statusPie" class="chart"></div>
+        <div id="regionPie" class="chart"></div>
+        <div id="faultLevelBar" class="chart"></div>
+        <div id="priorityPie" class="chart"></div>
+        <div id="powerTypePie" class="chart"></div>
+        <div id="siteImpactBar" class="chart"></div>
     </div>
 
     <script>
@@ -187,9 +191,9 @@
 
             let layout = {
                 height: 350,
-                paper_bgcolor: '#ffffff',
-                plot_bgcolor: '#ffffff',
-                font: { color: "#333", size: 12 },
+                paper_bgcolor: '#34495e',
+                plot_bgcolor: '#34495e',
+                font: { color: "#ecf0f1", size: 12 },
                 margin: { l: 50, r: 30, t: 50, b: 50 }
             };
 
@@ -198,11 +202,53 @@
                 frame: { duration: 500 }
             };
 
-            Plotly.newPlot("statusPie", [{ labels: Object.keys(statusCounts), values: Object.values(statusCounts), type: "pie", hole: 0.4 }], { ...layout, title: "Status Distribution" }, animationConfig);
-            Plotly.newPlot("regionPie", [{ labels: Object.keys(regionCounts), values: Object.values(regionCounts), type: "pie", hole: 0.4 }], { ...layout, title: "PCM ID Distribution per Region" }, animationConfig);
-            Plotly.newPlot("faultLevelBar", [{ x: Object.keys(faultLevelCounts), y: Object.values(faultLevelCounts), type: "bar" }], { ...layout, title: "PCM ID Distribution per Fault Level" }, animationConfig);
-            Plotly.newPlot("priorityPie", [{ labels: Object.keys(priorityCounts), values: Object.values(priorityCounts), type: "pie", hole: 0.4 }], { ...layout, title: "Priority Distribution" }, animationConfig);
-            Plotly.newPlot("powerTypePie", [{ labels: Object.keys(powerTypeCounts), values: Object.values(powerTypeCounts), type: "pie", hole: 0.4 }], { ...layout, title: "Power Type Distribution" }, animationConfig);
+            Plotly.newPlot("statusPie", [{
+                labels: Object.keys(statusCounts),
+                values: Object.values(statusCounts),
+                type: "pie",
+                hole: 0.4,
+                marker: { colors: ['#28a745', '#ffc107', '#dc3545'] },
+            }], { ...layout, title: "Status Distribution" }, animationConfig);
+
+            Plotly.newPlot("regionPie", [{
+                labels: Object.keys(regionCounts),
+                values: Object.values(regionCounts),
+                type: "pie",
+                hole: 0.4,
+                marker: { colors: ['#ff5733', '#33ff57', '#3357ff', '#ff33a8'] },
+            }], { ...layout, title: "PCM ID Distribution per Region" }, animationConfig);
+
+            Plotly.newPlot("faultLevelBar", [{
+                x: Object.keys(faultLevelCounts),
+                y: Object.values(faultLevelCounts),
+                type: "bar",
+                marker: { color: '#007bff', line: { width: 2 } },
+                text: Object.values(faultLevelCounts),
+                textposition: "auto",
+            }], { ...layout, title: "PCM ID Distribution per Fault Level" }, animationConfig);
+
+            Plotly.newPlot("priorityPie", [{
+                labels: Object.keys(priorityCounts),
+                values: Object.values(priorityCounts),
+                type: "pie",
+                hole: 0.4,
+                marker: { colors: ['#ffcc00', '#ff6666', '#33ff57'] },
+            }], { ...layout, title: "Priority Distribution" }, animationConfig);
+
+            Plotly.newPlot("powerTypePie", [{
+                labels: Object.keys(powerTypeCounts),
+                values: Object.values(powerTypeCounts),
+                type: "pie",
+                hole: 0.4,
+                marker: { colors: ['#007acc', '#ff5733', '#33ff57'] },
+            }], { ...layout, title: "Power Type Distribution" }, animationConfig);
+
+            Plotly.newPlot("siteImpactBar", [{
+                x: Object.keys(impactCounts),
+                y: Object.values(impactCounts),
+                type: "bar",
+                marker: { color: '#dc3545', line: { width: 2 } }
+            }], { ...layout, title: "Impact per Site" }, animationConfig);
         }
     </script>
 
