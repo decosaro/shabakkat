@@ -339,7 +339,7 @@
                     `<p><strong>${header}:</strong> ${window.data[originalIndex][index] !== undefined ? window.data[originalIndex][index] : ""}</p>`
                 ).join('');
 
-                // Add the three-dot dropdown for copy option
+                // Add the three-dot dropdown for copy and share options
                 const dropdown = document.createElement('div');
                 dropdown.classList.add('dropdown');
                 dropdown.innerHTML = '⋮';
@@ -355,7 +355,15 @@
                 copyButton.addEventListener('click', function() {
                     copyCardData(window.data[originalIndex]);
                 });
+
+                const shareButton = document.createElement('button');
+                shareButton.textContent = 'Share';
+                shareButton.addEventListener('click', function() {
+                    shareViaWeb(window.data[originalIndex]);
+                });
+
                 dropdownContent.appendChild(copyButton);
+                dropdownContent.appendChild(shareButton);
 
                 dropdown.appendChild(dropdownContent);
                 card.appendChild(dropdown);
@@ -390,6 +398,22 @@
                     .catch(err => alert('Failed to copy text: ' + err));
             }
 
+            // Function to share via Web Share API
+            function shareViaWeb(rowData) {
+                const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Excel Data',
+                        text: textToShare,
+                    })
+                    .then(() => console.log('Data shared successfully'))
+                    .catch(err => console.error('Error sharing data: ', err));
+                } else {
+                    alert("Web Share API is not supported in your browser.");
+                }
+            }
+
             // Show the "Copied" message
             function showCopiedMessage() {
                 const copiedMessage = document.getElementById('copiedMessage');
@@ -417,39 +441,35 @@
                 const query = document.getElementById('searchBox').value.toLowerCase();
                 filteredData = window.data
                     .map((row, index) => ({ rowData: row, originalIndex: index }))
-                    .filter(item => item.rowData.some(cell => String(cell).toLowerCase().includes(query)));
+                    .filter(item => item.rowData.some(cell => cell.toString().toLowerCase().includes(query)));
 
-                currentPage = 1;
                 displayResultsTable(paginateData(filteredData, currentPage));
             }
 
-            // Function to paginate filtered data
+            // Pagination function to paginate data
             function paginateData(data, page) {
-                const startIndex = (page - 1) * itemsPerPage;
-                const endIndex = page * itemsPerPage;
-                return data.slice(startIndex, endIndex);
+                const start = (page - 1) * itemsPerPage;
+                return data.slice(start, start + itemsPerPage);
             }
 
-            // Function to update pagination controls
+            // Update pagination controls
             function updatePaginationControls() {
                 const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-                const pageNumbers = document.getElementById('pageNumbers');
                 const prevPageButton = document.getElementById('prevPage');
                 const nextPageButton = document.getElementById('nextPage');
+                const pageNumbers = document.getElementById('pageNumbers');
 
                 pageNumbers.innerHTML = `Page ${currentPage} of ${totalPages}`;
+
                 prevPageButton.disabled = currentPage === 1;
                 nextPageButton.disabled = currentPage === totalPages;
             }
 
-            // Function to change pages
-            function changePage(direction) {
+            // Change page function
+            window.changePage = function(direction) {
                 currentPage += direction;
                 displayResultsTable(paginateData(filteredData, currentPage));
             }
-
-            // Add input event listener for search
-            document.getElementById('searchBox').addEventListener('input', window.searchTable);
         });
     </script>
 </body>
