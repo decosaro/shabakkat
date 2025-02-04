@@ -101,7 +101,7 @@
             transition: background-color 0.3s;
             position: absolute;
             top: 20px;
-            left: 20px;  /* Positioned to the top left */
+            left: 20px;
             display: none;  /* Initially hidden */
         }
 
@@ -238,6 +238,9 @@
             // Show the back button when viewing the full result
             document.getElementById('backButton').style.display = 'block';
 
+            // Hide the pagination controls when a row is clicked
+            document.querySelector('.pagination').style.display = 'none';
+
             grid.appendChild(card);
 
             // Display the grid after clicking the row (now showing selected row as a card)
@@ -251,6 +254,9 @@
             // Show the results grid again with the previously filtered data
             currentPage = 1;  // Reset to the first page when going back to results
             displayResultsTable(paginateData(filteredData, currentPage));
+
+            // Show the pagination controls when returning to the results view
+            document.querySelector('.pagination').style.display = 'flex';
         }
 
         function paginateData(data, page) {
