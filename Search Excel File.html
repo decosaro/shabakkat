@@ -1,139 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel Search</title>
+    <title>Excel Data Explorer</title>
+    <!-- Include XLSX library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         /* Global Styles */
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #FFFFFF;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            padding-top: 40px;
+            padding-top: 60px;
         }
 
         h2 {
-            color: #333;
-            font-weight: 700;
-            margin-bottom: 30px;
+            color: #FFFFFF;
+            font-weight: 600;
+            margin-bottom: 40px;
             text-align: center;
             letter-spacing: 1px;
         }
 
         #fileInput,
         #searchBox {
-            padding: 12px 20px;
+            padding: 14px 22px;
             margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+            border-radius: 30px;
+            border: none;
             font-size: 16px;
             width: 350px;
-            transition: border 0.3s;
+            transition: all 0.3s ease;
             box-sizing: border-box;
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+        }
+
+        #fileInput::placeholder,
+        #searchBox::placeholder {
+            color: #AAAAAA;
+        }
+
+        #fileInput:hover,
+        #searchBox:hover {
+            background-color: #2A2A2A;
         }
 
         #fileInput:focus,
         #searchBox:focus {
-            border-color: #4CAF50;
             outline: none;
+            background-color: #333333;
         }
 
         #resultsGrid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
             margin-top: 40px;
-            width: 80%;
+            width: 90%;
             transition: all 0.3s ease-in-out;
         }
 
         .card {
-            background-color: #fff;
-            border-radius: 15px;
+            background-color: #1E1E1E;
+            border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s ease-in-out;
             position: relative;
         }
 
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #333;
-            letter-spacing: 0.5px;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.5);
         }
 
         .card-content {
-            font-size: 14px;
-            color: #555;
+            font-size: 15px;
+            color: #FFFFFF;
             line-height: 1.6;
         }
 
         .card-content strong {
-            color: #4CAF50;
-        }
-
-        .card-content span {
-            color: #777;
+            color: #00ADB5;
         }
 
         .card-content p {
-            margin: 7px 0;
+            margin: 10px 0;
         }
 
         .back-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 25px;
+            background-color: #00ADB5;
+            color: #FFFFFF;
+            padding: 14px 28px;
             font-size: 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 30px;
             cursor: pointer;
             transition: background-color 0.3s;
             position: absolute;
             top: 20px;
             left: 20px;
             display: none;
-            /* Initially hidden */
             z-index: 10;
         }
 
         .back-button:hover {
-            background-color: #45a049;
+            background-color: #009BA5;
         }
 
         /* Pagination Styles */
         .pagination {
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
-            margin-top: 30px;
-            gap: 12px;
+            margin-top: 40px;
+            gap: 15px;
         }
 
         .pagination button {
-            padding: 12px 25px;
-            margin: 0 5px;
+            padding: 12px 20px;
             border: none;
-            background-color: #4CAF50;
-            color: white;
+            background-color: #00ADB5;
+            color: #FFFFFF;
             border-radius: 50px;
             cursor: pointer;
             font-size: 16px;
@@ -141,33 +139,34 @@
         }
 
         .pagination button:hover {
-            background-color: #45a049;
-            transform: scale(1.05);
+            background-color: #009BA5;
+            transform: translateY(-3px);
         }
 
         .pagination button:disabled {
-            background-color: #ccc;
+            background-color: #555555;
             cursor: not-allowed;
+            transform: none;
         }
 
         .pagination span {
             font-size: 16px;
-            color: #333;
-        }
-
-        .pagination .current-page {
-            font-weight: bold;
-            color: #4CAF50;
+            color: #FFFFFF;
         }
 
         /* Dropdown (ellipsis) menu */
         .dropdown {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             cursor: pointer;
             font-size: 26px;
-            color: #333;
+            color: #FFFFFF;
+            transition: color 0.3s;
+        }
+
+        .dropdown:hover {
+            color: #00ADB5;
         }
 
         /* Dropdown content */
@@ -175,11 +174,11 @@
             display: none;
             position: absolute;
             top: 40px;
-            right: 0;
-            background-color: #fff;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            min-width: 180px;
+            right: -10px;
+            background-color: #1E1E1E;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border-radius: 15px;
+            min-width: 200px;
             z-index: 1;
         }
 
@@ -190,21 +189,20 @@
 
         /* Dropdown items */
         .dropdown-content button {
-            background-color: #fff;
+            background: none;
             border: none;
-            padding: 14px 20px;
+            padding: 12px 20px;
             width: 100%;
             text-align: left;
             font-size: 16px;
-            color: #333;
+            color: #FFFFFF;
             cursor: pointer;
-            border-bottom: 1px solid #ddd;
             transition: background-color 0.3s ease;
-            border-radius: 10px;
+            border-bottom: 1px solid #333333;
         }
 
         .dropdown-content button:hover {
-            background-color: #f9f9f9;
+            background-color: #2A2A2A;
         }
 
         .dropdown-content button:last-child {
@@ -214,17 +212,17 @@
         /* Copied message styles */
         #copiedMessage {
             position: fixed;
-            top: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
+            background-color: #00ADB5;
+            color: #FFFFFF;
+            padding: 12px 25px;
+            border-radius: 30px;
             font-size: 16px;
             display: none;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.3s ease;
             z-index: 1000;
         }
 
@@ -237,11 +235,11 @@
             #fileInput,
             #searchBox {
                 width: 80%;
-                padding: 10px 15px;
+                padding: 12px 18px;
             }
 
             .pagination {
-                gap: 8px;
+                gap: 10px;
             }
 
             .pagination button {
@@ -251,22 +249,22 @@
             .card {
                 padding: 20px;
             }
-        }
 
+            .card-content {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
-
 <body>
-    <h2>Upload and Search Excel File</h2>
+    <h2>Excel Data Explorer</h2>
     <input type="file" id="fileInput" accept=".xlsx, .xls">
-    <input type="text" id="searchBox" placeholder="Search..." oninput="searchTable()">
-    <br><br>
-
+    <input type="text" id="searchBox" placeholder="Search..." oninput="searchTable()" disabled>
     <div id="resultsGrid"></div> <!-- Grid for displaying results -->
-    <button id="backButton" class="back-button" onclick="showSearchResults()">Back to Results</button>
+    <button id="backButton" class="back-button" onclick="showSearchResults()">← Back to Results</button>
 
     <!-- Copied message -->
-    <div id="copiedMessage">Copied</div>
+    <div id="copiedMessage">Copied to clipboard!</div>
 
     <!-- Pagination controls -->
     <div class="pagination">
@@ -277,12 +275,10 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            let data = [];
             let headers = [];
             let filteredData = [];
             let currentPage = 1;
             const itemsPerPage = 12;
-            let previousClickedRow = null;
 
             // File input event listener
             document.getElementById('fileInput').addEventListener('change', function(event) {
@@ -291,29 +287,48 @@
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {
-                        type: 'array'
-                    });
+                    const arrayBuffer = e.target.result;
+                    const data = new Uint8Array(arrayBuffer);
+                    const workbook = XLSX.read(data, { type: 'array' });
                     const sheetName = workbook.SheetNames[0];
                     const sheet = workbook.Sheets[sheetName];
 
-                    window.data = XLSX.utils.sheet_to_json(sheet, {
-                        header: 1,
-                        defval: ""
-                    });
+                    window.data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
                     headers = window.data.shift();
-                    document.getElementById('resultsGrid').style.display = 'none';
+
+                    // Enable the search box now that data is loaded
+                    document.getElementById('searchBox').disabled = false;
+                    document.getElementById('searchBox').placeholder = "Type to search...";
                 };
                 reader.readAsArrayBuffer(file);
             });
 
-            // Function to display filtered results in a paginated manner
+            // Search function
+            window.searchTable = function() {
+                const query = document.getElementById('searchBox').value.toLowerCase();
+
+                if (!query) {
+                    document.getElementById('resultsGrid').style.display = 'none';
+                    document.querySelector('.pagination').style.display = 'none';
+                    return;
+                }
+
+                filteredData = window.data
+                    .map((row, index) => ({ rowData: row, originalIndex: index }))
+                    .filter(item => item.rowData.some(cell => cell.toString().toLowerCase().includes(query)));
+
+                currentPage = 1;
+                displayResultsTable(paginateData(filteredData, currentPage));
+
+                document.querySelector('.pagination').style.display = filteredData.length > itemsPerPage ? 'flex' : 'none';
+            };
+
+            // Display results
             function displayResultsTable(pageData) {
                 const grid = document.getElementById('resultsGrid');
                 grid.innerHTML = '';
 
-                pageData.forEach((item, rowIndex) => {
+                pageData.forEach((item) => {
                     const row = item.rowData;
                     const card = document.createElement('div');
                     card.classList.add('card');
@@ -334,10 +349,8 @@
                 updatePaginationControls();
             }
 
-            // Function to show selected row details
+            // Show selected row details
             function showSelectedRow(originalIndex) {
-                previousClickedRow = originalIndex;
-
                 const grid = document.getElementById('resultsGrid');
                 grid.innerHTML = '';
 
@@ -351,7 +364,7 @@
                     `<p><strong>${header}:</strong> ${window.data[originalIndex][index] !== undefined ? window.data[originalIndex][index] : ""}</p>`
                 ).join('');
 
-                // Add the three-dot dropdown for copy and share options
+                // Add the dropdown menu
                 const dropdown = document.createElement('div');
                 dropdown.classList.add('dropdown');
                 dropdown.innerHTML = '⋮';
@@ -362,20 +375,46 @@
 
                 const dropdownContent = document.createElement('div');
                 dropdownContent.classList.add('dropdown-content');
+
+                // Copy button
                 const copyButton = document.createElement('button');
                 copyButton.textContent = 'Copy';
-                copyButton.addEventListener('click', function() {
+                copyButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
                     copyCardData(window.data[originalIndex]);
+                    dropdown.classList.remove('show-dropdown');
                 });
-
-                const shareButton = document.createElement('button');
-                shareButton.textContent = 'Share';
-                shareButton.addEventListener('click', function() {
-                    shareViaWeb(window.data[originalIndex]);
-                });
-
                 dropdownContent.appendChild(copyButton);
-                dropdownContent.appendChild(shareButton);
+
+                // Share via Email button
+                const emailButton = document.createElement('button');
+                emailButton.textContent = 'Share via Email';
+                emailButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    shareViaEmail(window.data[originalIndex]);
+                    dropdown.classList.remove('show-dropdown');
+                });
+                dropdownContent.appendChild(emailButton);
+
+                // Share via WhatsApp
+                const whatsappButton = document.createElement('button');
+                whatsappButton.textContent = 'Share via WhatsApp';
+                whatsappButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    shareViaWhatsApp(window.data[originalIndex]);
+                    dropdown.classList.remove('show-dropdown');
+                });
+                dropdownContent.appendChild(whatsappButton);
+
+                // Share via Telegram
+                const telegramButton = document.createElement('button');
+                telegramButton.textContent = 'Share via Telegram';
+                telegramButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    shareViaTelegram(window.data[originalIndex]);
+                    dropdown.classList.remove('show-dropdown');
+                });
+                dropdownContent.appendChild(telegramButton);
 
                 dropdown.appendChild(dropdownContent);
                 card.appendChild(dropdown);
@@ -400,22 +439,21 @@
                 dropdown.classList.toggle('show-dropdown');
             }
 
-            // Function to copy card data to clipboard
+            // Copy card data to clipboard
             function copyCardData(rowData) {
                 const textToCopy = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
 
-                // Try using the Clipboard API first
                 if (navigator.clipboard) {
                     navigator.clipboard.writeText(textToCopy)
                         .then(() => {
-                            showCopiedMessage(); // Show the "Copied" message
+                            showCopiedMessage();
                         })
                         .catch(err => {
-                            console.error('Clipboard API failed, using fallback:', err);
-                            useFallbackCopy(textToCopy); // Use fallback method
+                            console.error('Clipboard API failed:', err);
+                            useFallbackCopy(textToCopy);
                         });
                 } else {
-                    useFallbackCopy(textToCopy); // Use fallback method if Clipboard API is not supported
+                    useFallbackCopy(textToCopy);
                 }
             }
 
@@ -423,48 +461,17 @@
             function useFallbackCopy(text) {
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
-                textarea.style.position = 'fixed'; // Avoid scrolling to bottom
+                textarea.style.position = 'fixed';
                 document.body.appendChild(textarea);
                 textarea.select();
 
                 try {
-                    const successful = document.execCommand('copy');
-                    if (successful) {
-                        showCopiedMessage(); // Show the "Copied" message
-                    } else {
-                        alert('Fallback copy method failed. Please copy manually.');
-                    }
+                    document.execCommand('copy');
+                    showCopiedMessage();
                 } catch (err) {
-                    alert('Fallback copy method failed. Please copy manually.');
+                    alert('Copy to clipboard failed. Please copy manually.');
                 } finally {
                     document.body.removeChild(textarea);
-                }
-            }
-
-            // Function to share via Web Share API
-            function shareViaWeb(rowData) {
-                const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
-
-                console.log('Share Button Clicked');
-                console.log('Text to share:', textToShare);
-
-                if (navigator.share) {
-                    // If Web Share API is available
-                    navigator.share({
-                            title: 'Excel Data',
-                            text: textToShare,
-                        })
-                        .then(() => {
-                            console.log('Data shared successfully');
-                        })
-                        .catch(err => {
-                            console.error('Error sharing data: ', err);
-                        });
-                } else {
-                    // Fallback: Show a mailto link
-                    console.log('Web Share API is not available, using fallback');
-                    const mailtoLink = `mailto:?subject=Excel Data&body=${encodeURIComponent(textToShare)}`;
-                    window.location.href = mailtoLink;
                 }
             }
 
@@ -473,43 +480,51 @@
                 const copiedMessage = document.getElementById('copiedMessage');
                 copiedMessage.style.display = 'block';
                 copiedMessage.style.opacity = 1;
+                copiedMessage.style.transform = 'translateY(0)';
 
                 setTimeout(() => {
                     copiedMessage.style.opacity = 0;
+                    copiedMessage.style.transform = 'translateY(20px)';
                     setTimeout(() => {
                         copiedMessage.style.display = 'none';
-                    }, 300); // Hide after transition
-                }, 2000); // Show for 2 seconds
+                    }, 300);
+                }, 2000);
             }
 
-            // Function to show search results after clicking "Back"
+            // Share via Email
+            function shareViaEmail(rowData) {
+                const subject = encodeURIComponent('Shared Excel Data');
+                const body = encodeURIComponent(headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n'));
+                window.location.href = `mailto:?subject=${subject}&body=${body}`;
+            }
+
+            // Share via WhatsApp
+            function shareViaWhatsApp(rowData) {
+                const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+                const url = `https://wa.me/?text=${encodeURIComponent(textToShare)}`;
+                window.open(url, '_blank');
+            }
+
+            // Share via Telegram
+            function shareViaTelegram(rowData) {
+                const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+                const url = `https://t.me/share/url?url=&text=${encodeURIComponent(textToShare)}`;
+                window.open(url, '_blank');
+            }
+
+            // Show search results after clicking "Back"
             window.showSearchResults = function() {
                 document.getElementById('backButton').style.display = 'none';
-                currentPage = 1;
-                displayResultsTable(paginateData(filteredData, currentPage));
-                document.querySelector('.pagination').style.display = 'flex';
-            }
-
-            // Search function triggered by typing in the search box
-            window.searchTable = function() {
-                const query = document.getElementById('searchBox').value.toLowerCase();
-                filteredData = window.data
-                    .map((row, index) => ({
-                        rowData: row,
-                        originalIndex: index
-                    }))
-                    .filter(item => item.rowData.some(cell => cell.toString().toLowerCase().includes(query)));
-
+                document.querySelector('.pagination').style.display = filteredData.length > itemsPerPage ? 'flex' : 'none';
                 displayResultsTable(paginateData(filteredData, currentPage));
             }
 
-            // Pagination function to paginate data
+            // Pagination functions
             function paginateData(data, page) {
                 const start = (page - 1) * itemsPerPage;
                 return data.slice(start, start + itemsPerPage);
             }
 
-            // Update pagination controls
             function updatePaginationControls() {
                 const totalPages = Math.ceil(filteredData.length / itemsPerPage);
                 const prevPageButton = document.getElementById('prevPage');
@@ -519,17 +534,26 @@
                 pageNumbers.innerHTML = `Page ${currentPage} of ${totalPages}`;
 
                 prevPageButton.disabled = currentPage === 1;
-                nextPageButton.disabled = currentPage === totalPages;
+                nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
+
+                document.querySelector('.pagination').style.display = totalPages > 1 ? 'flex' : 'none';
             }
 
-            // Change page function
             window.changePage = function(direction) {
                 currentPage += direction;
                 displayResultsTable(paginateData(filteredData, currentPage));
             }
-        });
 
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const isDropdown = event.target.matches('.dropdown, .dropdown *');
+                if (!isDropdown) {
+                    document.querySelectorAll('.dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('show-dropdown');
+                    });
+                }
+            });
+        });
     </script>
 </body>
-
 </html>
