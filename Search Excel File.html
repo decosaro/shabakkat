@@ -168,7 +168,7 @@
     <script>
         let data = [];
         let headers = [];
-        let filteredData = [];  // To store the current search results
+        let filteredData = [];  // To store the current search results with original indices
         let currentPage = 1;    // To track the current page
         const itemsPerPage = 12; // Number of items to display per page
         let previousClickedRow = null;  // Track the previously clicked row
@@ -195,10 +195,11 @@
             const grid = document.getElementById('resultsGrid');
             grid.innerHTML = '';  // Clear previous results
 
-            pageData.forEach((row, rowIndex) => {
+            pageData.forEach((item, rowIndex) => {
+                const row = item.rowData; // Get the row data from the filtered list
                 const card = document.createElement('div');
                 card.classList.add('card');
-                card.addEventListener('click', () => showSelectedRow(rowIndex));
+                card.addEventListener('click', () => showSelectedRow(item.originalIndex)); // Pass original index
                 
                 const cardContent = document.createElement('div');
                 cardContent.classList.add('card-content');
@@ -207,7 +208,7 @@
                 cardContent.innerHTML = headers.slice(0, 4).map((header, index) => 
                     `<p><strong>${header}:</strong> ${row[index] !== undefined ? row[index] : ""}</p>`
                 ).join('');
-                
+
                 card.appendChild(cardContent);
                 grid.appendChild(card);
             });
@@ -216,8 +217,8 @@
             updatePaginationControls();
         }
 
-        function showSelectedRow(rowIndex) {
-            previousClickedRow = rowIndex;  // Store the index of the clicked row
+        function showSelectedRow(originalIndex) {
+            previousClickedRow = originalIndex;  // Store the original index
 
             const grid = document.getElementById('resultsGrid');
             grid.innerHTML = '';  // Clear the current results grid
@@ -230,8 +231,8 @@
 
             // Show all columns of the selected row (not just the first 4)
             cardContent.innerHTML = headers.map((header, index) => 
-                `<p><strong>${header}:</strong> ${window.data[rowIndex][index] !== undefined ? window.data[rowIndex][index] : ""}</p>`
-            ).join('');
+                `<p><strong>${header}:</strong> ${window.data[originalIndex][index] !== undefined ? window.data[originalIndex][index] : ""}</p>`
+            ).join('');  // Use the original index to get the data from window.data
 
             card.appendChild(cardContent);
 
@@ -289,9 +290,14 @@
                 return;
             }
 
-            // Filter data based on the search term
-            filteredData = window.data.filter(row => 
-                row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm))
+            // Filter data based on the search term and store the original index
+            filteredData = window.data.map((row, index) => {
+                return {
+                    originalIndex: index, // Keep the original index
+                    rowData: row
+                };
+            }).filter(item => 
+                item.rowData.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm))
             );
 
             // Reset pagination when new search occurs
