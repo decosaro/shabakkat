@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +30,8 @@
             letter-spacing: 1px;
         }
 
-        #fileInput, #searchBox {
+        #fileInput,
+        #searchBox {
             padding: 12px 20px;
             margin: 10px 0;
             border-radius: 8px;
@@ -40,7 +42,8 @@
             box-sizing: border-box;
         }
 
-        #fileInput:focus, #searchBox:focus {
+        #fileInput:focus,
+        #searchBox:focus {
             border-color: #4CAF50;
             outline: none;
         }
@@ -107,7 +110,8 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            display: none;  /* Initially hidden */
+            display: none;
+            /* Initially hidden */
             z-index: 10;
         }
 
@@ -230,7 +234,8 @@
                 width: 95%;
             }
 
-            #fileInput, #searchBox {
+            #fileInput,
+            #searchBox {
                 width: 80%;
                 padding: 10px 15px;
             }
@@ -249,13 +254,14 @@
         }
     </style>
 </head>
+
 <body>
     <h2>Upload and Search Excel File</h2>
     <input type="file" id="fileInput" accept=".xlsx, .xls">
     <input type="text" id="searchBox" placeholder="Search..." oninput="searchTable()">
     <br><br>
 
-    <div id="resultsGrid"></div>  <!-- Grid for displaying results -->
+    <div id="resultsGrid"></div> <!-- Grid for displaying results -->
     <button id="backButton" class="back-button" onclick="showSearchResults()">Back to Results</button>
 
     <!-- Copied message -->
@@ -285,11 +291,16 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
+                    const workbook = XLSX.read(data, {
+                        type: 'array'
+                    });
                     const sheetName = workbook.SheetNames[0];
                     const sheet = workbook.Sheets[sheetName];
 
-                    window.data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+                    window.data = XLSX.utils.sheet_to_json(sheet, {
+                        header: 1,
+                        defval: ""
+                    });
                     headers = window.data.shift();
                     document.getElementById('resultsGrid').style.display = 'none';
                 };
@@ -310,7 +321,7 @@
                     const cardContent = document.createElement('div');
                     cardContent.classList.add('card-content');
 
-                    cardContent.innerHTML = headers.slice(0, 4).map((header, index) => 
+                    cardContent.innerHTML = headers.slice(0, 4).map((header, index) =>
                         `<p><strong>${header}:</strong> ${row[index] !== undefined ? row[index] : ""}</p>`
                     ).join('');
 
@@ -335,7 +346,7 @@
                 const cardContent = document.createElement('div');
                 cardContent.classList.add('card-content');
 
-                cardContent.innerHTML = headers.map((header, index) => 
+                cardContent.innerHTML = headers.map((header, index) =>
                     `<p><strong>${header}:</strong> ${window.data[originalIndex][index] !== undefined ? window.data[originalIndex][index] : ""}</p>`
                 ).join('');
 
@@ -434,14 +445,17 @@
                 const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
 
                 if (navigator.share) {
+                    // If Web Share API is available
                     navigator.share({
-                        title: 'Excel Data',
-                        text: textToShare,
-                    })
-                    .then(() => console.log('Data shared successfully'))
-                    .catch(err => console.error('Error sharing data: ', err));
+                            title: 'Excel Data',
+                            text: textToShare,
+                        })
+                        .then(() => console.log('Data shared successfully'))
+                        .catch(err => console.error('Error sharing data: ', err));
                 } else {
-                    alert("Web Share API is not supported in your browser.");
+                    // Fallback: Show a mailto link
+                    const mailtoLink = `mailto:?subject=Excel Data&body=${encodeURIComponent(textToShare)}`;
+                    window.location.href = mailtoLink;
                 }
             }
 
@@ -471,7 +485,10 @@
             window.searchTable = function() {
                 const query = document.getElementById('searchBox').value.toLowerCase();
                 filteredData = window.data
-                    .map((row, index) => ({ rowData: row, originalIndex: index }))
+                    .map((row, index) => ({
+                        rowData: row,
+                        originalIndex: index
+                    }))
                     .filter(item => item.rowData.some(cell => cell.toString().toLowerCase().includes(query)));
 
                 displayResultsTable(paginateData(filteredData, currentPage));
@@ -504,4 +521,5 @@
         });
     </script>
 </body>
+
 </html>
