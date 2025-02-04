@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Search</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding-top: 20px;
+            position: relative;
+        }
+
+        h2 {
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #fileInput, #searchBox {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            width: 300px;
+            transition: border 0.3s;
+        }
+
+        #fileInput:focus, #searchBox:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        #resultsGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            width: 80%;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .card-content {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .card-content strong {
+            color: #4CAF50;
+        }
+
+        .card-content span {
+            color: #777;
+        }
+
+        .card-content p {
+            margin: 5px 0;
+        }
+
+        .back-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: none;  /* Initially hidden */
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
+
+    </style>
+</head>
+<body>
+    <h2>Search Excel File</h2>
+    <input type="file" id="fileInput" accept=".xlsx, .xls">
+    <input type="text" id="searchBox" placeholder="Search..." oninput="searchTable()">
+    <br><br>
+
+    <div id="resultsGrid"></div>  <!-- Grid for displaying results -->
+    <button id="backButton" class="back-button" onclick="showSearchResults()">Back to Results</button>
+
+    <script>
+        let data = [];
+        let headers = [];
+        let filteredData = [];  // To store the current search results
+        let previousClickedRow = null;  // Track the previously clicked row
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                
+                window.data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+                headers = window.data.shift(); // Extract headers
+                document.getElementById('resultsGrid').style.display = 'none';
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function displayResultsTable(filteredData) {
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';  // Clear previous results
+            filteredData.forEach((row, rowIndex) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.addEventListener('click', () => showSelectedRow(rowIndex));
+                
+                const cardContent = document.createElement('div');
+                cardContent.classList.add('card-content');
+
+                // Show only the first 4 columns (adjust the column count as needed)
+                cardContent.innerHTML = headers.slice(0, 4).map((header, index) => 
+                    `<p><strong>${header}:</strong> ${row[index] !== undefined ? row[index] : ""}</p>`
+                ).join('');
+                
+                card.appendChild(cardContent);
+                grid.appendChild(card);
+            });
+            
+            grid.style.display = filteredData.length > 0 ? 'grid' : 'none';
+        }
+
+        function showSelectedRow(rowIndex) {
+            previousClickedRow = rowIndex;  // Store the index of the clicked row
+
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';  // Clear the current results grid
+
+            const card = document.createElement('div');
+            card.classList.add('card');
+
+            const cardContent = document.createElement('div');
+            cardContent.classList.add('card-content');
+
+            // Show all columns of the selected row (not just the first 4)
+            cardContent.innerHTML = headers.map((header, index) => 
+                `<p><strong>${header}:</strong> ${window.data[rowIndex][index] !== undefined ? window.data[rowIndex][index] : ""}</p>`
+            ).join('');
+
+            card.appendChild(cardContent);
+
+            // Show the back button when viewing the full result
+            document.getElementById('backButton').style.display = 'block';
+
+            grid.appendChild(card);
+
+            // Display the grid after clicking the row (now showing selected row as a card)
+            grid.style.display = 'grid';
+        }
+
+        function showSearchResults() {
+            // Hide the back button when returning to search results
+            document.getElementById('backButton').style.display = 'none';
+
+            // Show the results grid again with the previously filtered data
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';  // Clear the current result view
+            displayResultsTable(filteredData);  // Re-display the filtered data
+        }
+
+        function searchTable() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            if (!searchTerm) {
+                document.getElementById('resultsGrid').style.display = 'none';
+                return;
+            }
+
+            // Filter data based on the search term
+            filteredData = window.data.filter(row => 
+                row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm))
+            );
+            displayResultsTable(filteredData);
+
+            // If a row was previously clicked, hide it to reset the state
+            if (previousClickedRow !== null) {
+                previousClickedRow = null;
+            }
+        }
+    </script>
+</body>
+</html>
