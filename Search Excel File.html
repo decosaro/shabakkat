@@ -391,11 +391,42 @@
             // Function to copy card data to clipboard
             function copyCardData(rowData) {
                 const textToCopy = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
-                navigator.clipboard.writeText(textToCopy)
-                    .then(() => {
+
+                // Try using the Clipboard API first
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(() => {
+                            showCopiedMessage(); // Show the "Copied" message
+                        })
+                        .catch(err => {
+                            console.error('Clipboard API failed, using fallback:', err);
+                            useFallbackCopy(textToCopy); // Use fallback method
+                        });
+                } else {
+                    useFallbackCopy(textToCopy); // Use fallback method if Clipboard API is not supported
+                }
+            }
+
+            // Fallback method for copying text
+            function useFallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed'; // Avoid scrolling to bottom
+                document.body.appendChild(textarea);
+                textarea.select();
+
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
                         showCopiedMessage(); // Show the "Copied" message
-                    })
-                    .catch(err => alert('Failed to copy text: ' + err));
+                    } else {
+                        alert('Fallback copy method failed. Please copy manually.');
+                    }
+                } catch (err) {
+                    alert('Fallback copy method failed. Please copy manually.');
+                } finally {
+                    document.body.removeChild(textarea);
+                }
             }
 
             // Function to share via Web Share API
