@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Excel Search</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -9,13 +11,13 @@
         /* Global Styles */
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #ffffff;
-            color: #333;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
             min-height: 100vh;
             padding-top: 40px;
         }
@@ -28,27 +30,28 @@
             letter-spacing: 1px;
         }
 
-        #fileInput, #searchBox {
+        #fileInput,
+        #searchBox {
             padding: 12px 20px;
             margin: 10px 0;
-            border-radius: 12px;
+            border-radius: 8px;
             border: 1px solid #ddd;
             font-size: 16px;
             width: 350px;
-            transition: border 0.3s, box-shadow 0.3s;
+            transition: border 0.3s;
             box-sizing: border-box;
         }
 
-        #fileInput:focus, #searchBox:focus {
-            border-color: #6200EA;
+        #fileInput:focus,
+        #searchBox:focus {
+            border-color: #4CAF50;
             outline: none;
-            box-shadow: 0 0 5px rgba(98, 0, 234, 0.3);
         }
 
         #resultsGrid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
             margin-top: 40px;
             width: 80%;
             transition: all 0.3s ease-in-out;
@@ -57,7 +60,7 @@
         .card {
             background-color: #fff;
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s ease-in-out;
@@ -69,6 +72,14 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
+        .card-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+            letter-spacing: 0.5px;
+        }
+
         .card-content {
             font-size: 14px;
             color: #555;
@@ -76,7 +87,11 @@
         }
 
         .card-content strong {
-            color: #6200EA;
+            color: #4CAF50;
+        }
+
+        .card-content span {
+            color: #777;
         }
 
         .card-content p {
@@ -84,23 +99,24 @@
         }
 
         .back-button {
-            background-color: #6200EA;
+            background-color: #4CAF50;
             color: white;
             padding: 12px 25px;
             font-size: 16px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s;
             position: absolute;
             top: 20px;
             left: 20px;
-            display: none;  /* Initially hidden */
+            display: none;
+            /* Initially hidden */
             z-index: 10;
         }
 
         .back-button:hover {
-            background-color: #5B00D6;
+            background-color: #45a049;
         }
 
         /* Pagination Styles */
@@ -116,7 +132,7 @@
             padding: 12px 25px;
             margin: 0 5px;
             border: none;
-            background-color: #6200EA;
+            background-color: #4CAF50;
             color: white;
             border-radius: 50px;
             cursor: pointer;
@@ -125,7 +141,7 @@
         }
 
         .pagination button:hover {
-            background-color: #5B00D6;
+            background-color: #45a049;
             transform: scale(1.05);
         }
 
@@ -137,6 +153,11 @@
         .pagination span {
             font-size: 16px;
             color: #333;
+        }
+
+        .pagination .current-page {
+            font-weight: bold;
+            color: #4CAF50;
         }
 
         /* Dropdown (ellipsis) menu */
@@ -179,6 +200,7 @@
             cursor: pointer;
             border-bottom: 1px solid #ddd;
             transition: background-color 0.3s ease;
+            border-radius: 10px;
         }
 
         .dropdown-content button:hover {
@@ -192,10 +214,10 @@
         /* Copied message styles */
         #copiedMessage {
             position: fixed;
-            bottom: 20px;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #6200EA;
+            background-color: #4CAF50;
             color: white;
             padding: 10px 20px;
             border-radius: 25px;
@@ -212,7 +234,8 @@
                 width: 95%;
             }
 
-            #fileInput, #searchBox {
+            #fileInput,
+            #searchBox {
                 width: 80%;
                 padding: 10px 15px;
             }
@@ -231,11 +254,14 @@
         }
     </style>
 </head>
+
 <body>
     <h2>Upload and Search Excel File</h2>
     <input type="file" id="fileInput" accept=".xlsx, .xls">
     <input type="text" id="searchBox" placeholder="Search..." oninput="searchTable()">
-    <div id="resultsGrid"></div>  <!-- Grid for displaying results -->
+    <br><br>
+
+    <div id="resultsGrid"></div> <!-- Grid for displaying results -->
     <button id="backButton" class="back-button" onclick="showSearchResults()">Back to Results</button>
 
     <!-- Copied message -->
@@ -255,6 +281,7 @@
             let filteredData = [];
             let currentPage = 1;
             const itemsPerPage = 12;
+            let previousClickedRow = null;
 
             // File input event listener
             document.getElementById('fileInput').addEventListener('change', function(event) {
@@ -264,14 +291,18 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
+                    const workbook = XLSX.read(data, {
+                        type: 'array'
+                    });
                     const sheetName = workbook.SheetNames[0];
                     const sheet = workbook.Sheets[sheetName];
 
-                    window.data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+                    window.data = XLSX.utils.sheet_to_json(sheet, {
+                        header: 1,
+                        defval: ""
+                    });
                     headers = window.data.shift();
-                    filteredData = window.data.map((row, index) => ({ rowData: row, originalIndex: index }));
-                    searchTable(); // Trigger initial display
+                    document.getElementById('resultsGrid').style.display = 'none';
                 };
                 reader.readAsArrayBuffer(file);
             });
@@ -281,7 +312,7 @@
                 const grid = document.getElementById('resultsGrid');
                 grid.innerHTML = '';
 
-                pageData.forEach((item) => {
+                pageData.forEach((item, rowIndex) => {
                     const row = item.rowData;
                     const card = document.createElement('div');
                     card.classList.add('card');
@@ -290,7 +321,7 @@
                     const cardContent = document.createElement('div');
                     cardContent.classList.add('card-content');
 
-                    cardContent.innerHTML = headers.slice(0, 4).map((header, index) => 
+                    cardContent.innerHTML = headers.slice(0, 4).map((header, index) =>
                         `<p><strong>${header}:</strong> ${row[index] !== undefined ? row[index] : ""}</p>`
                     ).join('');
 
@@ -304,6 +335,8 @@
 
             // Function to show selected row details
             function showSelectedRow(originalIndex) {
+                previousClickedRow = originalIndex;
+
                 const grid = document.getElementById('resultsGrid');
                 grid.innerHTML = '';
 
@@ -313,7 +346,7 @@
                 const cardContent = document.createElement('div');
                 cardContent.classList.add('card-content');
 
-                cardContent.innerHTML = headers.map((header, index) => 
+                cardContent.innerHTML = headers.map((header, index) =>
                     `<p><strong>${header}:</strong> ${window.data[originalIndex][index] !== undefined ? window.data[originalIndex][index] : ""}</p>`
                 ).join('');
 
@@ -407,6 +440,25 @@
                 }
             }
 
+            // Function to share via Web Share API
+            function shareViaWeb(rowData) {
+                const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+
+                if (navigator.share) {
+                    // If Web Share API is available
+                    navigator.share({
+                            title: 'Excel Data',
+                            text: textToShare,
+                        })
+                        .then(() => console.log('Data shared successfully'))
+                        .catch(err => console.error('Error sharing data: ', err));
+                } else {
+                    // Fallback: Show a mailto link
+                    const mailtoLink = `mailto:?subject=Excel Data&body=${encodeURIComponent(textToShare)}`;
+                    window.location.href = mailtoLink;
+                }
+            }
+
             // Show the "Copied" message
             function showCopiedMessage() {
                 const copiedMessage = document.getElementById('copiedMessage');
@@ -421,37 +473,24 @@
                 }, 2000); // Show for 2 seconds
             }
 
-            // Function to share via Web Share API
-            function shareViaWeb(rowData) {
-                const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
-
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'Excel Data',
-                        text: textToShare,
-                    })
-                    .then(() => console.log('Data shared successfully'))
-                    .catch(err => console.error('Error sharing data: ', err));
-                } else {
-                    alert("Web Share API is not supported in your browser.");
-                }
-            }
-
             // Function to show search results after clicking "Back"
             window.showSearchResults = function() {
                 document.getElementById('backButton').style.display = 'none';
-                document.querySelector('.pagination').style.display = 'flex';
+                currentPage = 1;
                 displayResultsTable(paginateData(filteredData, currentPage));
+                document.querySelector('.pagination').style.display = 'flex';
             }
 
             // Search function triggered by typing in the search box
             window.searchTable = function() {
                 const query = document.getElementById('searchBox').value.toLowerCase();
                 filteredData = window.data
-                    .map((row, index) => ({ rowData: row, originalIndex: index }))
+                    .map((row, index) => ({
+                        rowData: row,
+                        originalIndex: index
+                    }))
                     .filter(item => item.rowData.some(cell => cell.toString().toLowerCase().includes(query)));
 
-                currentPage = 1; // Reset to first page on new search
                 displayResultsTable(paginateData(filteredData, currentPage));
             }
 
@@ -471,7 +510,7 @@
                 pageNumbers.innerHTML = `Page ${currentPage} of ${totalPages}`;
 
                 prevPageButton.disabled = currentPage === 1;
-                nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
+                nextPageButton.disabled = currentPage === totalPages;
             }
 
             // Change page function
@@ -482,4 +521,5 @@
         });
     </script>
 </body>
+
 </html>
