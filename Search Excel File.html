@@ -58,6 +58,7 @@
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
         }
 
         .card:hover {
@@ -147,6 +148,42 @@
             color: #4CAF50;
         }
 
+        /* Dropdown (ellipsis) menu */
+        .dropdown {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 8px;
+        }
+
+        .dropdown-content button {
+            background-color: #fff;
+            border: none;
+            padding: 10px 20px;
+            text-align: left;
+            width: 100%;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-content button:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show-dropdown .dropdown-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -236,7 +273,53 @@
 
             card.appendChild(cardContent);
 
-            // Show the back button when viewing the full result
+            // Add the dropdown menu with the "Copy to Clipboard" and "Share" buttons
+            const dropdown = document.createElement('div');
+            dropdown.classList.add('dropdown');
+            dropdown.innerHTML = '...';
+
+            const dropdownContent = document.createElement('div');
+            dropdownContent.classList.add('dropdown-content');
+
+            // Copy to Clipboard Button
+            const copyButton = document.createElement('button');
+            copyButton.textContent = 'Copy to Clipboard';
+            copyButton.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevent card click from firing
+                const rowText = headers.map((header, index) => 
+                    `${header}: ${window.data[originalIndex][index] !== undefined ? window.data[originalIndex][index] : ""}`
+                ).join('\n');
+                
+                // Create a temporary textarea to copy the text to clipboard
+                const textArea = document.createElement('textarea');
+                textArea.value = rowText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                alert('Row data copied to clipboard!');
+            });
+
+            // Share Button (This can be customized based on your sharing mechanism)
+            const shareButton = document.createElement('button');
+            shareButton.textContent = 'Share';
+            shareButton.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevent card click from firing
+                // Example sharing mechanism: open the share URL in a new window
+                const shareText = headers.map((header, index) => 
+                    `${header}: ${window.data[originalIndex][index] !== undefined ? window.data[originalIndex][index] : ""}`
+                ).join('\n');
+                const shareUrl = `mailto:?subject=Shared Row Data&body=${encodeURIComponent(shareText)}`;
+                window.open(shareUrl, '_blank');
+            });
+
+            dropdownContent.appendChild(copyButton);
+            dropdownContent.appendChild(shareButton);
+            dropdown.appendChild(dropdownContent);
+            card.appendChild(dropdown);
+
+            // Add the back button
             document.getElementById('backButton').style.display = 'block';
 
             // Hide the pagination controls when a row is clicked
@@ -246,6 +329,11 @@
 
             // Display the grid after clicking the row (now showing selected row as a card)
             grid.style.display = 'grid';
+
+            // Add event listener to toggle dropdown
+            dropdown.addEventListener('click', function() {
+                dropdown.classList.toggle('show-dropdown');
+            });
         }
 
         function showSearchResults() {
