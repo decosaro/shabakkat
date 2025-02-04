@@ -252,6 +252,7 @@
                 padding: 20px;
             }
         }
+
     </style>
 </head>
 
@@ -444,16 +445,24 @@
             function shareViaWeb(rowData) {
                 const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
 
+                console.log('Share Button Clicked');
+                console.log('Text to share:', textToShare);
+
                 if (navigator.share) {
                     // If Web Share API is available
                     navigator.share({
                             title: 'Excel Data',
                             text: textToShare,
                         })
-                        .then(() => console.log('Data shared successfully'))
-                        .catch(err => console.error('Error sharing data: ', err));
+                        .then(() => {
+                            console.log('Data shared successfully');
+                        })
+                        .catch(err => {
+                            console.error('Error sharing data: ', err);
+                        });
                 } else {
                     // Fallback: Show a mailto link
+                    console.log('Web Share API is not available, using fallback');
                     const mailtoLink = `mailto:?subject=Excel Data&body=${encodeURIComponent(textToShare)}`;
                     window.location.href = mailtoLink;
                 }
@@ -519,6 +528,7 @@
                 displayResultsTable(paginateData(filteredData, currentPage));
             }
         });
+
     </script>
 </body>
 
