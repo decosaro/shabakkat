@@ -109,10 +109,48 @@
             background-color: #45a049;
         }
 
+        /* Pagination buttons */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .pagination button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .pagination button:hover {
+            background-color: #45a049;
+        }
+
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .pagination span {
+            font-size: 16px;
+            margin: 0 5px;
+        }
+
+        .pagination .current-page {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
     </style>
 </head>
 <body>
-    <h2>Search Excel File</h2>
+    <h2>Upload and Search Excel File</h2>
     <input type="file" id="fileInput" accept=".xlsx, .xls">
     <input type="text" id="searchBox" placeholder="Search..." oninput="searchTable()">
     <br><br>
@@ -120,10 +158,19 @@
     <div id="resultsGrid"></div>  <!-- Grid for displaying results -->
     <button id="backButton" class="back-button" onclick="showSearchResults()">Back to Results</button>
 
+    <!-- Pagination controls -->
+    <div class="pagination">
+        <button id="prevPage" onclick="changePage(-1)" disabled>Previous</button>
+        <span id="pageNumbers"></span>
+        <button id="nextPage" onclick="changePage(1)" disabled>Next</button>
+    </div>
+
     <script>
         let data = [];
         let headers = [];
         let filteredData = [];  // To store the current search results
+        let currentPage = 1;    // To track the current page
+        const itemsPerPage = 10; // Number of items to display per page
         let previousClickedRow = null;  // Track the previously clicked row
 
         document.getElementById('fileInput').addEventListener('change', function(event) {
@@ -144,10 +191,11 @@
             reader.readAsArrayBuffer(file);
         });
 
-        function displayResultsTable(filteredData) {
+        function displayResultsTable(pageData) {
             const grid = document.getElementById('resultsGrid');
             grid.innerHTML = '';  // Clear previous results
-            filteredData.forEach((row, rowIndex) => {
+
+            pageData.forEach((row, rowIndex) => {
                 const card = document.createElement('div');
                 card.classList.add('card');
                 card.addEventListener('click', () => showSelectedRow(rowIndex));
@@ -163,8 +211,9 @@
                 card.appendChild(cardContent);
                 grid.appendChild(card);
             });
-            
-            grid.style.display = filteredData.length > 0 ? 'grid' : 'none';
+
+            grid.style.display = pageData.length > 0 ? 'grid' : 'none';
+            updatePaginationControls();
         }
 
         function showSelectedRow(rowIndex) {
@@ -200,9 +249,31 @@
             document.getElementById('backButton').style.display = 'none';
 
             // Show the results grid again with the previously filtered data
-            const grid = document.getElementById('resultsGrid');
-            grid.innerHTML = '';  // Clear the current result view
-            displayResultsTable(filteredData);  // Re-display the filtered data
+            currentPage = 1;  // Reset to the first page when going back to results
+            displayResultsTable(paginateData(filteredData, currentPage));
+        }
+
+        function paginateData(data, page) {
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            return data.slice(start, end);
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            displayResultsTable(paginateData(filteredData, currentPage));
+        }
+
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+            // Enable/Disable the "Previous" and "Next" buttons based on the current page
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+
+            // Show the current page and total pages
+            const pageNumbers = document.getElementById('pageNumbers');
+            pageNumbers.innerHTML = `${currentPage} / ${totalPages}`;
         }
 
         function searchTable() {
@@ -216,7 +287,10 @@
             filteredData = window.data.filter(row => 
                 row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm))
             );
-            displayResultsTable(filteredData);
+
+            // Reset pagination when new search occurs
+            currentPage = 1;
+            displayResultsTable(paginateData(filteredData, currentPage));
 
             // If a row was previously clicked, hide it to reset the state
             if (previousClickedRow !== null) {
