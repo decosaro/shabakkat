@@ -7,28 +7,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Inline CSS Styles -->
     <style>
-        /* Global Styles */
+        /* Enhanced Modern CSS Styles */
         body {
             font-family: 'Inter', sans-serif;
-            /*background: linear-gradient(135deg, #f0f2f5 0%, #cfd6e6 100%);*/
-            color: #333;
+            /*background: linear-gradient(135deg, #f0f4f8, #d9e2ec);*/
+            color: #1F2937;
             margin: 0;
             padding: 0;
-            max-height: 1300px;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding-top: 60px;
+            min-height: 100vh;
         }
 
         h2 {
-            color: #2c3e50;
+            color: #0f172a;
             font-weight: 700;
             margin-bottom: 40px;
             text-align: center;
             letter-spacing: 1px;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         #fileInput,
@@ -36,29 +36,25 @@
             padding: 14px 22px;
             margin: 10px 0;
             border-radius: 30px;
-            border: none;
+            border: 1px solid #cbd5e1;
             font-size: 16px;
             width: 350px;
             transition: all 0.3s ease;
             box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.1),
-                        inset -4px -4px 10px rgba(255,255,255,0.7);
+            background: #ffffff;
         }
 
         #fileInput:hover,
         #searchBox:hover {
-            box-shadow: inset 6px 6px 12px rgba(0,0,0,0.1),
-                        inset -6px -6px 12px rgba(255,255,255,0.8);
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.4);
         }
 
         #fileInput:focus,
         #searchBox:focus {
             outline: none;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1),
-                        inset -2px -2px 5px rgba(255,255,255,0.8);
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.5);
         }
 
         #resultsGrid {
@@ -67,34 +63,36 @@
             gap: 25px;
             margin-top: 40px;
             width: 90%;
-            transition: all 0.3s ease-in-out;
+            max-width: 1200px;
+            padding-bottom: 40px;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 20px;
+            background: #ffffff;
+            border-radius: 16px;
             padding: 25px;
-            box-shadow: 8px 8px 15px rgba(0,0,0,0.1),
-                        -8px -8px 15px rgba(255,255,255,0.7);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                        0 4px 6px -2px rgba(0, 0, 0, 0.05);
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s ease-in-out;
             position: relative;
+            border: 1px solid #7dd3fc;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 12px 12px 20px rgba(0,0,0,0.15),
-                        -12px -12px 20px rgba(255,255,255,0.8);
+            box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.1),
+                        0 8px 10px -2px rgba(0, 0, 0, 0.05);
         }
 
         .card-content {
             font-size: 15px;
-            color: #34495e;
+            color: #374151;
             line-height: 1.6;
         }
 
         .card-content strong {
-            color: #2980b9;
+            color: #1d4ed8;
         }
 
         .card-content p {
@@ -102,26 +100,22 @@
         }
 
         .back-button {
-            background: linear-gradient(145deg, #e6e6e6, #ffffff);
-            color: #2c3e50;
+            background: #3b82f6;
+            color: #ffffff;
             padding: 14px 28px;
             font-size: 16px;
             border: none;
             border-radius: 30px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.3s;
             position: absolute;
             top: 20px;
             left: 20px;
             display: none;
-            z-index: 10;
-            box-shadow: 6px 6px 12px rgba(0,0,0,0.1),
-                        -6px -6px 12px rgba(255,255,255,0.7);
         }
 
         .back-button:hover {
-            box-shadow: 4px 4px 10px rgba(0,0,0,0.1),
-                        -4px -4px 10px rgba(255,255,255,0.8);
+            background: #2563eb;
         }
 
         /* Pagination Styles */
@@ -136,30 +130,28 @@
         .pagination button {
             padding: 12px 20px;
             border: none;
-            background: #2980b9;
+            background: #3b82f6;
             color: white;
             border-radius: 50px;
             cursor: pointer;
             font-size: 16px;
             transition: background 0.3s, transform 0.3s;
-            box-shadow: 4px 4px 10px rgba(0,0,0,0.1),
-                        -4px -4px 10px rgba(255,255,255,0.7);
         }
 
         .pagination button:hover {
-            background: #1f6391;
+            background: #2563eb;
             transform: translateY(-3px);
         }
 
         .pagination button:disabled {
-            background: #bdc3c7;
+            background: #cbd5e1;
             cursor: not-allowed;
             transform: none;
         }
 
         .pagination span {
             font-size: 16px;
-            color: #2c3e50;
+            color: #1F2937;
         }
 
         /* Dropdown (ellipsis) menu */
@@ -169,12 +161,12 @@
             right: 15px;
             cursor: pointer;
             font-size: 26px;
-            color: #7f8c8d;
+            color: #94a3b8;
             transition: color 0.3s;
         }
 
         .dropdown:hover {
-            color: #2c3e50;
+            color: #1e293b;
         }
 
         /* Dropdown content */
@@ -183,13 +175,13 @@
             position: absolute;
             top: 40px;
             right: -10px;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 6px 6px 12px rgba(0,0,0,0.1),
-                        -6px -6px 12px rgba(255,255,255,0.8);
-            border-radius: 15px;
+            background: #ffffff;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
             min-width: 200px;
             z-index: 1;
-            backdrop-filter: blur(10px);
+            overflow: hidden;
         }
 
         /* Display dropdown when clicked */
@@ -205,18 +197,17 @@
             width: 100%;
             text-align: left;
             font-size: 16px;
-            color: #2c3e50;
+            color: #1F2937;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: background-color 0.2s ease;
         }
 
         .dropdown-content button:hover {
-            background-color: rgba(0,0,0,0.05);
+            background-color: #f0f4f8;
         }
 
-        .dropdown-content button:last-child {
-            border-bottom: none;
+        .dropdown-content button + button {
+            border-top: 1px solid #e5e7eb;
         }
 
         /* Copied message styles */
@@ -225,7 +216,7 @@
             top: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: #2980b9;
+            background: #3b82f6;
             color: white;
             padding: 12px 25px;
             border-radius: 30px;
@@ -234,8 +225,6 @@
             opacity: 0;
             transition: opacity 0.3s ease, transform 0.3s ease;
             z-index: 1000;
-            box-shadow: 4px 4px 10px rgba(0,0,0,0.1),
-                        -4px -4px 10px rgba(255,255,255,0.7);
         }
 
         /* Responsive Design */
@@ -271,74 +260,84 @@
 <body>
     <h2>Excel Data Explorer</h2>
     <input type="file" id="fileInput" accept=".xlsx, .xls">
-    <input type="text" id="searchBox" placeholder="Search..." oninput="searchTable()" disabled>
-    <div id="resultsGrid"></div> <!-- Grid for displaying results -->
-    <button id="backButton" class="back-button" onclick="showSearchResults()">← Back to Results</button>
+    <input type="text" id="searchBox" placeholder="Search..." disabled>
+    <div id="resultsGrid"></div>
+    <button id="backButton" class="back-button" style="display: none;">← Back to Results</button>
 
     <!-- Copied message -->
     <div id="copiedMessage">Copied to clipboard!</div>
 
     <!-- Pagination controls -->
     <div class="pagination">
-        <button id="prevPage" onclick="changePage(-1)" disabled>Previous</button>
+        <button id="prevPage" disabled>Previous</button>
         <span id="pageNumbers"></span>
-        <button id="nextPage" onclick="changePage(1)" disabled>Next</button>
+        <button id="nextPage" disabled>Next</button>
     </div>
 
+    <!-- JavaScript -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        (function() {
             let headers = [];
             let filteredData = [];
             let currentPage = 1;
             const itemsPerPage = 12;
+            let data = []; // Initialize data array
+
+            const fileInput = document.getElementById('fileInput');
+            const searchBox = document.getElementById('searchBox');
+            const resultsGrid = document.getElementById('resultsGrid');
+            const backButton = document.getElementById('backButton');
+            const copiedMessage = document.getElementById('copiedMessage');
+            const prevPageButton = document.getElementById('prevPage');
+            const nextPageButton = document.getElementById('nextPage');
+            const pageNumbers = document.getElementById('pageNumbers');
+            const paginationControls = document.querySelector('.pagination');
 
             // File input event listener
-            document.getElementById('fileInput').addEventListener('change', function(event) {
+            fileInput.addEventListener('change', function(event) {
                 const file = event.target.files[0];
                 if (!file) return;
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const arrayBuffer = e.target.result;
-                    const data = new Uint8Array(arrayBuffer);
-                    const workbook = XLSX.read(data, { type: 'array' });
+                    const dataArray = new Uint8Array(arrayBuffer);
+                    const workbook = XLSX.read(dataArray, { type: 'array' });
                     const sheetName = workbook.SheetNames[0];
                     const sheet = workbook.Sheets[sheetName];
 
-                    window.data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-                    headers = window.data.shift();
+                    data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+                    headers = data.shift();
 
                     // Enable the search box now that data is loaded
-                    document.getElementById('searchBox').disabled = false;
-                    document.getElementById('searchBox').placeholder = "Type to search...";
+                    searchBox.disabled = false;
+                    searchBox.placeholder = "Type to search...";
+                    searchBox.addEventListener('input', searchTable);
                 };
                 reader.readAsArrayBuffer(file);
             });
 
             // Search function
-            window.searchTable = function() {
-                const query = document.getElementById('searchBox').value.toLowerCase();
+            function searchTable() {
+                const query = searchBox.value.toLowerCase();
 
                 if (!query) {
-                    document.getElementById('resultsGrid').style.display = 'none';
-                    document.querySelector('.pagination').style.display = 'none';
+                    resultsGrid.style.display = 'none';
+                    paginationControls.style.display = 'none';
                     return;
                 }
 
-                filteredData = window.data
+                filteredData = data
                     .map((row, index) => ({ rowData: row, originalIndex: index }))
                     .filter(item => item.rowData.some(cell => cell.toString().toLowerCase().includes(query)));
 
                 currentPage = 1;
                 displayResultsTable(paginateData(filteredData, currentPage));
-
-                document.querySelector('.pagination').style.display = filteredData.length > itemsPerPage ? 'flex' : 'none';
-            };
+            }
 
             // Display results
             function displayResultsTable(pageData) {
-                const grid = document.getElementById('resultsGrid');
-                grid.innerHTML = '';
+                resultsGrid.innerHTML = '';
 
                 pageData.forEach((item) => {
                     const row = item.rowData;
@@ -354,17 +353,16 @@
                     ).join('');
 
                     card.appendChild(cardContent);
-                    grid.appendChild(card);
+                    resultsGrid.appendChild(card);
                 });
 
-                grid.style.display = pageData.length > 0 ? 'grid' : 'none';
+                resultsGrid.style.display = pageData.length > 0 ? 'grid' : 'none';
                 updatePaginationControls();
             }
 
             // Show selected row details
             function showSelectedRow(originalIndex) {
-                const grid = document.getElementById('resultsGrid');
-                grid.innerHTML = '';
+                resultsGrid.innerHTML = '';
 
                 const card = document.createElement('div');
                 card.classList.add('card');
@@ -373,7 +371,7 @@
                 cardContent.classList.add('card-content');
 
                 cardContent.innerHTML = headers.map((header, index) =>
-                    `<p><strong>${header}:</strong> ${window.data[originalIndex][index] !== undefined ? window.data[originalIndex][index] : ""}</p>`
+                    `<p><strong>${header}:</strong> ${data[originalIndex][index] !== undefined ? data[originalIndex][index] : ""}</p>`
                 ).join('');
 
                 // Add the dropdown menu
@@ -393,7 +391,7 @@
                 copyButton.textContent = 'Copy';
                 copyButton.addEventListener('click', function(event) {
                     event.stopPropagation();
-                    copyCardData(window.data[originalIndex]);
+                    copyCardData(data[originalIndex]);
                     dropdown.classList.remove('show-dropdown');
                 });
                 dropdownContent.appendChild(copyButton);
@@ -403,7 +401,7 @@
                 emailButton.textContent = 'Share via Email';
                 emailButton.addEventListener('click', function(event) {
                     event.stopPropagation();
-                    shareViaEmail(window.data[originalIndex]);
+                    shareViaEmail(data[originalIndex]);
                     dropdown.classList.remove('show-dropdown');
                 });
                 dropdownContent.appendChild(emailButton);
@@ -413,7 +411,7 @@
                 whatsappButton.textContent = 'Share via WhatsApp';
                 whatsappButton.addEventListener('click', function(event) {
                     event.stopPropagation();
-                    shareViaWhatsApp(window.data[originalIndex]);
+                    shareViaWhatsApp(data[originalIndex]);
                     dropdown.classList.remove('show-dropdown');
                 });
                 dropdownContent.appendChild(whatsappButton);
@@ -423,23 +421,20 @@
                 telegramButton.textContent = 'Share via Telegram';
                 telegramButton.addEventListener('click', function(event) {
                     event.stopPropagation();
-                    shareViaTelegram(window.data[originalIndex]);
+                    shareViaTelegram(data[originalIndex]);
                     dropdown.classList.remove('show-dropdown');
                 });
                 dropdownContent.appendChild(telegramButton);
 
-                // Add more share buttons here if desired
-
                 dropdown.appendChild(dropdownContent);
                 card.appendChild(dropdown);
-
                 card.appendChild(cardContent);
 
-                document.getElementById('backButton').style.display = 'block';
-                document.querySelector('.pagination').style.display = 'none';
+                backButton.style.display = 'block';
+                paginationControls.style.display = 'none';
 
-                grid.appendChild(card);
-                grid.style.display = 'grid';
+                resultsGrid.appendChild(card);
+                resultsGrid.style.display = 'grid';
             }
 
             // Toggle dropdown menu
@@ -491,14 +486,13 @@
 
             // Show the "Copied" message
             function showCopiedMessage() {
-                const copiedMessage = document.getElementById('copiedMessage');
                 copiedMessage.style.display = 'block';
                 copiedMessage.style.opacity = 1;
                 copiedMessage.style.transform = 'translateY(0)';
 
                 setTimeout(() => {
                     copiedMessage.style.opacity = 0;
-                    copiedMessage.style.transform = 'translateY(20px)';
+                    copiedMessage.style.transform = 'translateY(-20px)';
                     setTimeout(() => {
                         copiedMessage.style.display = 'none';
                     }, 300);
@@ -527,36 +521,44 @@
             }
 
             // Show search results after clicking "Back"
-            window.showSearchResults = function() {
-                document.getElementById('backButton').style.display = 'none';
-                document.querySelector('.pagination').style.display = filteredData.length > itemsPerPage ? 'flex' : 'none';
+            backButton.addEventListener('click', function() {
+                backButton.style.display = 'none';
+                paginationControls.style.display = filteredData.length > itemsPerPage ? 'flex' : 'none';
                 displayResultsTable(paginateData(filteredData, currentPage));
-            }
+            });
 
             // Pagination functions
-            function paginateData(data, page) {
+            function paginateData(dataArray, page) {
                 const start = (page - 1) * itemsPerPage;
-                return data.slice(start, start + itemsPerPage);
+                return dataArray.slice(start, start + itemsPerPage);
             }
 
             function updatePaginationControls() {
                 const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-                const prevPageButton = document.getElementById('prevPage');
-                const nextPageButton = document.getElementById('nextPage');
-                const pageNumbers = document.getElementById('pageNumbers');
 
                 pageNumbers.innerHTML = `Page ${currentPage} of ${totalPages}`;
 
                 prevPageButton.disabled = currentPage === 1;
                 nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
 
-                document.querySelector('.pagination').style.display = totalPages > 1 ? 'flex' : 'none';
+                paginationControls.style.display = totalPages > 1 ? 'flex' : 'none';
             }
 
-            window.changePage = function(direction) {
-                currentPage += direction;
-                displayResultsTable(paginateData(filteredData, currentPage));
-            }
+            // Pagination button event listeners
+            prevPageButton.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage -= 1;
+                    displayResultsTable(paginateData(filteredData, currentPage));
+                }
+            });
+
+            nextPageButton.addEventListener('click', function() {
+                const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage += 1;
+                    displayResultsTable(paginateData(filteredData, currentPage));
+                }
+            });
 
             // Close dropdown when clicking outside
             document.addEventListener('click', function(event) {
@@ -567,7 +569,7 @@
                     });
                 }
             });
-        });
+        })();
     </script>
 </body>
 </html>
