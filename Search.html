@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Data Explorer</title>
+    <title>Excel Data Explorer</title>
     <!-- Include XLSX library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Google Fonts -->
@@ -53,7 +53,6 @@
             border-radius: 25px;
             border: 1px solid #cbd5e1;
             font-size: 14px;
-            /* Removed fixed width to allow flexibility */
             flex: 1;
             transition: all 0.3s ease;
             box-sizing: border-box;
@@ -142,42 +141,6 @@
             background: #2563eb;
         }
 
-        /* Pagination Styles */
-        .pagination {
-            display: none;
-            justify-content: center;
-            align-items: center;
-            margin-top: 15px;
-            gap: 8px;
-        }
-
-        .pagination button {
-            padding: 8px 16px;
-            border: none;
-            background: #3b82f6;
-            color: white;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: background 0.3s, transform 0.3s;
-        }
-
-        .pagination button:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-        }
-
-        .pagination button:disabled {
-            background: #cbd5e1;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .pagination span {
-            font-size: 13px;
-            color: #1F2937;
-        }
-
         /* Dropdown (ellipsis) menu */
         .dropdown {
             position: absolute;
@@ -251,6 +214,33 @@
             z-index: 1000;
         }
 
+        /* Custom Scrollbar Styles */
+        /* For WebKit browsers (Chrome, Safari, Edge) */
+        #resultsGrid::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        #resultsGrid::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+
+        #resultsGrid::-webkit-scrollbar-thumb {
+            background-color: #3b82f6;
+            border-radius: 10px;
+            border: 3px solid #e5e7eb;
+        }
+
+        #resultsGrid:hover::-webkit-scrollbar-thumb {
+            background-color: #2563eb;
+        }
+
+        /* For Firefox */
+        #resultsGrid {
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #e5e7eb;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             #resultsGrid {
@@ -270,15 +260,6 @@
                 max-width: none;
             }
 
-            .pagination {
-                gap: 6px;
-            }
-
-            .pagination button {
-                font-size: 11px;
-                padding: 6px 10px;
-            }
-
             .card {
                 padding: 12px;
             }
@@ -292,7 +273,6 @@
                 font-size: 11px;
             }
         }
-
     </style>
 </head>
 
@@ -321,21 +301,12 @@
     <!-- Copied message -->
     <div id="copiedMessage">Copied to clipboard!</div>
 
-    <!-- Pagination controls -->
-    <div class="pagination">
-        <button id="prevPage" disabled>Previous</button>
-        <span id="pageNumbers"></span>
-        <button id="nextPage" disabled>Next</button>
-    </div>
-
     <!-- JavaScript -->
     <script>
-        (function() {
+        (function () {
             let dataGroups = []; // Array to hold groups of data
             let currentGroupIndex = null; // Index of the currently selected group
             let filteredData = [];
-            let currentPage = 1;
-            const itemsPerPage = 12;
 
             const fileInput = document.getElementById('fileInput');
             const fileSelect = document.getElementById('fileSelect');
@@ -344,13 +315,9 @@
             const resultsGrid = document.getElementById('resultsGrid');
             const backButton = document.getElementById('backButton');
             const copiedMessage = document.getElementById('copiedMessage');
-            const prevPageButton = document.getElementById('prevPage');
-            const nextPageButton = document.getElementById('nextPage');
-            const pageNumbers = document.getElementById('pageNumbers');
-            const paginationControls = document.querySelector('.pagination');
 
             // Modified file input event listener to handle multiple files
-            fileInput.addEventListener('change', function(event) {
+            fileInput.addEventListener('change', function (event) {
                 const files = event.target.files;
                 if (!files.length) return;
 
@@ -362,7 +329,6 @@
                 columnSelect.disabled = true;
                 fileSelect.disabled = true;
                 resultsGrid.innerHTML = '';
-                paginationControls.style.display = 'none';
                 backButton.style.display = 'none';
                 fileSelect.style.display = 'none';
 
@@ -374,7 +340,7 @@
                     const file = files[i];
 
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         const arrayBuffer = e.target.result;
                         const dataArray = new Uint8Array(arrayBuffer);
                         const workbook = XLSX.read(dataArray, {
@@ -488,7 +454,7 @@
                         searchBox.value = '';
                         columnSelect.innerHTML = '<option value="">Search All Columns</option>';
                         resultsGrid.innerHTML = '';
-                        paginationControls.style.display = 'none';
+                        backButton.style.display = 'none';
                     }
                 }
 
@@ -513,7 +479,6 @@
 
                     // Clear previous results
                     resultsGrid.innerHTML = '';
-                    paginationControls.style.display = 'none';
                     backButton.style.display = 'none';
 
                     // Attach event listeners
@@ -527,7 +492,7 @@
             // Debounce function to optimize search
             function debounce(func, wait) {
                 let timeout;
-                return function(...args) {
+                return function (...args) {
                     clearTimeout(timeout);
                     timeout = setTimeout(() => func.apply(this, args), wait);
                 };
@@ -540,7 +505,6 @@
 
                 if (currentGroupIndex === null || query === '') {
                     resultsGrid.style.display = 'none';
-                    paginationControls.style.display = 'none';
                     return;
                 }
 
@@ -548,36 +512,31 @@
                 const data = currentGroup.data;
                 const headers = currentGroup.headers;
 
-                filteredData = data
-                    .filter(item => {
-                        const row = item.rowData;
-                        if (selectedColumnIndex !== "") {
-                            // Search in the selected column
-                            const cell = row[selectedColumnIndex] || "";
-                            return cell.toString().toLowerCase().includes(query);
-                        } else {
-                            // Search in all columns
-                            return row.some(cell => cell.toString().toLowerCase().includes(query));
-                        }
-                    });
+                filteredData = data.filter(item => {
+                    const row = item.rowData;
+                    if (selectedColumnIndex !== "") {
+                        // Search in the selected column
+                        const cell = row[selectedColumnIndex] || "";
+                        return cell.toString().toLowerCase().includes(query);
+                    } else {
+                        // Search in all columns
+                        return row.some(cell => cell.toString().toLowerCase().includes(query));
+                    }
+                });
 
-                currentPage = 1;
-                displayResultsTable(paginateData(filteredData, currentPage), headers);
+                displayResultsTable(filteredData, headers); // Display all filtered data
             }
 
             // Display results
-            function displayResultsTable(pageData, headers) {
+            function displayResultsTable(dataArray, headers) {
                 resultsGrid.innerHTML = '';
 
                 // Determine if the current group is a combined group
                 const currentGroup = dataGroups[currentGroupIndex];
                 const isCombinedGroup = currentGroup.isCombined;
 
-                pageData.forEach((item) => {
-                    const {
-                        rowData,
-                        fileName
-                    } = item;
+                dataArray.forEach((item) => {
+                    const { rowData, fileName } = item;
                     const card = document.createElement('div');
                     card.classList.add('card');
                     card.addEventListener('click', () => showSelectedRow(item, headers));
@@ -603,18 +562,14 @@
                     resultsGrid.appendChild(card);
                 });
 
-                resultsGrid.style.display = pageData.length > 0 ? 'grid' : 'none';
-                updatePaginationControls();
+                resultsGrid.style.display = dataArray.length > 0 ? 'grid' : 'none';
             }
 
             // Show selected row details
             function showSelectedRow(item, headers) {
                 resultsGrid.innerHTML = '';
 
-                const {
-                    rowData,
-                    fileName
-                } = item;
+                const { rowData, fileName } = item;
                 const card = document.createElement('div');
                 card.classList.add('card');
 
@@ -643,7 +598,7 @@
                 const dropdown = document.createElement('div');
                 dropdown.classList.add('dropdown');
                 dropdown.innerHTML = '⋮';
-                dropdown.addEventListener('click', function(event) {
+                dropdown.addEventListener('click', function (event) {
                     event.stopPropagation();
                     toggleDropdown(dropdown);
                 });
@@ -654,7 +609,7 @@
                 // Copy button
                 const copyButton = document.createElement('button');
                 copyButton.textContent = 'Copy';
-                copyButton.addEventListener('click', function(event) {
+                copyButton.addEventListener('click', function (event) {
                     event.stopPropagation();
                     copyCardData(rowData, headers, fileName);
                     dropdown.classList.remove('show-dropdown');
@@ -664,7 +619,7 @@
                 // Share via Email button
                 const emailButton = document.createElement('button');
                 emailButton.textContent = 'Share via Email';
-                emailButton.addEventListener('click', function(event) {
+                emailButton.addEventListener('click', function (event) {
                     event.stopPropagation();
                     shareViaEmail(rowData, headers, fileName);
                     dropdown.classList.remove('show-dropdown');
@@ -674,7 +629,7 @@
                 // Share via WhatsApp
                 const whatsappButton = document.createElement('button');
                 whatsappButton.textContent = 'Share via WhatsApp';
-                whatsappButton.addEventListener('click', function(event) {
+                whatsappButton.addEventListener('click', function (event) {
                     event.stopPropagation();
                     shareViaWhatsApp(rowData, headers, fileName);
                     dropdown.classList.remove('show-dropdown');
@@ -684,7 +639,7 @@
                 // Share via Telegram
                 const telegramButton = document.createElement('button');
                 telegramButton.textContent = 'Share via Telegram';
-                telegramButton.addEventListener('click', function(event) {
+                telegramButton.addEventListener('click', function (event) {
                     event.stopPropagation();
                     shareViaTelegram(rowData, headers, fileName);
                     dropdown.classList.remove('show-dropdown');
@@ -696,7 +651,6 @@
                 card.appendChild(cardContent);
 
                 backButton.style.display = 'block';
-                paginationControls.style.display = 'none';
 
                 resultsGrid.appendChild(card);
                 resultsGrid.style.display = 'grid';
@@ -818,50 +772,14 @@
             }
 
             // Show search results after clicking "Back"
-            backButton.addEventListener('click', function() {
+            backButton.addEventListener('click', function () {
                 backButton.style.display = 'none';
-                paginationControls.style.display = filteredData.length > itemsPerPage ? 'flex' : 'none';
                 const currentGroup = dataGroups[currentGroupIndex];
-                displayResultsTable(paginateData(filteredData, currentPage), currentGroup.headers);
-            });
-
-            // Pagination functions
-            function paginateData(dataArray, page) {
-                const start = (page - 1) * itemsPerPage;
-                return dataArray.slice(start, start + itemsPerPage);
-            }
-
-            function updatePaginationControls() {
-                const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-
-                pageNumbers.innerHTML = `Page ${currentPage} of ${totalPages}`;
-
-                prevPageButton.disabled = currentPage === 1;
-                nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
-
-                paginationControls.style.display = totalPages > 1 ? 'flex' : 'none';
-            }
-
-            // Pagination button event listeners
-            prevPageButton.addEventListener('click', function() {
-                if (currentPage > 1) {
-                    currentPage -= 1;
-                    const currentGroup = dataGroups[currentGroupIndex];
-                    displayResultsTable(paginateData(filteredData, currentPage), currentGroup.headers);
-                }
-            });
-
-            nextPageButton.addEventListener('click', function() {
-                const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-                if (currentPage < totalPages) {
-                    currentPage += 1;
-                    const currentGroup = dataGroups[currentGroupIndex];
-                    displayResultsTable(paginateData(filteredData, currentPage), currentGroup.headers);
-                }
+                displayResultsTable(filteredData, currentGroup.headers);
             });
 
             // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 const isDropdown = event.target.matches('.dropdown, .dropdown *');
                 if (!isDropdown) {
                     document.querySelectorAll('.dropdown').forEach(dropdown => {
@@ -870,7 +788,6 @@
                 }
             });
         })();
-
     </script>
 </body>
 
