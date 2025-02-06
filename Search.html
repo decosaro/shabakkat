@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Inline CSS Styles -->
     <style>
-        /* Enhanced Modern CSS Styles with Reduced Sizes */
+        /* Enhanced Modern CSS Styles with Adjusted Sizes */
         body {
             font-family: 'Inter', sans-serif;
             /*background: linear-gradient(135deg, #f0f4f8, #d9e2ec);*/
@@ -19,41 +19,60 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 40px; /* Reduced padding */
-            max-height: 1000px; /* Set the maximum height */
-            overflow: auto; /* Enable scrolling if content exceeds max-height */
+            padding-top: 40px;
+            max-height: 1000px;
+            overflow: auto;
         }
 
         h2 {
             color: #0f172a;
             font-weight: 700;
-            margin-bottom: 30px; /* Reduced margin */
+            margin-bottom: 20px;
             text-align: center;
             letter-spacing: 1px;
-            font-size: 24px; /* Reduced font size */
+            font-size: 24px;
+        }
+
+        /* New styles for the rows */
+        .row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 90%;
+            max-width: 1000px;
         }
 
         #fileInput,
-        #searchBox {
-            padding: 10px 18px; /* Reduced padding */
-            margin: 8px 0;
+        #searchBox,
+        #columnSelect,
+        #fileSelect {
+            padding: 8px 16px;
+            margin: 6px 0;
             border-radius: 25px;
             border: 1px solid #cbd5e1;
-            font-size: 14px; /* Reduced font size */
-            width: 320px; /* Reduced width */
+            font-size: 14px;
+            /* Removed fixed width to allow flexibility */
+            flex: 1;
             transition: all 0.3s ease;
             box-sizing: border-box;
             background: #ffffff;
+            max-width: 300px;
         }
 
         #fileInput:hover,
-        #searchBox:hover {
+        #searchBox:hover,
+        #columnSelect:hover,
+        #fileSelect:hover {
             border-color: #7dd3fc;
             box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.4);
         }
 
         #fileInput:focus,
-        #searchBox:focus {
+        #searchBox:focus,
+        #columnSelect:focus,
+        #fileSelect:focus {
             outline: none;
             border-color: #38bdf8;
             box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.5);
@@ -61,20 +80,20 @@
 
         #resultsGrid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Reduced min width */
-            gap: 20px; /* Reduced gap */
-            margin-top: 30px; /* Reduced margin */
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
             width: 90%;
             max-width: 1000px;
-            padding-bottom: 30px; /* Reduced padding */
+            padding-bottom: 20px;
             overflow-y: auto;
-            max-height: calc(1000px - 180px); /* Adjusted for reduced elements */
+            max-height: calc(1000px - 260px);
         }
 
         .card {
             background: #ffffff;
-            border-radius: 12px; /* Reduced border radius */
-            padding: 15px; /* Reduced padding */
+            border-radius: 12px;
+            padding: 12px;
             box-shadow: 0 6px 10px -3px rgba(0, 0, 0, 0.1),
                         0 3px 5px -2px rgba(0, 0, 0, 0.05);
             cursor: pointer;
@@ -91,7 +110,7 @@
         }
 
         .card-content {
-            font-size: 14px; /* Reduced font size */
+            font-size: 13px;
             color: #374151;
             line-height: 1.4;
         }
@@ -101,20 +120,20 @@
         }
 
         .card-content p {
-            margin: 8px 0;
+            margin: 6px 0;
         }
 
         .back-button {
             background: #3b82f6;
             color: #ffffff;
-            padding: 10px 20px; /* Reduced padding */
-            font-size: 14px; /* Reduced font size */
+            padding: 8px 16px;
+            font-size: 13px;
             border: none;
             border-radius: 25px;
             cursor: pointer;
             transition: background 0.3s;
             position: absolute;
-            top: 15px; /* Adjusted position */
+            top: 15px;
             left: 15px;
             display: none;
         }
@@ -128,18 +147,18 @@
             display: none;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
-            gap: 10px; /* Reduced gap */
+            margin-top: 15px;
+            gap: 8px;
         }
 
         .pagination button {
-            padding: 8px 16px; /* Reduced padding */
+            padding: 8px 16px;
             border: none;
             background: #3b82f6;
             color: white;
             border-radius: 25px;
             cursor: pointer;
-            font-size: 14px; /* Reduced font size */
+            font-size: 13px;
             transition: background 0.3s, transform 0.3s;
         }
 
@@ -155,7 +174,7 @@
         }
 
         .pagination span {
-            font-size: 14px; /* Reduced font size */
+            font-size: 13px;
             color: #1F2937;
         }
 
@@ -165,7 +184,7 @@
             top: 10px;
             right: 10px;
             cursor: pointer;
-            font-size: 24px; /* Reduced font size */
+            font-size: 22px;
             color: #94a3b8;
             transition: color 0.3s;
         }
@@ -198,10 +217,10 @@
         .dropdown-content button {
             background: none;
             border: none;
-            padding: 10px 16px; /* Reduced padding */
+            padding: 8px 14px;
             width: 100%;
             text-align: left;
-            font-size: 14px; /* Reduced font size */
+            font-size: 13px;
             color: #1F2937;
             cursor: pointer;
             transition: background-color 0.2s ease;
@@ -218,14 +237,14 @@
         /* Copied message styles */
         #copiedMessage {
             position: fixed;
-            top: 20px; /* Adjusted position */
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
             background: #3b82f6;
             color: white;
-            padding: 10px 20px; /* Reduced padding */
+            padding: 8px 16px;
             border-radius: 25px;
-            font-size: 14px; /* Reduced font size */
+            font-size: 13px;
             display: none;
             opacity: 0;
             transition: opacity 0.3s ease, transform 0.3s ease;
@@ -238,40 +257,62 @@
                 width: 95%;
             }
 
+            .row {
+                flex-direction: column;
+                align-items: center;
+            }
+
             #fileInput,
-            #searchBox {
+            #searchBox,
+            #columnSelect,
+            #fileSelect {
                 width: 80%;
-                padding: 10px 15px; /* Reduced padding */
+                max-width: none;
             }
 
             .pagination {
-                gap: 8px;
+                gap: 6px;
             }
 
             .pagination button {
-                font-size: 12px; /* Reduced font size */
-                padding: 6px 12px;
+                font-size: 11px;
+                padding: 6px 10px;
             }
 
             .card {
-                padding: 15px;
+                padding: 12px;
             }
 
             .card-content {
-                font-size: 13px; /* Reduced font size */
+                font-size: 12px;
             }
 
             .back-button {
-                padding: 8px 16px; /* Reduced padding */
-                font-size: 12px; /* Reduced font size */
+                padding: 6px 12px;
+                font-size: 11px;
             }
         }
     </style>
 </head>
 <body>
     <h2>Excel Data Explorer</h2>
-    <input type="file" id="fileInput" accept=".xlsx, .xls">
-    <input type="text" id="searchBox" placeholder="Search..." disabled>
+
+    <!-- Row 1: Upload and Search -->
+    <div class="row">
+        <input type="file" id="fileInput" accept=".xlsx, .xls" multiple>
+        <input type="text" id="searchBox" placeholder="Search..." disabled>
+    </div>
+
+    <!-- Row 2: Select File and Select Column -->
+    <div class="row">
+        <select id="fileSelect" disabled style="display: none;">
+            <option value="">Select a Data Group</option>
+        </select>
+        <select id="columnSelect" disabled>
+            <option value="">Search All Columns</option>
+        </select>
+    </div>
+
     <div id="resultsGrid"></div>
     <button id="backButton" class="back-button" style="display: none;">← Back to Results</button>
 
@@ -288,14 +329,16 @@
     <!-- JavaScript -->
     <script>
         (function() {
-            let headers = [];
+            let dataGroups = []; // Array to hold groups of data
+            let currentGroupIndex = null; // Index of the currently selected group
             let filteredData = [];
             let currentPage = 1;
             const itemsPerPage = 12;
-            let data = []; // Initialize data array
 
             const fileInput = document.getElementById('fileInput');
+            const fileSelect = document.getElementById('fileSelect');
             const searchBox = document.getElementById('searchBox');
+            const columnSelect = document.getElementById('columnSelect');
             const resultsGrid = document.getElementById('resultsGrid');
             const backButton = document.getElementById('backButton');
             const copiedMessage = document.getElementById('copiedMessage');
@@ -304,64 +347,247 @@
             const pageNumbers = document.getElementById('pageNumbers');
             const paginationControls = document.querySelector('.pagination');
 
-            // File input event listener
+            // Modified file input event listener to handle multiple files
             fileInput.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (!file) return;
+                const files = event.target.files;
+                if (!files.length) return;
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const arrayBuffer = e.target.result;
-                    const dataArray = new Uint8Array(arrayBuffer);
-                    const workbook = XLSX.read(dataArray, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const sheet = workbook.Sheets[sheetName];
+                dataGroups = [];    // Reset data groups array
+                fileSelect.innerHTML = '<option value="">Select a Data Group</option>';
+                columnSelect.innerHTML = '<option value="">Search All Columns</option>';
+                searchBox.value = '';
+                searchBox.disabled = true;
+                columnSelect.disabled = true;
+                fileSelect.disabled = true;
+                resultsGrid.innerHTML = '';
+                paginationControls.style.display = 'none';
+                backButton.style.display = 'none';
+                fileSelect.style.display = 'none';
 
-                    data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-                    headers = data.shift();
+                let filesProcessed = 0;
 
-                    // Enable the search box now that data is loaded
+                let headerMap = {}; // Map to track headers and associated files
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const arrayBuffer = e.target.result;
+                        const dataArray = new Uint8Array(arrayBuffer);
+                        const workbook = XLSX.read(dataArray, { type: 'array' });
+                        const sheetName = workbook.Sheets['Sheet1'] ? 'Sheet1' : workbook.SheetNames[0];
+                        const sheet = workbook.Sheets[sheetName];
+
+                        let fileData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+
+                        if (fileData.length > 0) {
+                            const headers = fileData.shift();
+
+                            // Include file name with each row
+                            const mappedData = fileData.map(row => ({
+                                rowData: row,
+                                fileName: file.name // Store the file name here
+                            }));
+
+                            const headerKey = JSON.stringify(headers);
+
+                            // **Create Individual Data Group for this File**
+                            dataGroups.push({
+                                groupId: `file-${file.name}`,
+                                groupName: `File: ${file.name}`,
+                                fileNames: [file.name],
+                                headers: headers,
+                                data: mappedData,
+                                isCombined: false
+                            });
+
+                            // Track headers and associated files
+                            if (headerMap[headerKey]) {
+                                headerMap[headerKey].files.push(file.name);
+                                headerMap[headerKey].data = headerMap[headerKey].data.concat(mappedData);
+                            } else {
+                                headerMap[headerKey] = {
+                                    headers: headers,
+                                    files: [file.name],
+                                    data: mappedData.slice() // Clone the array
+                                };
+                            }
+                        }
+
+                        filesProcessed++;
+                        checkAllFilesProcessed(filesProcessed, files.length);
+                    };
+                    reader.readAsArrayBuffer(file);
+                }
+
+                function checkAllFilesProcessed(processed, total) {
+                    if (processed === total) {
+                        if (dataGroups.length === 0) {
+                            alert('No data found in the selected files.');
+                            return;
+                        }
+
+                        // Create combined groups for headers that have more than one file
+                        for (let key in headerMap) {
+                            if (headerMap[key].files.length > 1) {
+                                dataGroups.push({
+                                    groupId: `combined-${dataGroups.length}`,
+                                    groupName: `Combined`,
+                                    fileNames: headerMap[key].files,
+                                    headers: headerMap[key].headers,
+                                    data: headerMap[key].data,
+                                    isCombined: true
+                                });
+                            }
+                        }
+
+                        // Populate the fileSelect dropdown if more than one group exists
+                        if (dataGroups.length > 1) {
+                            // Clear existing options
+                            fileSelect.innerHTML = '<option value="">Select a Data Group</option>';
+
+                            dataGroups.forEach((group, index) => {
+                                const option = document.createElement('option');
+                                option.value = index;
+                                option.textContent = group.groupName;
+                                fileSelect.appendChild(option);
+                            });
+
+                            // Show and enable the file select dropdown
+                            fileSelect.style.display = '';
+                            fileSelect.disabled = false;
+                            fileSelect.removeEventListener('change', handleFileSelectChange);
+                            fileSelect.addEventListener('change', handleFileSelectChange);
+                        } else {
+                            // Only one data group, select it automatically
+                            currentGroupIndex = 0;
+                            initializeForSelectedGroup();
+
+                            // Hide the file select dropdown since there's only one group
+                            fileSelect.style.display = 'none';
+                        }
+                    }
+                }
+
+                function handleFileSelectChange() {
+                    currentGroupIndex = this.value !== "" ? parseInt(this.value) : null;
+                    if (currentGroupIndex !== null) {
+                        initializeForSelectedGroup();
+                    } else {
+                        // Disable search and column select if no group is selected
+                        searchBox.disabled = true;
+                        columnSelect.disabled = true;
+                        searchBox.value = '';
+                        columnSelect.innerHTML = '<option value="">Search All Columns</option>';
+                        resultsGrid.innerHTML = '';
+                        paginationControls.style.display = 'none';
+                    }
+                }
+
+                function initializeForSelectedGroup() {
+                    const currentGroup = dataGroups[currentGroupIndex];
+
+                    // Populate the column select dropdown
+                    columnSelect.innerHTML = '<option value="">Search All Columns</option>';
+                    currentGroup.headers.forEach((header, index) => {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.textContent = header;
+                        columnSelect.appendChild(option);
+                    });
+
+                    // Enable the search box and column select
                     searchBox.disabled = false;
+                    columnSelect.disabled = false;
                     searchBox.placeholder = "Type to search...";
-                    searchBox.addEventListener('input', searchTable);
-                };
-                reader.readAsArrayBuffer(file);
+                    searchBox.value = '';
+                    columnSelect.selectedIndex = 0;
+
+                    // Clear previous results
+                    resultsGrid.innerHTML = '';
+                    paginationControls.style.display = 'none';
+                    backButton.style.display = 'none';
+
+                    // Attach event listeners
+                    searchBox.removeEventListener('input', searchTable);
+                    searchBox.addEventListener('input', debounce(searchTable, 300));
+                    columnSelect.removeEventListener('change', searchTable);
+                    columnSelect.addEventListener('change', searchTable);
+                }
             });
+
+            // Debounce function to optimize search
+            function debounce(func, wait) {
+                let timeout;
+                return function (...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
 
             // Search function
             function searchTable() {
                 const query = searchBox.value.toLowerCase();
+                const selectedColumnIndex = columnSelect.value;
 
-                if (!query) {
+                if (currentGroupIndex === null || query === '') {
                     resultsGrid.style.display = 'none';
                     paginationControls.style.display = 'none';
                     return;
                 }
 
+                const currentGroup = dataGroups[currentGroupIndex];
+                const data = currentGroup.data;
+                const headers = currentGroup.headers;
+
                 filteredData = data
-                    .map((row, index) => ({ rowData: row, originalIndex: index }))
-                    .filter(item => item.rowData.some(cell => cell.toString().toLowerCase().includes(query)));
+                    .filter(item => {
+                        const row = item.rowData;
+                        if (selectedColumnIndex !== "") {
+                            // Search in the selected column
+                            const cell = row[selectedColumnIndex] || "";
+                            return cell.toString().toLowerCase().includes(query);
+                        } else {
+                            // Search in all columns
+                            return row.some(cell => cell.toString().toLowerCase().includes(query));
+                        }
+                    });
 
                 currentPage = 1;
-                displayResultsTable(paginateData(filteredData, currentPage));
+                displayResultsTable(paginateData(filteredData, currentPage), headers);
             }
 
             // Display results
-            function displayResultsTable(pageData) {
+            function displayResultsTable(pageData, headers) {
                 resultsGrid.innerHTML = '';
 
+                // Determine if the current group is a combined group
+                const currentGroup = dataGroups[currentGroupIndex];
+                const isCombinedGroup = currentGroup.isCombined;
+
                 pageData.forEach((item) => {
-                    const row = item.rowData;
+                    const { rowData, fileName } = item;
                     const card = document.createElement('div');
                     card.classList.add('card');
-                    card.addEventListener('click', () => showSelectedRow(item.originalIndex));
+                    card.addEventListener('click', () => showSelectedRow(item, headers));
 
                     const cardContent = document.createElement('div');
                     cardContent.classList.add('card-content');
 
-                    cardContent.innerHTML = headers.slice(0, 4).map((header, index) =>
-                        `<p><strong>${header}:</strong> ${row[index] !== undefined ? row[index] : ""}</p>`
-                    ).join('');
+                    // If the group is combined, show the file name at the top
+                    if (isCombinedGroup) {
+                        const fileNameElement = document.createElement('p');
+                        fileNameElement.innerHTML = `<strong>File:</strong> ${fileName}`;
+                        cardContent.appendChild(fileNameElement);
+                    }
+
+                    // Display up to the first four pieces of data
+                    headers.slice(0, 4).forEach((header, index) => {
+                        const p = document.createElement('p');
+                        p.innerHTML = `<strong>${header}:</strong> ${rowData[index] !== undefined ? rowData[index] : ""}`;
+                        cardContent.appendChild(p);
+                    });
 
                     card.appendChild(cardContent);
                     resultsGrid.appendChild(card);
@@ -372,18 +598,33 @@
             }
 
             // Show selected row details
-            function showSelectedRow(originalIndex) {
+            function showSelectedRow(item, headers) {
                 resultsGrid.innerHTML = '';
 
+                const { rowData, fileName } = item;
                 const card = document.createElement('div');
                 card.classList.add('card');
 
                 const cardContent = document.createElement('div');
                 cardContent.classList.add('card-content');
 
-                cardContent.innerHTML = headers.map((header, index) =>
-                    `<p><strong>${header}:</strong> ${data[originalIndex][index] !== undefined ? data[originalIndex][index] : ""}</p>`
-                ).join('');
+                // Determine if the current group is a combined group
+                const currentGroup = dataGroups[currentGroupIndex];
+                const isCombinedGroup = currentGroup.isCombined;
+
+                // If the group is combined, show the file name
+                if (isCombinedGroup) {
+                    const fileNameElement = document.createElement('p');
+                    fileNameElement.innerHTML = `<strong>File:</strong> ${fileName}`;
+                    cardContent.appendChild(fileNameElement);
+                }
+
+                // Display all data
+                headers.forEach((header, index) => {
+                    const p = document.createElement('p');
+                    p.innerHTML = `<strong>${header}:</strong> ${rowData[index] !== undefined ? rowData[index] : ""}`;
+                    cardContent.appendChild(p);
+                });
 
                 // Add the dropdown menu
                 const dropdown = document.createElement('div');
@@ -402,7 +643,7 @@
                 copyButton.textContent = 'Copy';
                 copyButton.addEventListener('click', function(event) {
                     event.stopPropagation();
-                    copyCardData(data[originalIndex]);
+                    copyCardData(rowData, headers, fileName);
                     dropdown.classList.remove('show-dropdown');
                 });
                 dropdownContent.appendChild(copyButton);
@@ -412,7 +653,7 @@
                 emailButton.textContent = 'Share via Email';
                 emailButton.addEventListener('click', function(event) {
                     event.stopPropagation();
-                    shareViaEmail(data[originalIndex]);
+                    shareViaEmail(rowData, headers, fileName);
                     dropdown.classList.remove('show-dropdown');
                 });
                 dropdownContent.appendChild(emailButton);
@@ -422,7 +663,7 @@
                 whatsappButton.textContent = 'Share via WhatsApp';
                 whatsappButton.addEventListener('click', function(event) {
                     event.stopPropagation();
-                    shareViaWhatsApp(data[originalIndex]);
+                    shareViaWhatsApp(rowData, headers, fileName);
                     dropdown.classList.remove('show-dropdown');
                 });
                 dropdownContent.appendChild(whatsappButton);
@@ -432,7 +673,7 @@
                 telegramButton.textContent = 'Share via Telegram';
                 telegramButton.addEventListener('click', function(event) {
                     event.stopPropagation();
-                    shareViaTelegram(data[originalIndex]);
+                    shareViaTelegram(rowData, headers, fileName);
                     dropdown.classList.remove('show-dropdown');
                 });
                 dropdownContent.appendChild(telegramButton);
@@ -460,8 +701,15 @@
             }
 
             // Copy card data to clipboard
-            function copyCardData(rowData) {
-                const textToCopy = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+            function copyCardData(rowData, headers, fileName) {
+                const currentGroup = dataGroups[currentGroupIndex];
+                const isCombinedGroup = currentGroup.isCombined;
+
+                let textToCopy = '';
+                if (isCombinedGroup) {
+                    textToCopy += `File: ${fileName}\n`;
+                }
+                textToCopy += headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
 
                 if (navigator.clipboard) {
                     navigator.clipboard.writeText(textToCopy)
@@ -511,22 +759,47 @@
             }
 
             // Share via Email
-            function shareViaEmail(rowData) {
+            function shareViaEmail(rowData, headers, fileName) {
+                const currentGroup = dataGroups[currentGroupIndex];
+                const isCombinedGroup = currentGroup.isCombined;
+
+                let body = '';
+                if (isCombinedGroup) {
+                    body += `File: ${fileName}\n`;
+                }
+                body += headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+
                 const subject = encodeURIComponent('Shared Excel Data');
-                const body = encodeURIComponent(headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n'));
-                window.location.href = `mailto:?subject=${subject}&body=${body}`;
+                const emailBody = encodeURIComponent(body);
+                window.location.href = `mailto:?subject=${subject}&body=${emailBody}`;
             }
 
             // Share via WhatsApp
-            function shareViaWhatsApp(rowData) {
-                const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+            function shareViaWhatsApp(rowData, headers, fileName) {
+                const currentGroup = dataGroups[currentGroupIndex];
+                const isCombinedGroup = currentGroup.isCombined;
+
+                let textToShare = '';
+                if (isCombinedGroup) {
+                    textToShare += `File: ${fileName}\n`;
+                }
+                textToShare += headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+
                 const url = `https://wa.me/?text=${encodeURIComponent(textToShare)}`;
                 window.open(url, '_blank');
             }
 
             // Share via Telegram
-            function shareViaTelegram(rowData) {
-                const textToShare = headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+            function shareViaTelegram(rowData, headers, fileName) {
+                const currentGroup = dataGroups[currentGroupIndex];
+                const isCombinedGroup = currentGroup.isCombined;
+
+                let textToShare = '';
+                if (isCombinedGroup) {
+                    textToShare += `File: ${fileName}\n`;
+                }
+                textToShare += headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
+
                 const url = `https://t.me/share/url?url=&text=${encodeURIComponent(textToShare)}`;
                 window.open(url, '_blank');
             }
@@ -535,7 +808,8 @@
             backButton.addEventListener('click', function() {
                 backButton.style.display = 'none';
                 paginationControls.style.display = filteredData.length > itemsPerPage ? 'flex' : 'none';
-                displayResultsTable(paginateData(filteredData, currentPage));
+                const currentGroup = dataGroups[currentGroupIndex];
+                displayResultsTable(paginateData(filteredData, currentPage), currentGroup.headers);
             });
 
             // Pagination functions
@@ -559,7 +833,8 @@
             prevPageButton.addEventListener('click', function() {
                 if (currentPage > 1) {
                     currentPage -= 1;
-                    displayResultsTable(paginateData(filteredData, currentPage));
+                    const currentGroup = dataGroups[currentGroupIndex];
+                    displayResultsTable(paginateData(filteredData, currentPage), currentGroup.headers);
                 }
             });
 
@@ -567,7 +842,8 @@
                 const totalPages = Math.ceil(filteredData.length / itemsPerPage);
                 if (currentPage < totalPages) {
                     currentPage += 1;
-                    displayResultsTable(paginateData(filteredData, currentPage));
+                    const currentGroup = dataGroups[currentGroupIndex];
+                    displayResultsTable(paginateData(filteredData, currentPage), currentGroup.headers);
                 }
             });
 
