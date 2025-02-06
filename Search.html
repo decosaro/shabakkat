@@ -20,7 +20,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 40px;
+            /*padding-top: 40px;*/
             max-height: 1000px;
             overflow: auto;
         }
@@ -47,7 +47,8 @@
         #fileInput,
         #searchBox,
         #columnSelect,
-        #fileSelect {
+        #fileSelect,
+        #sheetSelect {
             padding: 8px 16px;
             margin: 6px 0;
             border-radius: 25px;
@@ -63,7 +64,8 @@
         #fileInput:hover,
         #searchBox:hover,
         #columnSelect:hover,
-        #fileSelect:hover {
+        #fileSelect:hover,
+        #sheetSelect:hover {
             border-color: #7dd3fc;
             box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.4);
         }
@@ -71,7 +73,8 @@
         #fileInput:focus,
         #searchBox:focus,
         #columnSelect:focus,
-        #fileSelect:focus {
+        #fileSelect:focus,
+        #sheetSelect:focus {
             outline: none;
             border-color: #38bdf8;
             box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.5);
@@ -86,7 +89,8 @@
             max-width: 1000px;
             padding-bottom: 20px;
             overflow-y: auto;
-            max-height: calc(1000px - 260px);
+            max-height: calc(1000px - 320px); /* Adjusted for additional dropdown */
+            padding-right: 15px; /* Added padding to create space */
         }
 
         .card {
@@ -255,7 +259,8 @@
             #fileInput,
             #searchBox,
             #columnSelect,
-            #fileSelect {
+            #fileSelect,
+            #sheetSelect {
                 width: 80%;
                 max-width: none;
             }
@@ -290,6 +295,9 @@
         <select id="fileSelect" disabled style="display: none;">
             <option value="">Select a Data Group</option>
         </select>
+        <select id="sheetSelect" disabled style="display: none;">
+            <option value="">Select a Sheet</option>
+        </select>
         <select id="columnSelect" disabled>
             <option value="">Search All Columns</option>
         </select>
@@ -307,9 +315,11 @@
             let dataGroups = []; // Array to hold groups of data
             let currentGroupIndex = null; // Index of the currently selected group
             let filteredData = [];
+            let totalFilesUploaded = 0; // New variable to track the number of files uploaded
 
             const fileInput = document.getElementById('fileInput');
             const fileSelect = document.getElementById('fileSelect');
+            const sheetSelect = document.getElementById('sheetSelect');
             const searchBox = document.getElementById('searchBox');
             const columnSelect = document.getElementById('columnSelect');
             const resultsGrid = document.getElementById('resultsGrid');
@@ -322,15 +332,19 @@
                 if (!files.length) return;
 
                 dataGroups = []; // Reset data groups array
+                totalFilesUploaded = files.length; // Update the total number of files uploaded
                 fileSelect.innerHTML = '<option value="">Select a Data Group</option>';
+                sheetSelect.innerHTML = '<option value="">Select a Sheet</option>';
                 columnSelect.innerHTML = '<option value="">Search All Columns</option>';
                 searchBox.value = '';
                 searchBox.disabled = true;
                 columnSelect.disabled = true;
                 fileSelect.disabled = true;
+                sheetSelect.disabled = true;
                 resultsGrid.innerHTML = '';
                 backButton.style.display = 'none';
                 fileSelect.style.display = 'none';
+                sheetSelect.style.display = 'none';
 
                 let filesProcessed = 0;
 
@@ -343,49 +357,61 @@
                     reader.onload = function (e) {
                         const arrayBuffer = e.target.result;
                         const dataArray = new Uint8Array(arrayBuffer);
-                        const workbook = XLSX.read(dataArray, {
-                            type: 'array'
-                        });
-                        const sheetName = workbook.Sheets['Sheet1'] ? 'Sheet1' : workbook.SheetNames[0];
-                        const sheet = workbook.Sheets[sheetName];
+                        const workbook = XLSX.read(dataArray, { type: 'array' });
 
-                        let fileData = XLSX.utils.sheet_to_json(sheet, {
-                            header: 1,
-                            defval: ""
-                        });
+                        const sheetNames = workbook.SheetNames;
+                        const sheetsData = {};
 
-                        if (fileData.length > 0) {
-                            const headers = fileData.shift();
-
-                            // Include file name with each row
-                            const mappedData = fileData.map(row => ({
-                                rowData: row,
-                                fileName: file.name // Store the file name here
-                            }));
-
-                            const headerKey = JSON.stringify(headers);
-
-                            // **Create Individual Data Group for this File**
-                            dataGroups.push({
-                                groupId: `file-${file.name}`,
-                                groupName: `File: ${file.name}`,
-                                fileNames: [file.name],
-                                headers: headers,
-                                data: mappedData,
-                                isCombined: false
+                        sheetNames.forEach(sheetName => {
+                            const sheet = workbook.Sheets[sheetName];
+                            let fileData = XLSX.utils.sheet_to_json(sheet, {
+                                header: 1,
+                                defval: ""
                             });
 
-                            // Track headers and associated files
-                            if (headerMap[headerKey]) {
-                                headerMap[headerKey].files.push(file.name);
-                                headerMap[headerKey].data = headerMap[headerKey].data.concat(mappedData);
-                            } else {
-                                headerMap[headerKey] = {
+                            if (fileData.length > 0) {
+                                const headers = fileData.shift();
+
+                                // Include file name and sheet name with each row
+                                const mappedData = fileData.map(row => ({
+                                    rowData: row,
+                                    fileName: file.name,
+                                    sheetName: sheetName
+                                }));
+
+                                sheetsData[sheetName] = {
                                     headers: headers,
-                                    files: [file.name],
-                                    data: mappedData.slice() // Clone the array
+                                    data: mappedData
                                 };
                             }
+                        });
+
+                        dataGroups.push({
+                            groupId: `file-${file.name}`,
+                            groupName: `File: ${file.name}`,
+                            fileName: file.name,
+                            sheetsData: sheetsData, // Store all sheets data
+                            isCombined: false
+                        });
+
+                        // Track headers and associated files for combined groups
+                        const headerKey = JSON.stringify(Object.keys(sheetsData).map(sheetName => sheetsData[sheetName].headers));
+                        if (headerMap[headerKey]) {
+                            headerMap[headerKey].files.push(file.name);
+                            // Merge sheets data
+                            for (let sheetName in sheetsData) {
+                                if (headerMap[headerKey].sheetsData[sheetName]) {
+                                    headerMap[headerKey].sheetsData[sheetName].data = headerMap[headerKey].sheetsData[sheetName].data.concat(sheetsData[sheetName].data);
+                                } else {
+                                    headerMap[headerKey].sheetsData[sheetName] = sheetsData[sheetName];
+                                }
+                            }
+                        } else {
+                            headerMap[headerKey] = {
+                                headers: sheetsData[Object.keys(sheetsData)[0]].headers,
+                                files: [file.name],
+                                sheetsData: JSON.parse(JSON.stringify(sheetsData)) // Deep copy
+                            };
                         }
 
                         filesProcessed++;
@@ -408,8 +434,7 @@
                                     groupId: `combined-${dataGroups.length}`,
                                     groupName: `Combined`,
                                     fileNames: headerMap[key].files,
-                                    headers: headerMap[key].headers,
-                                    data: headerMap[key].data,
+                                    sheetsData: headerMap[key].sheetsData,
                                     isCombined: true
                                 });
                             }
@@ -448,7 +473,63 @@
                     if (currentGroupIndex !== null) {
                         initializeForSelectedGroup();
                     } else {
-                        // Disable search and column select if no group is selected
+                        // Disable search, column select, and sheet select if no group is selected
+                        searchBox.disabled = true;
+                        columnSelect.disabled = true;
+                        sheetSelect.disabled = true;
+                        searchBox.value = '';
+                        columnSelect.innerHTML = '<option value="">Search All Columns</option>';
+                        sheetSelect.innerHTML = '<option value="">Select a Sheet</option>';
+                        resultsGrid.innerHTML = '';
+                        backButton.style.display = 'none';
+                    }
+                }
+
+                function initializeForSelectedGroup() {
+                    const currentGroup = dataGroups[currentGroupIndex];
+
+                    // Populate the sheet select dropdown
+                    sheetSelect.innerHTML = '<option value="">Select a Sheet</option>';
+                    const sheetNames = Object.keys(currentGroup.sheetsData);
+
+                    if (sheetNames.length > 1) {
+                        // Multiple sheets, show the sheetSelect dropdown
+                        sheetNames.forEach(sheetName => {
+                            const option = document.createElement('option');
+                            option.value = sheetName;
+                            option.textContent = sheetName;
+                            sheetSelect.appendChild(option);
+                        });
+
+                        // Show and enable the sheet select dropdown
+                        sheetSelect.style.display = '';
+                        sheetSelect.disabled = false;
+                        sheetSelect.removeEventListener('change', handleSheetSelectChange);
+                        sheetSelect.addEventListener('change', handleSheetSelectChange);
+
+                        // Disable search and column select until a sheet is selected
+                        searchBox.disabled = true;
+                        columnSelect.disabled = true;
+                        searchBox.value = '';
+                        columnSelect.innerHTML = '<option value="">Search All Columns</option>';
+                        resultsGrid.innerHTML = '';
+                        backButton.style.display = 'none';
+                    } else if (sheetNames.length === 1) {
+                        // Only one sheet, automatically select it
+                        sheetSelect.style.display = 'none';
+                        initializeForSelectedSheet(sheetNames[0]);
+                    } else {
+                        // No sheets found
+                        alert('No sheets with data found in the selected file.');
+                    }
+                }
+
+                function handleSheetSelectChange() {
+                    const selectedSheetName = this.value;
+                    if (selectedSheetName !== "") {
+                        initializeForSelectedSheet(selectedSheetName);
+                    } else {
+                        // Disable search and column select if no sheet is selected
                         searchBox.disabled = true;
                         columnSelect.disabled = true;
                         searchBox.value = '';
@@ -458,12 +539,13 @@
                     }
                 }
 
-                function initializeForSelectedGroup() {
+                function initializeForSelectedSheet(sheetName) {
                     const currentGroup = dataGroups[currentGroupIndex];
+                    const sheetData = currentGroup.sheetsData[sheetName];
 
                     // Populate the column select dropdown
                     columnSelect.innerHTML = '<option value="">Search All Columns</option>';
-                    currentGroup.headers.forEach((header, index) => {
+                    sheetData.headers.forEach((header, index) => {
                         const option = document.createElement('option');
                         option.value = index;
                         option.textContent = header;
@@ -486,6 +568,9 @@
                     searchBox.addEventListener('input', debounce(searchTable, 300));
                     columnSelect.removeEventListener('change', searchTable);
                     columnSelect.addEventListener('change', searchTable);
+
+                    // Store the selected sheet name
+                    sheetSelect.value = sheetName;
                 }
             });
 
@@ -509,8 +594,10 @@
                 }
 
                 const currentGroup = dataGroups[currentGroupIndex];
-                const data = currentGroup.data;
-                const headers = currentGroup.headers;
+                const selectedSheetName = sheetSelect.value || Object.keys(currentGroup.sheetsData)[0];
+                const sheetData = currentGroup.sheetsData[selectedSheetName];
+                const data = sheetData.data;
+                const headers = sheetData.headers;
 
                 filteredData = data.filter(item => {
                     const row = item.rowData;
@@ -531,9 +618,9 @@
             function displayResultsTable(dataArray, headers) {
                 resultsGrid.innerHTML = '';
 
-                // Determine if the current group is a combined group
+                // Determine if we should display the file name
                 const currentGroup = dataGroups[currentGroupIndex];
-                const isCombinedGroup = currentGroup.isCombined;
+                const showFileName = totalFilesUploaded > 1 && currentGroup.isCombined;
 
                 dataArray.forEach((item) => {
                     const { rowData, fileName } = item;
@@ -544,8 +631,8 @@
                     const cardContent = document.createElement('div');
                     cardContent.classList.add('card-content');
 
-                    // If the group is combined, show the file name at the top
-                    if (isCombinedGroup) {
+                    // Conditionally display the file name
+                    if (showFileName) {
                         const fileNameElement = document.createElement('p');
                         fileNameElement.innerHTML = `<strong>File:</strong> ${fileName}`;
                         cardContent.appendChild(fileNameElement);
@@ -576,12 +663,11 @@
                 const cardContent = document.createElement('div');
                 cardContent.classList.add('card-content');
 
-                // Determine if the current group is a combined group
                 const currentGroup = dataGroups[currentGroupIndex];
-                const isCombinedGroup = currentGroup.isCombined;
+                const showFileName = totalFilesUploaded > 1 && currentGroup.isCombined;
 
-                // If the group is combined, show the file name
-                if (isCombinedGroup) {
+                // Conditionally display the file name
+                if (showFileName) {
                     const fileNameElement = document.createElement('p');
                     fileNameElement.innerHTML = `<strong>File:</strong> ${fileName}`;
                     cardContent.appendChild(fileNameElement);
@@ -670,10 +756,10 @@
             // Copy card data to clipboard
             function copyCardData(rowData, headers, fileName) {
                 const currentGroup = dataGroups[currentGroupIndex];
-                const isCombinedGroup = currentGroup.isCombined;
+                const showFileName = totalFilesUploaded > 1 && currentGroup.isCombined;
 
                 let textToCopy = '';
-                if (isCombinedGroup) {
+                if (showFileName) {
                     textToCopy += `File: ${fileName}\n`;
                 }
                 textToCopy += headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
@@ -728,10 +814,10 @@
             // Share via Email
             function shareViaEmail(rowData, headers, fileName) {
                 const currentGroup = dataGroups[currentGroupIndex];
-                const isCombinedGroup = currentGroup.isCombined;
+                const showFileName = totalFilesUploaded > 1 && currentGroup.isCombined;
 
                 let body = '';
-                if (isCombinedGroup) {
+                if (showFileName) {
                     body += `File: ${fileName}\n`;
                 }
                 body += headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
@@ -744,10 +830,10 @@
             // Share via WhatsApp
             function shareViaWhatsApp(rowData, headers, fileName) {
                 const currentGroup = dataGroups[currentGroupIndex];
-                const isCombinedGroup = currentGroup.isCombined;
+                const showFileName = totalFilesUploaded > 1 && currentGroup.isCombined;
 
                 let textToShare = '';
-                if (isCombinedGroup) {
+                if (showFileName) {
                     textToShare += `File: ${fileName}\n`;
                 }
                 textToShare += headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
@@ -759,10 +845,10 @@
             // Share via Telegram
             function shareViaTelegram(rowData, headers, fileName) {
                 const currentGroup = dataGroups[currentGroupIndex];
-                const isCombinedGroup = currentGroup.isCombined;
+                const showFileName = totalFilesUploaded > 1 && currentGroup.isCombined;
 
                 let textToShare = '';
-                if (isCombinedGroup) {
+                if (showFileName) {
                     textToShare += `File: ${fileName}\n`;
                 }
                 textToShare += headers.map((header, index) => `${header}: ${rowData[index] || ''}`).join('\n');
@@ -775,7 +861,9 @@
             backButton.addEventListener('click', function () {
                 backButton.style.display = 'none';
                 const currentGroup = dataGroups[currentGroupIndex];
-                displayResultsTable(filteredData, currentGroup.headers);
+                const sheetName = sheetSelect.value || Object.keys(currentGroup.sheetsData)[0];
+                const headers = currentGroup.sheetsData[sheetName].headers;
+                displayResultsTable(filteredData, headers);
             });
 
             // Close dropdown when clicking outside
