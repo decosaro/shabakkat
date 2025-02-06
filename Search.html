@@ -20,7 +20,7 @@ body {
   flex-direction: column;
   align-items: center;
   /*padding-top: 40px;*/
-  max-height: 1000px;
+  /* Removed max-height to allow dynamic content height */
   overflow: auto;
 }
 
@@ -91,6 +91,16 @@ h2 {
   height: 600px; /* Set a fixed height for the grid */
   padding-bottom: 20px;
   padding-right: 15px; /* Added padding to create space */
+}
+
+/* Adjust #resultsGrid and .card height when in detail view */
+#resultsGrid.detail-view {
+  height: auto;
+  overflow-y: visible;
+}
+
+#resultsGrid.detail-view .card {
+  height: auto;
 }
 
 .card {
@@ -318,11 +328,11 @@ h2 {
   let dataGroups = []; // Array to hold groups of data
   let currentGroupIndex = null; // Index of the currently selected group
   let filteredData = [];
-  let totalFilesUploaded = 0; // New variable to track the number of files uploaded
+  let totalFilesUploaded = 0; // Variable to track the number of files uploaded
   let startIndex = 0; // For virtual scrolling
   const itemsPerPage = 20; // Number of items to render at a time
   let headers = []; // Store headers globally for access in scroll handler
-  let isDetailView = false; // Track if we're in detail view // <-- Added
+  let isDetailView = false; // Track if we're in detail view
 
   const fileInput = document.getElementById('fileInput');
   const fileSelect = document.getElementById('fileSelect');
@@ -333,7 +343,7 @@ h2 {
   const backButton = document.getElementById('backButton');
   const copiedMessage = document.getElementById('copiedMessage');
 
-  // Modified file input event listener to handle multiple files
+  // File input event listener to handle multiple files
   fileInput.addEventListener('change', function (event) {
     const files = event.target.files;
     if (!files.length) return;
@@ -606,8 +616,9 @@ h2 {
 
   // Display results with virtual scrolling
   function displayResultsTable(dataArray, headers) {
-    isDetailView = false; // Ensure we're not in detail view // <-- Added
+    isDetailView = false; // Ensure we're not in detail view
     resultsGrid.innerHTML = '';
+    resultsGrid.classList.remove('detail-view'); // Remove detail-view class
     resultsGrid.style.display = dataArray.length > 0 ? 'grid' : 'none';
 
     // Render the initial set of items
@@ -661,7 +672,7 @@ h2 {
 
   // Handle scroll event for virtual scrolling
   function handleScroll() {
-    if (isDetailView) return; // Do nothing if in detail view // <-- Modified
+    if (isDetailView) return; // Do nothing if in detail view
 
     const { scrollTop, scrollHeight, clientHeight } = resultsGrid;
     if (scrollTop + clientHeight >= scrollHeight - 100) {
@@ -675,11 +686,12 @@ h2 {
 
   // Show selected row details
   function showSelectedRow(item, headers) {
-    isDetailView = true; // We're entering detail view // <-- Added
+    isDetailView = true; // We're entering detail view
 
     // Clear the results grid and hide other results
     resultsGrid.innerHTML = '';
     resultsGrid.style.display = 'grid';
+    resultsGrid.classList.add('detail-view'); // Add detail-view class
 
     const { rowData, fileName } = item;
     const card = document.createElement('div');
@@ -871,7 +883,8 @@ h2 {
   // Show search results after clicking "Back"
   backButton.addEventListener('click', function () {
     backButton.style.display = 'none';
-    isDetailView = false; // Reset detail view flag // <-- Added
+    isDetailView = false; // Reset detail view flag
+    resultsGrid.classList.remove('detail-view'); // Remove detail-view class
     const currentGroup = dataGroups[currentGroupIndex];
     const sheetName = sheetSelect.value || Object.keys(currentGroup.sheetsData)[0];
     headers = currentGroup.sheetsData[sheetName].headers;
