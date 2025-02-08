@@ -10,10 +10,12 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-  <!-- Chart.js, Zoom Plugin, PapaParse, and Candlestick Plugin -->
+  <!-- Chart.js, Zoom Plugin, PapaParse, SheetJS (for Excel), and Candlestick Plugin -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <!-- SheetJS (XLSX) library for Excel file parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
   <style>
     /* CSS Variables for a consistent modern theme */
@@ -32,7 +34,6 @@
       font-family: 'Roboto', sans-serif;
       background: var(--bg-color);
       margin: 0;
-      /*padding-top: 70px;*/
     }
     /* Navbar */
     .navbar {
@@ -277,7 +278,8 @@
             <p>No file loaded.</p>
           </div>
           <div class="card-footer">
-            <input type="file" id="fileInput" accept=".csv" class="form-control">
+            <!-- Accept both CSV and Excel files -->
+            <input type="file" id="fileInput" accept=".csv, .xlsx, .xls" class="form-control">
           </div>
         </div>
         <div class="card">
@@ -294,7 +296,7 @@
       <div class="col-md-9">
         <div class="card">
           <div class="card-header">
-            <h5 class="mb-0">Visualization Settings</h5>
+            <h5 class="mb-0">Chart Settings</h5>
           </div>
           <div class="card-body">
             <!-- Accordion for Settings -->
@@ -302,11 +304,11 @@
               <!-- General Section -->
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingGeneral">
-                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeneral" aria-expanded="true" aria-controls="collapseGeneral">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeneral" aria-expanded="false" aria-controls="collapseGeneral">
                     <i class="bi bi-sliders me-2"></i> General
                   </button>
                 </h2>
-                <div id="collapseGeneral" class="accordion-collapse collapse show" aria-labelledby="headingGeneral" data-bs-parent="#vizAccordion">
+                <div id="collapseGeneral" class="accordion-collapse collapse" aria-labelledby="headingGeneral" data-bs-parent="#vizAccordion">
                   <div class="accordion-body">
                     <div class="mb-3">
                       <label for="chartType" class="form-label">Chart Type</label>
@@ -326,19 +328,11 @@
                     </div>
                     <div class="mb-3">
                       <label for="chartTitle" class="form-label">Chart Title</label>
-                      <input type="text" class="form-control" id="chartTitle" placeholder="Enter chart title">
+                      <input type="text" class="form-control" id="chartTitle" placeholder="Enter chart title (optional)">
                     </div>
                     <div class="mb-3">
                       <label for="chartAreaBgColor" class="form-label">Chart Area Background Color</label>
                       <input type="color" class="form-control form-control-color" id="chartAreaBgColor" value="#ffffff">
-                    </div>
-                    <div class="form-check mb-3">
-                      <input class="form-check-input" type="checkbox" id="noChartAreaBg">
-                      <label class="form-check-label" for="noChartAreaBg">No Chart Area Background</label>
-                    </div>
-                    <div class="form-check mb-3">
-                      <input class="form-check-input" type="checkbox" id="enableZoom">
-                      <label class="form-check-label" for="enableZoom">Enable Zoom</label>
                     </div>
                   </div>
                 </div>
@@ -552,10 +546,15 @@
       return !isNaN(parseFloat(n)) && isFinite(n);
     }
 
-    // CSV Upload & Field Population
+    // File Upload Handler: Supports both CSV and Excel files.
     document.getElementById('fileInput').addEventListener('change', function(e) {
       const file = e.target.files[0];
-      if (file) {
+      if (!file) return;
+      
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      
+      if (fileExtension === 'csv') {
+        // Use PapaParse for CSV files
         Papa.parse(file, {
           complete: function(results) {
             csvData = results.data;
@@ -565,6 +564,35 @@
           },
           header: true
         });
+      } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+        // Use SheetJS to parse Excel files
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          // Use the first sheet
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          // Convert the sheet to JSON array (header row is the first row)
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          
+          // Assume first row contains column names
+          fields = jsonData[0];
+          // Convert remaining rows to objects
+          csvData = jsonData.slice(1).map(row => {
+            const rowObj = {};
+            fields.forEach((field, i) => {
+              rowObj[field] = row[i];
+            });
+            return rowObj;
+          });
+          
+          populateFields();
+          populateDropdowns();
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        alert("Unsupported file type. Please upload a CSV or Excel file.");
       }
     });
 
@@ -586,7 +614,6 @@
       }
     }
 
-    // Populate dropdown menus
     function populateDropdowns() {
       const dropdownIds = ['xAxisField', 'yAxisField', 'legendField', 'bubbleSizeField', 'filterField', 'lineValueField'];
       dropdownIds.forEach(id => {
@@ -770,12 +797,12 @@
             maintainAspectRatio: false,
             plugins: {
               chartAreaBgPlugin: { color: params.chartAreaBgColor },
-              title: { 
-                display: true, 
+              title: params.chartTitle ? {
+                display: true,
                 text: params.chartTitle,
                 font: { size: params.titleFontSize, family: params.titleFontFamily },
                 color: params.titleFontColor
-              },
+              } : { display: false },
               legend: { 
                 position: params.legendPosition,
                 labels: { font: { size: params.legendFontSize }, color: params.legendFontColor }
@@ -838,12 +865,12 @@
             maintainAspectRatio: false,
             plugins: {
               chartAreaBgPlugin: { color: params.chartAreaBgColor },
-              title: { 
-                display: true, 
+              title: params.chartTitle ? {
+                display: true,
                 text: params.chartTitle,
                 font: { size: params.titleFontSize, family: params.titleFontFamily },
                 color: params.titleFontColor
-              },
+              } : { display: false },
               legend: { 
                 position: params.legendPosition,
                 labels: { font: { size: params.legendFontSize }, color: params.legendFontColor }
@@ -856,7 +883,7 @@
           let lineData = [];
           if (lineValueField) {
             let aggregatedLineData = {};
-            newData.forEach(row => {
+            filteredData.forEach(row => {
               const key = row[params.xField] || 'Unknown';
               const lineVal = parseFloat(row[lineValueField]);
               if (isNumeric(lineVal)) {
@@ -899,12 +926,6 @@
             ticks: { color: params.yAxisFontColor, font: { size: params.yAxisFontSize } },
             grid: { display: params.showGridlines, color: params.gridlineColor }
           }
-        };
-      }
-      if (params.enableZoom) {
-        newConfig.options.plugins.zoom = {
-          zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'xy' },
-          pan: { enabled: true, mode: 'xy' }
         };
       }
       return newConfig;
@@ -966,14 +987,12 @@
       chartInstance.update();
     }
 
-    // Update bubble size and line value containers based on chart type
     document.getElementById('chartType').addEventListener('change', function() {
       const type = this.value;
       document.getElementById('bubbleSizeContainer').style.display = (type === 'bubble') ? 'block' : 'none';
       document.getElementById('lineValueContainer').style.display = (type === 'mixed') ? 'block' : 'none';
     });
 
-    // Open Custom Color Modal
     function openCustomColorModal(chartWrapperId) {
       currentChartWrapperIdForCustomColors = chartWrapperId;
       const params = chartConfigs[chartWrapperId].params;
@@ -1027,8 +1046,10 @@
     });
 
     function addVisualization() {
-      if (csvData.length === 0) { alert('Please upload a CSV file first.'); return; }
+      if (csvData.length === 0) { alert('Please upload a CSV or Excel file first.'); return; }
       
+      // Get chart title (if left blank, no title will be shown)
+      const chartTitle = document.getElementById('chartTitle').value;
       const chartType = document.getElementById('chartType').value;
       const xField = document.getElementById('xAxisField').value;
       const yField = document.getElementById('yAxisField').value;
@@ -1037,12 +1058,8 @@
       const aggFunc = document.getElementById('aggFunction').value;
       const sortOrder = document.getElementById('sortOrder').value;
       const sortField = document.getElementById('sortField').value;
-      const chartTitle = document.getElementById('chartTitle').value || 'My Chart';
       
-      const chartAreaBgColorInput = document.getElementById('chartAreaBgColor').value;
-      const noChartAreaBg = document.getElementById('noChartAreaBg').checked;
-      const chartAreaBgColor = noChartAreaBg ? "transparent" : chartAreaBgColorInput;
-      const enableZoom = document.getElementById('enableZoom').checked;
+      const chartAreaBgColor = document.getElementById('chartAreaBgColor').value;
       
       const datasetColor = document.getElementById('datasetColor').value;
       const legendPosition = document.getElementById('legendPosition').value;
@@ -1117,12 +1134,12 @@
             maintainAspectRatio: false,
             plugins: {
               chartAreaBgPlugin: { color: chartAreaBgColor },
-              title: { 
-                display: true, 
+              title: chartTitle ? {
+                display: true,
                 text: chartTitle,
                 font: { size: titleFontSize, family: titleFontFamily },
                 color: titleFontColor
-              },
+              } : { display: false },
               legend: { 
                 position: legendPosition,
                 labels: { font: { size: legendFontSize }, color: legendFontColor }
@@ -1130,12 +1147,6 @@
             }
           }
         };
-        if (enableZoom) {
-          config.options.plugins.zoom = {
-            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'xy' },
-            pan: { enabled: true, mode: 'xy' }
-          };
-        }
       } else {
         let aggregatedData = {};
         if (aggFunc === 'count') {
@@ -1173,7 +1184,6 @@
           labels = combined.map(item => item.label);
           aggregatedValues = combined.map(item => item.value);
         }
-        // Assign a unique color for each aggregated value by default.
         let aggregatedColors = generateDefaultColors(labels.length);
         config = {
           type: (chartType === 'mixed') ? 'bar' : chartType,
@@ -1190,12 +1200,12 @@
             maintainAspectRatio: false,
             plugins: {
               chartAreaBgPlugin: { color: chartAreaBgColor },
-              title: { 
-                display: true, 
+              title: chartTitle ? {
+                display: true,
                 text: chartTitle,
                 font: { size: titleFontSize, family: titleFontFamily },
                 color: titleFontColor
-              },
+              } : { display: false },
               legend: { 
                 position: legendPosition,
                 labels: { font: { size: legendFontSize }, color: legendFontColor }
@@ -1239,12 +1249,6 @@
           });
           config.options.scales = { x: { stacked: false }, y: { stacked: false } };
         }
-        if (enableZoom) {
-          config.options.plugins.zoom = {
-            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'xy' },
-            pan: { enabled: true, mode: 'xy' }
-          };
-        }
       }
       
       const container = document.getElementById('reportCanvasContainer');
@@ -1259,53 +1263,76 @@
       removeBtn.onclick = function() { chartWrapper.remove(); delete chartConfigs[chartWrapper.id]; };
       chartWrapper.appendChild(removeBtn);
       
-      // Customize Colors button for aggregated charts
       if (chartType !== 'scatter' && chartType !== 'bubble') {
         const customizeColorsBtn = document.createElement('button');
         customizeColorsBtn.innerText = "Customize Colors";
         customizeColorsBtn.className = "btn btn-secondary btn-sm customize-colors-btn";
         customizeColorsBtn.onclick = function() { openCustomColorModal(chartWrapper.id); };
         chartWrapper.appendChild(customizeColorsBtn);
+
+        let uniqueId = Date.now();
+        const slicerDiv = document.createElement('div');
+        slicerDiv.className = "chart-slicer";
+        slicerDiv.style.display = "none";
+
+        const slicerFieldLabel = document.createElement('label');
+        slicerFieldLabel.innerText = "Chart Filter Field:";
+        slicerDiv.appendChild(slicerFieldLabel);
+
+        const slicerFieldSelect = document.createElement('select');
+        slicerFieldSelect.className = "form-select form-select-sm";
+        slicerFieldSelect.id = "chartSlicerField_" + uniqueId;
+        const sfNone = document.createElement('option');
+        sfNone.value = '';
+        sfNone.textContent = 'None';
+        slicerFieldSelect.appendChild(sfNone);
+        fields.forEach(field => {
+          const opt = document.createElement('option');
+          opt.value = field;
+          opt.textContent = field;
+          slicerFieldSelect.appendChild(opt);
+        });
+        slicerDiv.appendChild(slicerFieldSelect);
+
+        const slicerButtonContainer = document.createElement('div');
+        slicerButtonContainer.id = "chartSlicerButtonContainer_" + uniqueId;
+        slicerButtonContainer.style.display = "none";
+        slicerDiv.appendChild(slicerButtonContainer);
+
+        slicerFieldSelect.onchange = function() {
+          let selField = slicerFieldSelect.value;
+          updateSlicerButtons(uniqueId, chartConfigs[chartWrapper.id].params.baseData, selField, chartWrapper.id);
+        };
+
+        const applySlicerBtn = document.createElement('button');
+        applySlicerBtn.type = "button";
+        applySlicerBtn.className = "btn btn-secondary btn-sm mt-1";
+        applySlicerBtn.innerText = "Apply Chart Filter";
+        applySlicerBtn.onclick = function() { applyChartSlicer(chartWrapper.id); };
+        slicerDiv.appendChild(applySlicerBtn);
+
+        const hideFilterBtn = document.createElement('button');
+        hideFilterBtn.type = "button";
+        hideFilterBtn.className = "btn btn-secondary btn-sm mt-1";
+        hideFilterBtn.innerText = "Hide Filter Field";
+        hideFilterBtn.onclick = function() {
+          slicerDiv.style.display = "none";
+          showFilterBtn.style.display = "inline-block";
+        };
+        slicerDiv.appendChild(hideFilterBtn);
+
+        const showFilterBtn = document.createElement('button');
+        showFilterBtn.innerText = "Show Chart Filter Field";
+        showFilterBtn.className = "btn btn-secondary btn-sm";
+        showFilterBtn.style.marginLeft = "5px";
+        showFilterBtn.onclick = function() {
+          slicerDiv.style.display = "block";
+          showFilterBtn.style.display = "none";
+          chartWrapper.prepend(slicerDiv);
+        };
+        chartWrapper.appendChild(showFilterBtn);
       }
       
-      // Chart-specific slicer
-      const slicerDiv = document.createElement('div');
-      slicerDiv.className = "chart-slicer";
-      const slicerFieldLabel = document.createElement('label');
-      slicerFieldLabel.innerText = "Chart Filter Field:";
-      slicerDiv.appendChild(slicerFieldLabel);
-      const slicerFieldSelect = document.createElement('select');
-      slicerFieldSelect.className = "form-select form-select-sm";
-      let uniqueId = Date.now();
-      slicerFieldSelect.id = "chartSlicerField_" + uniqueId;
-      const sfNone = document.createElement('option');
-      sfNone.value = '';
-      sfNone.textContent = 'None';
-      slicerFieldSelect.appendChild(sfNone);
-      fields.forEach(field => {
-        const opt = document.createElement('option');
-        opt.value = field;
-        opt.textContent = field;
-        slicerFieldSelect.appendChild(opt);
-      });
-      slicerDiv.appendChild(slicerFieldSelect);
-      const slicerButtonContainer = document.createElement('div');
-      slicerButtonContainer.id = "chartSlicerButtonContainer_" + uniqueId;
-      slicerButtonContainer.style.display = "none";
-      slicerDiv.appendChild(slicerButtonContainer);
-      slicerFieldSelect.onchange = function() {
-        let selField = slicerFieldSelect.value;
-        updateSlicerButtons(uniqueId, chartConfigs[chartWrapper.id].params.baseData, selField, chartWrapper.id);
-      };
-      const applySlicerBtn = document.createElement('button');
-      applySlicerBtn.type = "button";
-      applySlicerBtn.className = "btn btn-secondary btn-sm mt-1";
-      applySlicerBtn.innerText = "Apply Chart Filter";
-      applySlicerBtn.onclick = function() { applyChartSlicer(chartWrapper.id); };
-      slicerDiv.appendChild(applySlicerBtn);
-      chartWrapper.appendChild(slicerDiv);
-      
-      // Chart content container
       const chartContentContainer = document.createElement('div');
       chartContentContainer.className = "chart-content-container";
       const canvasContainer = document.createElement('div');
@@ -1358,7 +1385,7 @@
       
       chartWrapper.appendChild(chartContentContainer);
       container.appendChild(chartWrapper);
-      chartWrapper.id = "chartWrapper_" + uniqueId;
+      chartWrapper.id = "chartWrapper_" + Date.now();
       
       let chartInstance = new Chart(canvas, {
         ...config,
@@ -1368,11 +1395,7 @@
           maintainAspectRatio: false,
           plugins: {
             ...config.options.plugins,
-            chartAreaBgPlugin: { color: chartAreaBgColor },
-            zoom: (enableZoom) ? {
-              zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'xy' },
-              pan: { enabled: true, mode: 'xy' }
-            } : undefined
+            chartAreaBgPlugin: { color: chartAreaBgColor }
           }
         }
       });
@@ -1385,7 +1408,6 @@
         bubbleSizeField: bubbleSizeField,
         chartTitle: chartTitle,
         chartAreaBgColor: chartAreaBgColor,
-        enableZoom: enableZoom,
         baseData: filteredData,
         currentData: filteredData,
         datasetColor: datasetColor,
