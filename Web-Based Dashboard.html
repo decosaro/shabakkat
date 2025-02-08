@@ -3,38 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Report Builder – Modern Filter & Zoom Styles</title>
+  <title>Dashboard Report Builder – Modern Style</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <!-- Bootstrap CSS for UI -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-  <!-- Chart.js, Chart.js Zoom Plugin, and PapaParse libraries -->
+  <!-- Chart.js, Zoom Plugin, PapaParse, and Candlestick Plugin -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  <!-- Optional: Candlestick Chart Plugin -->
   <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
   <style>
-    /* Overall Page Styling */
-    body { 
-      padding-top: 70px; 
-      background: #f0f2f5;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* CSS Variables for a consistent modern theme */
+    :root {
+      --primary-color: #4A90E2;
+      --secondary-color: #50E3C2;
+      --bg-color: #F7F8FA;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --border-radius: 8px;
+      --transition-speed: 0.3s;
     }
-    /* Card & Panel Styles */
+    /* Base Styles */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--bg-color);
+      margin: 0;
+      /*padding-top: 70px;*/
+    }
+    /* Navbar */
+    .navbar {
+      box-shadow: 0 2px 4px var(--shadow-color);
+      position: relative;
+      display: none;
+    }
+    /* Center the navbar brand text */
+    .navbar-brand {
+      font-weight: 500;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    /* Card Styles */
     .card {
+      background: var(--card-bg);
       border: none;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px var(--shadow-color);
       margin-bottom: 20px;
     }
     .card-header {
-      background-color: #0d6efd;
+      background: linear-gradient(135deg, var(--primary-color), #357ABD);
       color: #fff;
       border-bottom: none;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
+      border-top-left-radius: var(--border-radius);
+      border-top-right-radius: var(--border-radius);
+      font-weight: 500;
     }
+    .card-footer {
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+      border-bottom-left-radius: var(--border-radius);
+      border-bottom-right-radius: var(--border-radius);
+    }
+    /* Panels */
     #fieldsPanel, #slicersPanel {
       max-height: 250px;
       overflow-y: auto;
@@ -42,41 +77,38 @@
     /* Chart Wrapper */
     .chart-wrapper {
       position: relative;
-      border: 1px solid #ddd;
       padding: 15px;
-      border-radius: 8px;
-      background: #fff;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-      transition: transform 0.2s;
+      border-radius: var(--border-radius);
+      background: var(--card-bg);
+      box-shadow: 0 4px 8px var(--shadow-color);
+      transition: transform var(--transition-speed);
     }
     .chart-wrapper:hover {
-      transform: scale(1.02);
+      transform: translateY(-3px);
+    }
+    .remove-btn, .customize-colors-btn {
+      position: absolute;
+      top: 10px;
+      z-index: 10;
     }
     .remove-btn {
-      position: absolute;
-      top: 10px;
       right: 10px;
-      z-index: 10;
     }
-    /* New: Customize Colors button styling */
     .customize-colors-btn {
-      position: absolute;
-      top: 10px;
       right: 110px;
-      z-index: 10;
     }
-    /* --- Enhanced Chart Filter Field Styles --- */
+    /* Modern Slicer Styles */
     .chart-slicer {
-      background: #ffffff;
+      background: #fff;
       border: 1px solid #d1d9e6;
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       padding: 16px;
       margin-bottom: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
     }
     .chart-slicer:hover {
       transform: translateY(-2px);
@@ -85,47 +117,48 @@
     .chart-slicer label {
       font-weight: 600;
       font-size: 1rem;
-      color: #333;
+      color: var(--text-color);
       margin-bottom: 4px;
+    }
+    .chart-slicer select, .chart-slicer button {
+      border-radius: var(--border-radius);
     }
     .chart-slicer select {
       width: 100%;
       padding: 10px 14px;
       border: 1px solid #c3cfe2;
-      border-radius: 6px;
       background-color: #f8f9fa;
       font-size: 0.95rem;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
     }
     .chart-slicer select:focus {
       outline: none;
-      border-color: #0d6efd;
-      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.25);
     }
     .chart-slicer button {
       align-self: flex-start;
       padding: 8px 16px;
       border: none;
-      border-radius: 6px;
-      background-color: #0d6efd;
-      color: #ffffff;
+      background-color: var(--primary-color);
+      color: #fff;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s;
     }
     .chart-slicer button:hover {
-      background-color: #0b5ed7;
+      background-color: #357ABD;
     }
-    /* --- Modern Zoom Bar Styles --- */
+    /* Zoom Bar */
     .zoom-bar-container {
-      background-color: #fff;
+      background: #fff;
       border: 1px solid #e0e0e0;
-      border-radius: 8px;
+      border-radius: var(--border-radius);
       padding: 12px 16px;
       display: flex;
       align-items: center;
       gap: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px var(--shadow-color);
     }
     .zoom-bar-container .input-group {
       flex: 1;
@@ -135,7 +168,7 @@
       -webkit-appearance: none;
       width: 100%;
       height: 8px;
-      background: linear-gradient(to right, #0d6efd, #66b2ff);
+      background: linear-gradient(to right, var(--primary-color), #66b2ff);
       border-radius: 4px;
       outline: none;
       transition: background 0.3s;
@@ -144,7 +177,7 @@
       -webkit-appearance: none;
       width: 16px;
       height: 16px;
-      background: #0d6efd;
+      background: var(--primary-color);
       border-radius: 50%;
       cursor: pointer;
       border: 2px solid #fff;
@@ -152,51 +185,50 @@
     }
     .zoom-bar-container input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.1);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 8px var(--shadow-color);
     }
     .zoom-bar-container .input-group-text {
       background: transparent;
       border: none;
       font-weight: bold;
-      color: #333;
+      color: var(--text-color);
     }
     .zoom-bar-container button {
       padding: 6px 12px;
       border: none;
-      border-radius: 4px;
-      background-color: #0d6efd;
+      background-color: var(--primary-color);
       color: #fff;
       cursor: pointer;
+      border-radius: 4px;
       transition: background-color 0.2s;
     }
     .zoom-bar-container button:hover {
-      background-color: #0b5ed7;
+      background-color: #357ABD;
     }
-    /* Report Canvas Grid (2 per row) */
+    /* Report Canvas Grid */
     #reportCanvasContainer {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 20px;
     }
-    /* Active state for slicer buttons */
-    .slicer-btn.active {
-      background-color: #63cfff !important;
-      border-color: #0d6efd !important;
-      color: #fff !important;
-    }
-    /* New CSS: Force the canvas to fill its container */
     .canvas-container {
       position: relative;
       width: 100%;
-      height: 300px; /* Adjust the height as needed */
+      height: 300px;
     }
     .canvas-container canvas {
       width: 100% !important;
       height: 100% !important;
     }
+    /* Slicer Button Active State */
+    .slicer-btn.active {
+      background-color: var(--secondary-color) !important;
+      border-color: var(--primary-color) !important;
+      color: #fff !important;
+    }
   </style>
   <script>
-    // Custom plugin: Chart area background color.
+    // Custom Chart.js plugin for chart area background
     const chartAreaBgPlugin = {
       id: 'chartAreaBgPlugin',
       beforeDraw: (chart, args, options) => {
@@ -208,6 +240,16 @@
       }
     };
     Chart.register(chartAreaBgPlugin);
+
+    // Generates an array of default colors from a preset palette.
+    function generateDefaultColors(n) {
+      const palette = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#66FF66", "#FF66CC"];
+      let colors = [];
+      for (let i = 0; i < n; i++) {
+        colors.push(palette[i % palette.length]);
+      }
+      return colors;
+    }
   </script>
 </head>
 <body>
@@ -222,7 +264,7 @@
       </button>
     </div>
   </nav>
-  
+
   <!-- Main Container -->
   <div class="container-fluid">
     <!-- Top Row: Controls -->
@@ -248,7 +290,7 @@
           </div>
         </div>
       </div>
-      <!-- Right Panel: Enhanced Visualization Settings -->
+      <!-- Right Panel: Visualization Settings -->
       <div class="col-md-9">
         <div class="card">
           <div class="card-header">
@@ -326,7 +368,6 @@
                       <label for="bubbleSizeField" class="form-label">Bubble Size Field (Optional)</label>
                       <select class="form-select" id="bubbleSizeField"></select>
                     </div>
-                    <!-- New: Line Value Field for Mixed Charts -->
                     <div class="mb-3" id="lineValueContainer" style="display: none;">
                       <label for="lineValueField" class="form-label">Line Value Field (Optional)</label>
                       <select class="form-select" id="lineValueField"></select>
@@ -371,7 +412,7 @@
                   </div>
                 </div>
               </div>
-              <!-- Format Section with Advanced Chart Plot Parameters -->
+              <!-- Format Section -->
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingFormat">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFormat" aria-expanded="false" aria-controls="collapseFormat">
@@ -380,7 +421,6 @@
                 </h2>
                 <div id="collapseFormat" class="accordion-collapse collapse" aria-labelledby="headingFormat" data-bs-parent="#vizAccordion">
                   <div class="accordion-body">
-                    <!-- Basic Format Controls -->
                     <div class="mb-3">
                       <label for="datasetColor" class="form-label">Dataset Color</label>
                       <input type="color" class="form-control form-control-color" id="datasetColor" value="#36a2eb">
@@ -395,7 +435,6 @@
                       </select>
                     </div>
                     <hr>
-                    <!-- Advanced Dataset Settings -->
                     <h6>Dataset Settings</h6>
                     <div class="mb-3">
                       <label for="borderWidth" class="form-label">Border Width</label>
@@ -406,7 +445,6 @@
                       <input type="number" class="form-control" id="pointRadius" value="3" min="0">
                     </div>
                     <hr>
-                    <!-- Advanced Legend Settings -->
                     <h6>Legend Settings</h6>
                     <div class="mb-3">
                       <label for="legendFontSize" class="form-label">Legend Font Size</label>
@@ -417,7 +455,6 @@
                       <input type="color" class="form-control form-control-color" id="legendFontColor" value="#000000">
                     </div>
                     <hr>
-                    <!-- Advanced Axis Settings -->
                     <h6>Axis Settings</h6>
                     <div class="mb-3">
                       <label for="xAxisFontColor" class="form-label">X-Axis Font Color</label>
@@ -444,7 +481,6 @@
                       <input type="color" class="form-control form-control-color" id="gridlineColor" value="#e0e0e0">
                     </div>
                     <hr>
-                    <!-- Advanced Title Settings -->
                     <h6>Title Settings</h6>
                     <div class="mb-3">
                       <label for="titleFontSize" class="form-label">Title Font Size</label>
@@ -457,7 +493,7 @@
                     <div class="mb-3">
                       <label for="titleFontFamily" class="form-label">Title Font Family</label>
                       <select class="form-select" id="titleFontFamily">
-                        <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" selected>Segoe UI</option>
+                        <option value="'Roboto', sans-serif" selected>Roboto</option>
                         <option value="Arial, sans-serif">Arial</option>
                         <option value="'Times New Roman', Times, serif">Times New Roman</option>
                         <option value="'Courier New', Courier, monospace">Courier New</option>
@@ -472,11 +508,11 @@
         </div>
       </div>
     </div>
-    <!-- Second Row: Full-Width Report Canvas -->
+    <!-- Report Canvas -->
     <div class="row">
       <div class="col-12">
         <div class="card">
-          <div class="card-header">Report Canvas</div>
+          <div class="card-header">Report Dashboard</div>
           <div class="card-body" id="reportCanvasContainer">
             <p>No visualizations added yet.</p>
           </div>
@@ -494,7 +530,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id="customColorModalBody">
-          <!-- Dynamically populated with color inputs -->
+          <!-- Dynamically populated color inputs -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" id="applyCustomColorsBtn">Apply Colors</button>
@@ -506,24 +542,14 @@
   
   <!-- Scripts -->
   <script>
-    // Global variables
     let csvData = [];
     let fields = [];
     let slicerCount = 0;
     let chartConfigs = {};
-    let currentChartWrapperIdForCustomColors = null; // For the modal
+    let currentChartWrapperIdForCustomColors = null;
 
     function isNumeric(n) {
       return !isNaN(parseFloat(n)) && isFinite(n);
-    }
-
-    function generateDefaultColors(n) {
-      const palette = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#66FF66", "#FF66CC"];
-      let colors = [];
-      for (let i = 0; i < n; i++) {
-        colors.push(palette[i % palette.length]);
-      }
-      return colors;
     }
 
     // CSV Upload & Field Population
@@ -534,7 +560,6 @@
           complete: function(results) {
             csvData = results.data;
             fields = results.meta.fields || [];
-            console.log('CSV loaded. Fields:', fields);
             populateFields();
             populateDropdowns();
           },
@@ -561,7 +586,7 @@
       }
     }
 
-    // Include "lineValueField" for dropdowns
+    // Populate dropdown menus
     function populateDropdowns() {
       const dropdownIds = ['xAxisField', 'yAxisField', 'legendField', 'bubbleSizeField', 'filterField', 'lineValueField'];
       dropdownIds.forEach(id => {
@@ -664,7 +689,7 @@
       valueSelect.style.display = "block";
     }
 
-    // Chart-Specific Slicers (Excel‑like)
+    // Chart-Specific Slicers
     function updateSlicerButtons(uniqueId, baseData, selectedField, wrapperId) {
       const container = document.getElementById("chartSlicerButtonContainer_" + uniqueId);
       container.innerHTML = '';
@@ -702,7 +727,6 @@
       let newFilteredData = params.baseData;
       if (slicerFieldSelect.value && selectedValues.length > 0) {
         newFilteredData = newFilteredData.filter(row => selectedValues.includes(row[slicerFieldSelect.value]));
-        console.log(`Chart slicer for ${wrapperId}: ${slicerFieldSelect.value} in [${selectedValues.join(', ')}]`);
       }
       let newConfig = rebuildChartConfig(params, newFilteredData);
       chartConf.instance.destroy();
@@ -760,7 +784,6 @@
           }
         };
       } else {
-        // For aggregated charts (including mixed)
         let aggregatedData = {};
         if (params.aggFunc === 'count') {
           newData.forEach(row => {
@@ -790,17 +813,15 @@
         if (params.sortOrder && params.sortOrder !== "None") {
           let combined = labels.map((label, index) => ({ label: label, value: aggregatedValues[index] }));
           if (params.sortField === "aggregatedValue") {
-            if (params.sortOrder === "Ascending") combined.sort((a, b) => a.value - b.value);
-            else if (params.sortOrder === "Descending") combined.sort((a, b) => b.value - a.value);
+            combined.sort((a, b) => params.sortOrder === "Ascending" ? a.value - b.value : b.value - a.value);
           } else if (params.sortField === "xAxis") {
-            if (params.sortOrder === "Ascending") combined.sort((a, b) => a.label.localeCompare(b.label));
-            else if (params.sortOrder === "Descending") combined.sort((a, b) => b.label.localeCompare(a.label));
+            combined.sort((a, b) => params.sortOrder === "Ascending" ? a.label.localeCompare(b.label) : b.label.localeCompare(a.label));
           }
           labels = combined.map(item => item.label);
           aggregatedValues = combined.map(item => item.value);
-          params.aggregatedColors = Array(labels.length).fill(params.datasetColor);
+          params.aggregatedColors = generateDefaultColors(labels.length);
         } else {
-          params.aggregatedColors = Array(labels.length).fill(params.datasetColor);
+          params.aggregatedColors = generateDefaultColors(labels.length);
         }
         newConfig = {
           type: (params.chartType === 'mixed') ? 'bar' : params.chartType,
@@ -830,38 +851,28 @@
             }
           }
         };
-        // For mixed charts, add a line dataset.
         if (params.chartType === 'mixed') {
           const lineValueField = document.getElementById('lineValueField').value;
           let lineData = [];
           if (lineValueField) {
             let aggregatedLineData = {};
-            if (params.aggFunc === 'count') {
-              filteredData.forEach(row => {
-                const key = row[params.xField] || 'Unknown';
-                if (!aggregatedLineData[key]) aggregatedLineData[key] = 0;
-                aggregatedLineData[key]++;
-              });
-            } else {
-              filteredData.forEach(row => {
-                const key = row[params.xField] || 'Unknown';
-                const lineVal = parseFloat(row[lineValueField]);
-                if (isNumeric(lineVal)) {
-                  if (!aggregatedLineData[key]) aggregatedLineData[key] = [];
-                  aggregatedLineData[key].push(lineVal);
-                }
-              });
-            }
+            newData.forEach(row => {
+              const key = row[params.xField] || 'Unknown';
+              const lineVal = parseFloat(row[lineValueField]);
+              if (isNumeric(lineVal)) {
+                if (!aggregatedLineData[key]) aggregatedLineData[key] = [];
+                aggregatedLineData[key].push(lineVal);
+              }
+            });
             let lineLabels = Object.keys(aggregatedLineData);
-            let aggregatedLineValues = lineLabels.map(label => {
-              if (params.aggFunc === 'count') return aggregatedLineData[label];
+            lineData = lineLabels.map(label => {
+              if (params.aggFunc === 'count') return aggregatedLineData[label].length;
               else if (params.aggFunc === 'sum') return aggregatedLineData[label].reduce((a, b) => a + b, 0);
               else if (params.aggFunc === 'average') { const arr = aggregatedLineData[label]; return arr.reduce((a, b) => a + b, 0) / arr.length; }
               else if (params.aggFunc === 'min') return Math.min(...aggregatedLineData[label]);
               else if (params.aggFunc === 'max') return Math.max(...aggregatedLineData[label]);
               else return aggregatedLineData[label];
             });
-            lineData = aggregatedLineValues;
           } else {
             lineData = aggregatedValues;
           }
@@ -877,7 +888,6 @@
           newConfig.options.scales = { x: { stacked: false }, y: { stacked: false } };
         }
       }
-      // Apply axis settings if the chart type supports axes
       if (!["pie", "doughnut", "polarArea", "radar"].includes(params.chartType)) {
         newConfig.options.scales = {
           ...newConfig.options.scales,
@@ -933,11 +943,9 @@
       if (params.sortOrder && params.sortOrder !== "None") {
         let combined = fullLabels.map((label, index) => ({ label: label, value: fullValues[index] }));
         if (params.sortField === "aggregatedValue") {
-          if (params.sortOrder === "Ascending") combined.sort((a, b) => a.value - b.value);
-          else if (params.sortOrder === "Descending") combined.sort((a, b) => b.value - a.value);
+          combined.sort((a, b) => params.sortOrder === "Ascending" ? a.value - b.value : b.value - a.value);
         } else if (params.sortField === "xAxis") {
-          if (params.sortOrder === "Ascending") combined.sort((a, b) => a.label.localeCompare(b.label));
-          else if (params.sortOrder === "Descending") combined.sort((a, b) => b.label.localeCompare(a.label));
+          combined.sort((a, b) => params.sortOrder === "Ascending" ? a.label.localeCompare(b.label) : b.label.localeCompare(a.label));
         }
         fullLabels = combined.map(item => item.label);
         fullValues = combined.map(item => item.value);
@@ -958,27 +966,23 @@
       chartInstance.update();
     }
 
-    // Update display of bubble size and line value containers based on chart type.
+    // Update bubble size and line value containers based on chart type
     document.getElementById('chartType').addEventListener('change', function() {
       const type = this.value;
-      const bubbleSizeContainer = document.getElementById('bubbleSizeContainer');
-      bubbleSizeContainer.style.display = (type === 'bubble') ? 'block' : 'none';
-      const lineValueContainer = document.getElementById('lineValueContainer');
-      lineValueContainer.style.display = (type === 'mixed') ? 'block' : 'none';
+      document.getElementById('bubbleSizeContainer').style.display = (type === 'bubble') ? 'block' : 'none';
+      document.getElementById('lineValueContainer').style.display = (type === 'mixed') ? 'block' : 'none';
     });
 
-    // Open the Custom Color Modal for the given chart wrapper
+    // Open Custom Color Modal
     function openCustomColorModal(chartWrapperId) {
       currentChartWrapperIdForCustomColors = chartWrapperId;
       const params = chartConfigs[chartWrapperId].params;
-      // Ensure that aggregatedColors and aggregatedLabels exist
       if (!params.aggregatedLabels || !params.aggregatedColors) {
         alert("This chart type does not support individual value color customization.");
         return;
       }
       const modalBody = document.getElementById("customColorModalBody");
-      modalBody.innerHTML = ""; // Clear previous content
-      // For each label, create a color input
+      modalBody.innerHTML = "";
       params.aggregatedLabels.forEach((label, index) => {
         const div = document.createElement("div");
         div.className = "mb-3";
@@ -990,31 +994,26 @@
         inputEl.type = "color";
         inputEl.className = "form-control form-control-color";
         inputEl.id = "colorInput_" + index;
-        // Set default value from current aggregatedColors array
         inputEl.value = params.aggregatedColors[index] || "#000000";
         div.appendChild(labelEl);
         div.appendChild(inputEl);
         modalBody.appendChild(div);
       });
-      // Show the modal using Bootstrap modal API
       const modalElement = document.getElementById("customColorModal");
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
     }
 
-    // When the "Apply Colors" button in the modal is clicked, update the chart.
     document.getElementById("applyCustomColorsBtn").addEventListener("click", function() {
       if (!currentChartWrapperIdForCustomColors) return;
       const params = chartConfigs[currentChartWrapperIdForCustomColors].params;
       const newColors = [];
-      // Assume the number of color inputs equals the number of aggregated labels
       params.aggregatedLabels.forEach((label, index) => {
         const colorInput = document.getElementById("colorInput_" + index);
         if (colorInput) {
           newColors.push(colorInput.value);
         }
       });
-      // Update aggregatedColors in params and the chart dataset
       params.aggregatedColors = newColors;
       const chartInstance = chartConfigs[currentChartWrapperIdForCustomColors].instance;
       if (chartInstance.data.datasets && chartInstance.data.datasets.length > 0) {
@@ -1022,7 +1021,6 @@
         chartInstance.data.datasets[0].borderColor = newColors;
       }
       chartInstance.update();
-      // Hide the modal
       const modalElement = document.getElementById("customColorModal");
       const modal = bootstrap.Modal.getInstance(modalElement);
       modal.hide();
@@ -1031,20 +1029,16 @@
     function addVisualization() {
       if (csvData.length === 0) { alert('Please upload a CSV file first.'); return; }
       
-      // Read settings from the accordion
       const chartType = document.getElementById('chartType').value;
       const xField = document.getElementById('xAxisField').value;
       const yField = document.getElementById('yAxisField').value;
-      if (!xField) { alert("Please select a valid X-Axis Field."); return; }
-      if (!yField) { alert("Please select a valid Y-Axis Field."); return; }
-      const legendFieldValue = document.getElementById('legendField').value;
+      if (!xField || !yField) { alert("Please select valid X and Y fields."); return; }
       const bubbleSizeField = document.getElementById('bubbleSizeField').value;
       const aggFunc = document.getElementById('aggFunction').value;
       const sortOrder = document.getElementById('sortOrder').value;
       const sortField = document.getElementById('sortField').value;
       const chartTitle = document.getElementById('chartTitle').value || 'My Chart';
       
-      // General & Format Settings
       const chartAreaBgColorInput = document.getElementById('chartAreaBgColor').value;
       const noChartAreaBg = document.getElementById('noChartAreaBg').checked;
       const chartAreaBgColor = noChartAreaBg ? "transparent" : chartAreaBgColorInput;
@@ -1053,7 +1047,6 @@
       const datasetColor = document.getElementById('datasetColor').value;
       const legendPosition = document.getElementById('legendPosition').value;
       
-      // Advanced Format Settings
       const borderWidth = parseInt(document.getElementById('borderWidth').value) || 1;
       const pointRadius = parseInt(document.getElementById('pointRadius').value) || 3;
       const legendFontSize = parseInt(document.getElementById('legendFontSize').value) || 12;
@@ -1068,13 +1061,11 @@
       const titleFontColor = document.getElementById('titleFontColor').value;
       const titleFontFamily = document.getElementById('titleFontFamily').value;
       
-      // Local Filter Options
+      let filteredData = csvData;
       const localFilterField = document.getElementById('filterField').value;
       const localFilterValue = document.getElementById('filterValue').value;
-      let filteredData = csvData;
       if (localFilterField && localFilterValue) {
         filteredData = filteredData.filter(row => row[localFilterField] == localFilterValue);
-        console.log(`Local filter: ${localFilterField} == ${localFilterValue}`);
       }
       const slicersPanel = document.getElementById('slicersPanel');
       const slicerRows = slicersPanel.querySelectorAll('.slicer-row');
@@ -1083,9 +1074,10 @@
         const slicerValuesSelect = row.querySelector('select[id^="slicerValues_"]');
         if (slicerField && slicerValuesSelect.selectedOptions.length > 0) {
           let selectedValues = [];
-          for (let option of slicerValuesSelect.selectedOptions) { selectedValues.push(option.value); }
+          for (let option of slicerValuesSelect.selectedOptions) {
+            selectedValues.push(option.value);
+          }
           filteredData = filteredData.filter(row => selectedValues.includes(row[slicerField]));
-          console.log(`Global slicer: ${slicerField} in [${selectedValues.join(', ')}]`);
         }
       });
       
@@ -1109,7 +1101,7 @@
             }
           }
         });
-        if (dataPoints.length === 0) { alert("No valid numeric data found for the selected X and Y fields in raw mode."); return; }
+        if (dataPoints.length === 0) { alert("No valid numeric data found for the selected fields."); return; }
         config = {
           type: chartType,
           data: { datasets: [{
@@ -1174,16 +1166,15 @@
         if (sortOrder && sortOrder !== "None") {
           let combined = labels.map((label, index) => ({ label: label, value: aggregatedValues[index] }));
           if (sortField === "aggregatedValue") {
-            if (sortOrder === "Ascending") combined.sort((a, b) => a.value - b.value);
-            else if (sortOrder === "Descending") combined.sort((a, b) => b.value - a.value);
+            combined.sort((a, b) => sortOrder === "Ascending" ? a.value - b.value : b.value - a.value);
           } else if (sortField === "xAxis") {
-            if (sortOrder === "Ascending") combined.sort((a, b) => a.label.localeCompare(b.label));
-            else if (sortOrder === "Descending") combined.sort((a, b) => b.label.localeCompare(a.label));
+            combined.sort((a, b) => sortOrder === "Ascending" ? a.label.localeCompare(b.label) : b.label.localeCompare(a.label));
           }
           labels = combined.map(item => item.label);
           aggregatedValues = combined.map(item => item.value);
         }
-        let aggregatedColors = Array(labels.length).fill(datasetColor);
+        // Assign a unique color for each aggregated value by default.
+        let aggregatedColors = generateDefaultColors(labels.length);
         config = {
           type: (chartType === 'mixed') ? 'bar' : chartType,
           data: { labels: labels, datasets: [{
@@ -1217,32 +1208,23 @@
           let lineData = [];
           if (lineValueField) {
             let aggregatedLineData = {};
-            if (aggFunc === 'count') {
-              filteredData.forEach(row => {
-                const key = row[xField] || 'Unknown';
-                if (!aggregatedLineData[key]) aggregatedLineData[key] = 0;
-                aggregatedLineData[key]++;
-              });
-            } else {
-              filteredData.forEach(row => {
-                const key = row[xField] || 'Unknown';
-                const lineVal = parseFloat(row[lineValueField]);
-                if (isNumeric(lineVal)) {
-                  if (!aggregatedLineData[key]) aggregatedLineData[key] = [];
-                  aggregatedLineData[key].push(lineVal);
-                }
-              });
-            }
+            filteredData.forEach(row => {
+              const key = row[xField] || 'Unknown';
+              const lineVal = parseFloat(row[lineValueField]);
+              if (isNumeric(lineVal)) {
+                if (!aggregatedLineData[key]) aggregatedLineData[key] = [];
+                aggregatedLineData[key].push(lineVal);
+              }
+            });
             let lineLabels = Object.keys(aggregatedLineData);
-            let aggregatedLineValues = lineLabels.map(label => {
-              if (aggFunc === 'count') return aggregatedLineData[label];
+            lineData = lineLabels.map(label => {
+              if (aggFunc === 'count') return aggregatedLineData[label].length;
               else if (aggFunc === 'sum') return aggregatedLineData[label].reduce((a, b) => a + b, 0);
               else if (aggFunc === 'average') { const arr = aggregatedLineData[label]; return arr.reduce((a, b) => a + b, 0) / arr.length; }
               else if (aggFunc === 'min') return Math.min(...aggregatedLineData[label]);
               else if (aggFunc === 'max') return Math.max(...aggregatedLineData[label]);
               else return aggregatedLineData[label];
             });
-            lineData = aggregatedLineValues;
           } else {
             lineData = aggregatedValues;
           }
@@ -1277,7 +1259,7 @@
       removeBtn.onclick = function() { chartWrapper.remove(); delete chartConfigs[chartWrapper.id]; };
       chartWrapper.appendChild(removeBtn);
       
-      // For aggregated charts, add the "Customize Colors" button
+      // Customize Colors button for aggregated charts
       if (chartType !== 'scatter' && chartType !== 'bubble') {
         const customizeColorsBtn = document.createElement('button');
         customizeColorsBtn.innerText = "Customize Colors";
@@ -1286,7 +1268,7 @@
         chartWrapper.appendChild(customizeColorsBtn);
       }
       
-      // Chart-Specific Slicer with Enhanced Styles
+      // Chart-specific slicer
       const slicerDiv = document.createElement('div');
       slicerDiv.className = "chart-slicer";
       const slicerFieldLabel = document.createElement('label');
@@ -1323,7 +1305,7 @@
       slicerDiv.appendChild(applySlicerBtn);
       chartWrapper.appendChild(slicerDiv);
       
-      // Chart Content Container (holds canvas and, for aggregated charts, the zoom bar)
+      // Chart content container
       const chartContentContainer = document.createElement('div');
       chartContentContainer.className = "chart-content-container";
       const canvasContainer = document.createElement('div');
@@ -1376,7 +1358,6 @@
       
       chartWrapper.appendChild(chartContentContainer);
       container.appendChild(chartWrapper);
-      
       chartWrapper.id = "chartWrapper_" + uniqueId;
       
       let chartInstance = new Chart(canvas, {
@@ -1396,7 +1377,6 @@
         }
       });
       
-      // Save all parameters for later use (slicers, zoom updates, etc.)
       let params = {
         chartType: chartType,
         xField: xField,
@@ -1424,7 +1404,6 @@
         titleFontColor: titleFontColor,
         titleFontFamily: titleFontFamily
       };
-      // For aggregated charts, store aggregated labels and colors.
       if (chartType !== 'scatter' && chartType !== 'bubble') {
         let aggregatedData = {};
         if (aggFunc === 'count') {
@@ -1445,7 +1424,7 @@
         }
         let aggregatedLabels = Object.keys(aggregatedData);
         params.aggregatedLabels = aggregatedLabels;
-        params.aggregatedColors = Array(aggregatedLabels.length).fill(datasetColor);
+        params.aggregatedColors = generateDefaultColors(aggregatedLabels.length);
       }
       
       chartConfigs[chartWrapper.id] = {
