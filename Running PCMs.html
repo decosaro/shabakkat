@@ -270,6 +270,173 @@
             box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
 
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 25px 15px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #374151;
+            font-size: 1.25em;
+        }
+
+        .close {
+            color: #9ca3af;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #374151;
+        }
+
+        .modal-body {
+            padding: 20px 25px 25px;
+        }
+
+        .modal-body p {
+            margin: 0 0 20px 0;
+            color: #6b7280;
+            font-size: 0.95em;
+        }
+
+        .download-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .download-option-btn {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            width: 100%;
+        }
+
+        .download-option-btn:hover {
+            border-color: #0ea5e9;
+            background: #f0f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+        }
+
+        .download-option-icon {
+            font-size: 2em;
+            margin-right: 15px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .download-option-text {
+            flex: 1;
+        }
+
+        .download-option-text strong {
+            display: block;
+            color: #374151;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .download-option-text small {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+
+        .input-files-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .input-files-section h4 {
+            margin: 0 0 15px 0;
+            color: #374151;
+            font-size: 1.1em;
+        }
+
+        .input-files-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-file-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .input-file-item:hover {
+            border-color: #0ea5e9;
+            background: #f0f9ff;
+            transform: translateY(-1px);
+        }
+
+        .input-file-icon {
+            font-size: 1.5em;
+            margin-right: 12px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .input-file-text {
+            flex: 1;
+        }
+
+        .input-file-text strong {
+            display: block;
+            color: #374151;
+            font-size: 0.95em;
+            margin-bottom: 3px;
+        }
+
+        .input-file-text small {
+            color: #6b7280;
+            font-size: 0.85em;
+        }
+
         .statistics {
             margin-top: 20px;
             padding: 20px;
@@ -729,6 +896,34 @@
                     <a id="download-button" class="download-button">
                         📥 Download
                     </a>
+                </div>
+                
+                <!-- Download Options Modal -->
+                <div id="download-modal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>📥 Download Options</h3>
+                            <span class="close" id="close-download-modal">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <p>Choose what you would like to download:</p>
+                            <div class="download-options">
+                                <button id="download-merged" class="download-option-btn">
+                                    <div class="download-option-icon">📋</div>
+                                    <div class="download-option-text">
+                                        <strong>Merged File</strong>
+                                        <small>Complete merged data with all PCMs</small>
+                                    </div>
+                                </button>
+                                <div class="input-files-section">
+                                    <h4>Input Files</h4>
+                                    <div id="input-files-list" class="input-files-list">
+                                        <!-- Individual input files will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1293,9 +1488,19 @@
                     const todayFormatted = getTodayFormatted();
                     const filename = `Running PCMs - ${todayFormatted}.xlsx`;
                     
+                    // Store the merged file data for download
+                    window.mergedFileData = {
+                        url: url,
+                        filename: filename
+                    };
+                    
+                    // Set up download button to show modal
                     const downloadButton = document.getElementById('download-button');
-                    downloadButton.href = url;
-                    downloadButton.download = filename;
+                    downloadButton.href = '#';
+                    downloadButton.onclick = function(e) {
+                        e.preventDefault();
+                        showDownloadModal();
+                    };
                     document.getElementById('download-section').style.display = 'block';
                     
                     // Show statistics
@@ -2366,6 +2571,109 @@
                 }
             });
         }
+
+        // Download modal functions
+        function showDownloadModal() {
+            populateInputFiles();
+            document.getElementById('download-modal').style.display = 'flex';
+        }
+
+        function populateInputFiles() {
+            const inputFilesList = document.getElementById('input-files-list');
+            inputFilesList.innerHTML = '';
+
+            const fileTypes = [
+                { key: 'netask', name: 'Nextask PCMs', icon: '📈' },
+                { key: 'cmOperation', name: 'TMS CM Operation', icon: '📝' },
+                { key: 'owsFrt', name: 'OWS FRT', icon: '⏱️' },
+                { key: 'manualFrt', name: 'Manual FRT', icon: '📋' }
+            ];
+
+            fileTypes.forEach(fileType => {
+                if (uploadedFiles[fileType.key]) {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'input-file-item';
+                    fileItem.onclick = () => downloadInputFile(fileType.key);
+                    
+                    fileItem.innerHTML = `
+                        <div class="input-file-icon">${fileType.icon}</div>
+                        <div class="input-file-text">
+                            <strong>${fileType.name}</strong>
+                            <small>Click to download</small>
+                        </div>
+                    `;
+                    
+                    inputFilesList.appendChild(fileItem);
+                }
+            });
+
+            if (inputFilesList.children.length === 0) {
+                inputFilesList.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">No input files available</p>';
+            }
+        }
+
+        function hideDownloadModal() {
+            document.getElementById('download-modal').style.display = 'none';
+        }
+
+        function downloadMergedFile() {
+            if (window.mergedFileData) {
+                const link = document.createElement('a');
+                link.href = window.mergedFileData.url;
+                link.download = window.mergedFileData.filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                hideDownloadModal();
+            }
+        }
+
+        function downloadInputFile(fileType) {
+            if (uploadedFiles[fileType]) {
+                const workbook = uploadedFiles[fileType];
+                const filename = getInputFilename(fileType);
+                
+                workbook.xlsx.writeBuffer().then(function(buffer) {
+                    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    URL.revokeObjectURL(url);
+                });
+            }
+        }
+
+        function getInputFilename(fileType) {
+            const filenames = {
+                'netask': 'Nextask_PCMs.xlsx',
+                'cmOperation': 'TMS_PCMs.xlsx',
+                'owsFrt': 'OWS_FRT.xlsx',
+                'manualFrt': 'Manual_FRT.xlsx'
+            };
+            return filenames[fileType] || `${fileType}.xlsx`;
+        }
+
+        // Set up modal event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close modal when clicking X
+            document.getElementById('close-download-modal').addEventListener('click', hideDownloadModal);
+            
+            // Close modal when clicking outside
+            document.getElementById('download-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    hideDownloadModal();
+                }
+            });
+
+            // Download merged file
+            document.getElementById('download-merged').addEventListener('click', downloadMergedFile);
+        });
 
         function updateSelectedText(type) {
             // Only update if the Summary section is visible
