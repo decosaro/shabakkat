@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -184,7 +185,7 @@
             border-radius: 10px;
             display: none;
             z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             animation: slideInFromRight 0.4s ease-out;
         }
 
@@ -193,6 +194,7 @@
                 transform: translateX(400px);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -208,6 +210,7 @@
                 transform: translateX(0);
                 opacity: 1;
             }
+
             to {
                 transform: translateX(400px);
                 opacity: 0;
@@ -473,6 +476,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -484,6 +488,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -495,9 +500,11 @@
             0% {
                 box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
             }
+
             50% {
                 box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
             }
+
             100% {
                 box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
             }
@@ -515,8 +522,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .floating-footer {
@@ -593,12 +605,12 @@
             opacity: 0;
         }
 
-        .filter-option input[type="radio"]:checked + .filter-label::before {
+        .filter-option input[type="radio"]:checked+.filter-label::before {
             background: #3b82f6;
             border-color: #3b82f6;
         }
 
-        .filter-option input[type="radio"]:checked + .filter-label::before {
+        .filter-option input[type="radio"]:checked+.filter-label::before {
             content: '●';
             color: white;
             text-align: center;
@@ -705,7 +717,7 @@
             text-align: left;
             font-size: 0.9em;
         }
-        
+
         .feedback-table .subcategory-row td:first-child {
             text-align: left;
             padding-left: 27px;
@@ -751,6 +763,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -760,32 +773,32 @@
         <div class="main-card">
             <div class="upload-section">
                 <div class="files-grid">
-                <div class="file-input-group" id="group-netask">
+                    <div class="file-input-group" id="group-netask">
                         <label class="file-label">📁 Netask Running PCMs</label>
-                    <label for="netask-file" class="file-button">Choose File</label>
-                    <input type="file" id="netask-file" class="file-input" accept=".xlsx,.xls">
-                    <div class="file-status" id="netask-status"></div>
-                </div>
+                        <label for="netask-file" class="file-button">Choose File</label>
+                        <input type="file" id="netask-file" class="file-input" accept=".xlsx,.xls">
+                        <div class="file-status" id="netask-status"></div>
+                    </div>
 
-                <div class="file-input-group" id="group-ows-frt">
-                    <label class="file-label">⏱️ OWS FRT</label>
-                    <label for="ows-frt-file" class="file-button">Choose File</label>
-                    <input type="file" id="ows-frt-file" class="file-input" accept=".xlsx,.xls">
-                    <div class="file-status" id="ows-frt-status"></div>
-                </div>
+                    <div class="file-input-group" id="group-ows-frt">
+                        <label class="file-label">⏱️ OWS FRT</label>
+                        <label for="ows-frt-file" class="file-button">Choose File</label>
+                        <input type="file" id="ows-frt-file" class="file-input" accept=".xlsx,.xls">
+                        <div class="file-status" id="ows-frt-status"></div>
+                    </div>
 
-                <div class="file-input-group" id="group-cm-operation">
-                    <label class="file-label">📝 TMS CM Operation</label>
-                    <label for="cm-operation-file" class="file-button">Choose File</label>
-                    <input type="file" id="cm-operation-file" class="file-input" accept=".xlsx,.xls">
-                    <div class="file-status" id="cm-operation-status"></div>
-                </div>
+                    <div class="file-input-group" id="group-cm-operation">
+                        <label class="file-label">📝 TMS CM Operation</label>
+                        <label for="cm-operation-file" class="file-button">Choose File</label>
+                        <input type="file" id="cm-operation-file" class="file-input" accept=".xlsx,.xls">
+                        <div class="file-status" id="cm-operation-status"></div>
+                    </div>
 
-                <div class="file-input-group" id="group-manual-frt">
-                    <label class="file-label">📋 Manual FRT</label>
-                    <label for="manual-frt-file" class="file-button">Choose File</label>
-                    <input type="file" id="manual-frt-file" class="file-input" accept=".xlsx,.xls">
-                    <div class="file-status" id="manual-frt-status"></div>
+                    <div class="file-input-group" id="group-manual-frt">
+                        <label class="file-label">📋 Manual FRT</label>
+                        <label for="manual-frt-file" class="file-button">Choose File</label>
+                        <input type="file" id="manual-frt-file" class="file-input" accept=".xlsx,.xls">
+                        <div class="file-status" id="manual-frt-status"></div>
                     </div>
                 </div>
 
@@ -834,61 +847,75 @@
 
                 <div id="hd-feedback-report" class="hd-feedback-report" style="display: none;">
                     <h3 style="color: #374151; margin-bottom: 15px; font-size: 1.2em;">📋 Summary</h3>
-                    
+
                     <div class="filter-section" style="margin-top: 20px; margin-bottom: 20px;">
                         <h4 style="color: #374151; margin-bottom: 15px; font-size: 1em;">🔍 Summary Filters</h4>
                         <div class="filter-options" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
                             <div class="filter-option">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">PCM Year</label>
+                                <label
+                                    style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">PCM
+                                    Year</label>
                                 <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="year-trigger" style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="multiselect-trigger" id="year-trigger"
+                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                                         <span id="year-selected-text">All Years</span>
                                         <span>▼</span>
                                     </div>
-                                    <div class="multiselect-dropdown" id="year-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div class="multiselect-dropdown" id="year-dropdown"
+                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
                                         <div id="pcm-year-filters" style="padding: 10px;"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="filter-option">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">PCM Month</label>
+                                <label
+                                    style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">PCM
+                                    Month</label>
                                 <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="month-trigger" style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="multiselect-trigger" id="month-trigger"
+                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                                         <span id="month-selected-text">All Months</span>
                                         <span>▼</span>
                                     </div>
-                                    <div class="multiselect-dropdown" id="month-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div class="multiselect-dropdown" id="month-dropdown"
+                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
                                         <div id="pcm-month-filters" style="padding: 10px;"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="filter-option">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">Skill</label>
+                                <label
+                                    style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">Skill</label>
                                 <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="skill-trigger" style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="multiselect-trigger" id="skill-trigger"
+                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                                         <span id="skill-selected-text">All Skills</span>
                                         <span>▼</span>
                                     </div>
-                                    <div class="multiselect-dropdown" id="skill-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div class="multiselect-dropdown" id="skill-dropdown"
+                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
                                         <div id="skill-filters" style="padding: 10px;"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="filter-option">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">Region</label>
+                                <label
+                                    style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">Region</label>
                                 <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="region-trigger" style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="multiselect-trigger" id="region-trigger"
+                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                                         <span id="region-selected-text">All Regions</span>
                                         <span>▼</span>
                                     </div>
-                                    <div class="multiselect-dropdown" id="region-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div class="multiselect-dropdown" id="region-dropdown"
+                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
                                         <div id="region-filters" style="padding: 10px;"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div id="feedback-table-container"></div>
                 </div>
 
@@ -897,7 +924,7 @@
                         📥 Download
                     </a>
                 </div>
-                
+
                 <!-- Download Options Modal -->
                 <div id="download-modal" class="modal" style="display: none;">
                     <div class="modal-content">
@@ -1010,29 +1037,29 @@
         document.getElementById('ows-frt-file').addEventListener('change', (e) => handleFileUpload(e, 'owsFrt'));
 
         // Auto-load files on page load
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             showMessage('Loading default files...', 'info');
-            
+
             const fileUrls = {
                 netask: 'https://decosaro.github.io/shabakkat/Nextask_PCMs.xlsx',
                 cmOperation: 'https://decosaro.github.io/shabakkat/TMS_PCMs.xlsx',
                 owsFrt: 'https://decosaro.github.io/shabakkat/OWS_FRT.xlsx'
             };
-            
+
             // GitHub API URLs for file metadata
             const githubApiUrls = {
                 netask: 'https://api.github.com/repos/decosaro/shabakkat/contents/Nextask_PCMs.xlsx',
                 cmOperation: 'https://api.github.com/repos/decosaro/shabakkat/contents/TMS_PCMs.xlsx',
                 owsFrt: 'https://api.github.com/repos/decosaro/shabakkat/contents/OWS_FRT.xlsx'
             };
-            
+
             // Alternative: Use commits API to get file info
             const githubCommitsUrls = {
                 netask: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=Nextask_PCMs.xlsx&per_page=1',
                 cmOperation: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=TMS_PCMs.xlsx&per_page=1',
                 owsFrt: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=OWS_FRT.xlsx&per_page=1'
             };
-            
+
             // Service configuration
             const serviceConfig = {
                 platform: 'github',
@@ -1042,7 +1069,7 @@
                     part2: [54, 48, 48, 65, 117, 87, 54, 66, 57, 106, 55, 66, 55, 102, 51, 108, 70, 81, 97, 54]
                 }
             };
-            
+
             // Credential reconstruction function
             function reconstructCredentials() {
                 // Check for environment variable
@@ -1058,15 +1085,15 @@
                 const part2 = String.fromCharCode(...serviceConfig.data.part2);
                 return part1 + part2;
             }
-            
+
             // Get the API token
             const GITHUB_TOKEN = reconstructCredentials();
-            
+
             // Validate the token
             if (!GITHUB_TOKEN || GITHUB_TOKEN.length < 20) {
                 console.warn('API credentials not available');
             }
-            
+
             // Function to get GitHub file metadata
             async function getGitHubFileInfo(fileType) {
                 try {
@@ -1075,24 +1102,24 @@
                         console.warn(`GitHub token not available for ${fileType}`);
                         return null;
                     }
-                    
+
                     const headers = {
                         'Accept': 'application/vnd.github.v3+json',
                         'User-Agent': 'PCM-Tool/1.0',
                         'Authorization': `token ${GITHUB_TOKEN}`
                     };
-                    
+
                     // Try to get file info from contents API first
                     let fileData = null;
                     let commitData = null;
-                    
+
                     try {
                         const contentsResponse = await fetch(githubApiUrls[fileType], {
                             headers: headers
                         });
-                        
+
                         console.log(`Contents API response status for ${fileType}:`, contentsResponse.status);
-                        
+
                         if (contentsResponse.ok) {
                             fileData = await contentsResponse.json();
                             console.log(`Contents API response for ${fileType}:`, fileData);
@@ -1102,15 +1129,15 @@
                     } catch (contentsError) {
                         console.warn(`Contents API failed for ${fileType}:`, contentsError);
                     }
-                    
+
                     // Try to get commit info for last modified date
                     try {
                         const commitsResponse = await fetch(githubCommitsUrls[fileType], {
                             headers: headers
                         });
-                        
+
                         console.log(`Commits API response status for ${fileType}:`, commitsResponse.status);
-                        
+
                         if (commitsResponse.ok) {
                             const commits = await commitsResponse.json();
                             if (commits && commits.length > 0) {
@@ -1123,7 +1150,7 @@
                     } catch (commitsError) {
                         console.warn(`Commits API failed for ${fileType}:`, commitsError);
                     }
-                    
+
                     // Determine last modified date
                     let lastModified = new Date();
                     if (commitData && commitData.commit && commitData.commit.committer && commitData.commit.committer.date) {
@@ -1133,7 +1160,7 @@
                     } else if (fileData && fileData.last_modified) {
                         lastModified = new Date(fileData.last_modified);
                     }
-                    
+
                     return {
                         name: (fileData && fileData.name) || `${fileType}.xlsx`,
                         size: (fileData && fileData.size) || 0,
@@ -1151,7 +1178,7 @@
                 try {
                     // Get GitHub file metadata first
                     const gitHubInfo = await getGitHubFileInfo(fileType);
-                    
+
                     const response = await fetch(url);
                     if (!response.ok) {
                         throw new Error(`Failed to fetch ${url}: ${response.status}`);
@@ -1160,14 +1187,14 @@
                     const workbook = new ExcelJS.Workbook();
                     await workbook.xlsx.load(arrayBuffer);
                     uploadedFiles[fileType] = workbook;
-                    
+
                     // Update UI with GitHub metadata
                     const groupId = `group-${fileType.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
                     const statusId = `${fileType.replace(/([A-Z])/g, '-$1').toLowerCase()}-status`;
-                    
+
                     document.getElementById(groupId).classList.add('uploaded');
                     const statusElement = document.getElementById(statusId);
-                    
+
                     // Format file size
                     const formatFileSize = (bytes) => {
                         if (bytes === 0) return '0 Bytes';
@@ -1176,7 +1203,7 @@
                         const i = Math.floor(Math.log(bytes) / Math.log(k));
                         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
                     };
-                    
+
                     // Format date
                     const formatDate = (date) => {
                         const year = date.getFullYear();
@@ -1187,7 +1214,7 @@
                         const seconds = String(date.getSeconds()).padStart(2, '0');
                         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
                     };
-                    
+
                     if (gitHubInfo) {
                         statusElement.innerHTML = `
                             <div style="font-size: 0.9em; color: #059669;">
@@ -1208,7 +1235,7 @@
                         `;
                     }
                     statusElement.classList.add('show');
-                    
+
                     return { success: true, fileType, filename: url.split('/').pop() };
                 } catch (error) {
                     console.error(`Error loading ${fileType}:`, error);
@@ -1217,7 +1244,7 @@
             });
 
             const results = await Promise.all(loadPromises);
-            
+
             // Enable process button if at least one file loaded successfully
             const successCount = results.filter(r => r.success).length;
             if (successCount > 0) {
@@ -1229,17 +1256,17 @@
         });
 
         // Filter option handlers
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const filterOptions = document.querySelectorAll('.filter-option');
             const radioButtons = document.querySelectorAll('input[name="filter-type"]');
-            
+
             radioButtons.forEach(radio => {
-                radio.addEventListener('change', function() {
+                radio.addEventListener('change', function () {
                     filterOptions.forEach(option => option.classList.remove('selected'));
                     this.closest('.filter-option').classList.add('selected');
                 });
             });
-            
+
             // Set initial selected state
             const checkedRadio = document.querySelector('input[name="filter-type"]:checked');
             if (checkedRadio) {
@@ -1250,28 +1277,28 @@
         async function handleFileUpload(event, fileType) {
             const file = event.target.files[0];
             if (file) {
-                    try {
+                try {
                     const workbook = new ExcelJS.Workbook();
                     const arrayBuffer = await file.arrayBuffer();
                     await workbook.xlsx.load(arrayBuffer);
-                        uploadedFiles[fileType] = workbook;
-                        
-                        // Update UI
-                        const groupId = `group-${fileType.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-                        const statusId = `${fileType.replace(/([A-Z])/g, '-$1').toLowerCase()}-status`;
-                        
-                        document.getElementById(groupId).classList.add('uploaded');
-                        const statusElement = document.getElementById(statusId);
-                        statusElement.textContent = `✅ ${file.name} uploaded successfully`;
-                        statusElement.classList.add('show');
-                        
-                        // Enable process button if at least one file is uploaded
-                        if (uploadedFiles.netask || uploadedFiles.manualFrt || uploadedFiles.cmOperation || uploadedFiles.owsFrt) {
-                            document.getElementById('process-button').disabled = false;
-                        }
-                    } catch (error) {
-                        showMessage(`Error reading ${file.name}: ${error.message}`, 'error');
+                    uploadedFiles[fileType] = workbook;
+
+                    // Update UI
+                    const groupId = `group-${fileType.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                    const statusId = `${fileType.replace(/([A-Z])/g, '-$1').toLowerCase()}-status`;
+
+                    document.getElementById(groupId).classList.add('uploaded');
+                    const statusElement = document.getElementById(statusId);
+                    statusElement.textContent = `✅ ${file.name} uploaded successfully`;
+                    statusElement.classList.add('show');
+
+                    // Enable process button if at least one file is uploaded
+                    if (uploadedFiles.netask || uploadedFiles.manualFrt || uploadedFiles.cmOperation || uploadedFiles.owsFrt) {
+                        document.getElementById('process-button').disabled = false;
                     }
+                } catch (error) {
+                    showMessage(`Error reading ${file.name}: ${error.message}`, 'error');
+                }
             }
         }
 
@@ -1279,8 +1306,8 @@
         function getTodayFormatted() {
             const today = new Date();
             const day = today.getDate().toString().padStart(2, '0');
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const month = months[today.getMonth()];
             return `${day} ${month}`;
         }
@@ -1290,34 +1317,34 @@
             if (!dateValue || dateValue === '' || dateValue === '-' || dateValue === null) {
                 return null;
             }
-            
+
             try {
                 const dateStr = dateValue.toString().trim();
-                
+
                 // Handle YYYY-MM-DD HH:mm:ss format
                 const standardMatch = dateStr.match(/^(\d{4})-\d{2}-\d{2}/);
                 if (standardMatch) {
                     return parseInt(standardMatch[1]);
                 }
-                
+
                 // Handle MM/DD/YYYY HH:mm:ss format
                 const mmddyyyyMatch = dateStr.match(/^\d{1,2}\/\d{1,2}\/(\d{4})/);
                 if (mmddyyyyMatch) {
                     return parseInt(mmddyyyyMatch[1]);
                 }
-                
+
                 // Handle DD/MM/YYYY HH:mm:ss format
                 const ddmmyyyyMatch = dateStr.match(/^\d{1,2}\/\d{1,2}\/(\d{4})/);
                 if (ddmmyyyyMatch) {
                     return parseInt(ddmmyyyyMatch[1]);
                 }
-                
+
                 // Try to parse as date object
                 const date = new Date(dateStr);
                 if (!isNaN(date.getTime())) {
                     return date.getFullYear();
                 }
-                
+
                 return null;
             } catch (error) {
                 console.warn('Error extracting year:', error);
@@ -1330,41 +1357,41 @@
             if (!dateValue || dateValue === '' || dateValue === '-' || dateValue === null) {
                 return null;
             }
-            
+
             const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                              'July', 'August', 'September', 'October', 'November', 'December'];
-            
+                'July', 'August', 'September', 'October', 'November', 'December'];
+
             try {
                 const dateStr = dateValue.toString().trim();
                 let month = null;
-                
+
                 // Handle YYYY-MM-DD HH:mm:ss format
                 const standardMatch = dateStr.match(/^\d{4}-(\d{2})-\d{2}/);
                 if (standardMatch) {
                     month = parseInt(standardMatch[1]) - 1;
                     return monthNames[month];
                 }
-                
+
                 // Handle MM/DD/YYYY HH:mm:ss format
                 const mmddyyyyMatch = dateStr.match(/^(\d{1,2})\/\d{1,2}\/\d{4}/);
                 if (mmddyyyyMatch) {
                     month = parseInt(mmddyyyyMatch[1]) - 1;
                     return monthNames[month];
                 }
-                
+
                 // Handle DD/MM/YYYY HH:mm:ss format (assuming second number is month)
                 const ddmmyyyyMatch = dateStr.match(/^\d{1,2}\/(\d{1,2})\/\d{4}/);
                 if (ddmmyyyyMatch) {
                     month = parseInt(ddmmyyyyMatch[1]) - 1;
                     return monthNames[month];
                 }
-                
+
                 // Try to parse as date object
                 const date = new Date(dateStr);
                 if (!isNaN(date.getTime())) {
                     return monthNames[date.getMonth()];
                 }
-                
+
                 return null;
             } catch (error) {
                 console.warn('Error extracting month name:', error);
@@ -1375,29 +1402,29 @@
         // Helper function to format date strings to YYYY-MM-DD HH:mm:ss without any timezone conversion
         function formatDateStringToStandard(value) {
             if (!value || value === '' || value === '-') return value;
-            
+
             try {
                 const stringValue = value.toString().trim();
-                
+
                 // If already in YYYY-MM-DD HH:mm:ss format, return as is
                 if (stringValue.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
                     return stringValue;
                 }
-                
+
                 // Handle MM/DD/YYYY HH:mm:ss format (like 09/17/2023 11:59:00)
                 const mmddyyyyMatch = stringValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$/);
                 if (mmddyyyyMatch) {
                     const [, month, day, year, hours, minutes, seconds] = mmddyyyyMatch;
                     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hours.padStart(2, '0')}:${minutes}:${seconds}`;
                 }
-                
+
                 // Handle DD/MM/YYYY HH:mm:ss format
                 const ddmmyyyyMatch = stringValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$/);
                 if (ddmmyyyyMatch) {
                     const [, day, month, year, hours, minutes, seconds] = ddmmyyyyMatch;
                     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hours.padStart(2, '0')}:${minutes}:${seconds}`;
                 }
-                
+
                 // For any other format, return as-is to avoid any timezone conversion
                 return stringValue;
             } catch (error) {
@@ -1411,7 +1438,7 @@
             if (!value || value === null || value === '') {
                 return null;
             }
-            
+
             // Use the new formatting function to preserve exact time
             return formatDateStringToStandard(value);
         }
@@ -1420,17 +1447,17 @@
         function worksheetToJson(worksheet) {
             const jsonData = [];
             const headers = [];
-            
+
             // Get headers from first row
             const firstRow = worksheet.getRow(1);
             firstRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
                 headers[colNumber - 1] = cell.value || '';
             });
-            
+
             // Process data rows
             worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
                 if (rowNumber === 1) return; // Skip header row
-                
+
                 const rowData = {};
                 row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
                     const header = headers[colNumber - 1];
@@ -1438,13 +1465,13 @@
                         rowData[header] = cell.value || null;
                     }
                 });
-                
+
                 // Only add row if it has some data
                 if (Object.values(rowData).some(value => value !== null && value !== '')) {
                     jsonData.push(rowData);
                 }
             });
-            
+
             return jsonData;
         }
 
@@ -1476,40 +1503,40 @@
             setTimeout(async () => {
                 try {
                     const result = mergeData();
-                    
+
                     // Create and download the file using Excel.js
                     const buffer = await result.workbook.xlsx.writeBuffer();
-                    const blob = new Blob([buffer], { 
-                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+                    const blob = new Blob([buffer], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                     });
                     const url = URL.createObjectURL(blob);
-                    
+
                     // Update download filename with today's date
                     const todayFormatted = getTodayFormatted();
                     const filename = `Running PCMs - ${todayFormatted}.xlsx`;
-                    
+
                     // Store the merged file data for download
                     window.mergedFileData = {
                         url: url,
                         filename: filename
                     };
-                    
+
                     // Set up download button to show modal
                     const downloadButton = document.getElementById('download-button');
                     downloadButton.href = '#';
-                    downloadButton.onclick = function(e) {
+                    downloadButton.onclick = function (e) {
                         e.preventDefault();
                         showDownloadModal();
                     };
                     document.getElementById('download-section').style.display = 'block';
-                    
+
                     // Show statistics
                     document.getElementById('total-records').textContent = result.stats.totalRecords;
                     document.getElementById('netask-records').textContent = result.stats.netaskRecords;
                     // Show TMS CM Operation records count
                     document.getElementById('tms-only-records').textContent = result.stats.tmsOnlyRecords;
                     document.getElementById('frt-matches').textContent = result.stats.frtMatches;
-                    
+
                     // Show filtered records count if filters were applied
                     if (result.stats.filteredRecords > 0) {
                         document.getElementById('filtered-records').textContent = result.stats.filteredRecords;
@@ -1517,25 +1544,25 @@
                     } else {
                         document.getElementById('filtered-stat').style.display = 'none';
                     }
-                    
+
                     // Update statistics labels based on data sources present
                     const netaskPresent = result.stats.netaskRecords > 0;
                     const tmsPresent = result.stats.tmsOnlyRecords > 0;
-                    
+
                     if (!netaskPresent) {
                         document.querySelector('#statistics .stat-row:nth-child(2) .stat-label').textContent = 'Netask PCMs:';
                         document.querySelector('#statistics .stat-row:nth-child(3) .stat-label').textContent = 'TMS PCMs:';
                     }
                     document.getElementById('statistics').style.display = 'block';
-                    
+
                     // Generate and display HD Feedback report
                     const reportHTML = generateHDFeedbackReport(result.finalData);
                     document.getElementById('feedback-table-container').innerHTML = reportHTML;
                     document.getElementById('hd-feedback-report').style.display = 'block';
-                    
+
                     // Populate filter dropdowns
                     populateSummaryFilters(result.finalData);
-                    
+
                     // Update filter text after Summary section is visible
                     setTimeout(() => {
                         updateSelectedText('year');
@@ -1543,12 +1570,12 @@
                         updateSelectedText('skill');
                         updateSelectedText('region');
                     }, 200);
-                    
+
                     // Update success message based on filter type and data source
                     const selectedFilter = document.querySelector('input[name="filter-type"]:checked').value;
                     const includesNetaskData = result.stats.netaskRecords > 0;
                     const includesTmsData = result.stats.tmsOnlyRecords > 0;
-                    
+
                     let message = 'Files processed successfully!';
                     if (selectedFilter === 'running') {
                         message += ' (Running PCMs only)';
@@ -1556,9 +1583,9 @@
                     if (!includesNetaskData) {
                         message += ' (TMS data only)';
                     }
-                    
+
                     showMessage(message, 'success');
-                    
+
                     button.classList.remove('processing');
                     button.textContent = 'Process Merge Files';
                     button.disabled = false;
@@ -1592,7 +1619,7 @@
             if (uploadedFiles.netask) {
                 const netaskWorksheet = uploadedFiles.netask.worksheets[0];
                 netaskData = worksheetToJson(netaskWorksheet);
-                
+
                 // Apply Netask filter if "Running PCMs Only" is selected
                 if (isRunningOnly) {
                     const originalCount = netaskData.length;
@@ -1603,13 +1630,13 @@
                     stats.filteredRecords = originalCount - netaskData.length;
                 }
             }
-            
+
             stats.netaskRecords = netaskData.length;
 
             // Get data from other files if available
-            let cmData = uploadedFiles.cmOperation ? 
+            let cmData = uploadedFiles.cmOperation ?
                 worksheetToJson(uploadedFiles.cmOperation.worksheets[0]) : [];
-            
+
             // Apply TMS filters if "Running PCMs Only" is selected
             if (isRunningOnly) {
                 // Filter TMS CM Operation: Status = "Running" AND PCM Status != "Resolve"
@@ -1619,11 +1646,11 @@
                     return status === 'Running' && pcmStatus !== 'Resolve';
                 });
             }
-            
-            const frtData = uploadedFiles.owsFrt ? 
+
+            const frtData = uploadedFiles.owsFrt ?
                 worksheetToJson(uploadedFiles.owsFrt.worksheets[0]) : [];
-            
-            const manualFrtData = uploadedFiles.manualFrt ? 
+
+            const manualFrtData = uploadedFiles.manualFrt ?
                 worksheetToJson(uploadedFiles.manualFrt.worksheets[0]) : [];
 
             // Build FRT lookup map using WO ID(Process TT) as key
@@ -1635,7 +1662,7 @@
                     frtMap.set(String(woId), row);
                 }
             });
-            
+
             // Build Manual FRT lookup map using Order ID as key
             const manualFrtMap = new Map();
             manualFrtData.forEach(row => {
@@ -1659,7 +1686,7 @@
                 // Add OWS FRT data from OWS FRT file or Manual FRT file
                 if (frtData.length > 0 && orderId && frtMap.has(orderId)) {
                     const frtRow = frtMap.get(orderId);
-                    
+
                     // Add Fault Recovery Time from OWS FRT file
                     const frtValue = frtRow['Fault Recovery Time(Process TT)'] || frtRow['Fault Recovery Time'];
                     if (frtValue) {
@@ -1668,7 +1695,7 @@
                     } else {
                         rowWithFrt['OWS FRT'] = null;
                     }
-                    
+
                     // Fill missing Region from FRT file
                     if (!rowWithFrt['Region'] || rowWithFrt['Region'] === null || rowWithFrt['Region'] === '') {
                         const frtRegion = frtRow['Region(Create TT)'];
@@ -1676,7 +1703,7 @@
                             rowWithFrt['Region'] = frtRegion;
                         }
                     }
-                    
+
                     // Fill missing Site ID from FRT file
                     if (!rowWithFrt['Site ID'] || rowWithFrt['Site ID'] === null || rowWithFrt['Site ID'] === '') {
                         const frtSiteId = frtRow['Site ID(Create TT)'];
@@ -1684,7 +1711,7 @@
                             rowWithFrt['Site ID'] = frtSiteId;
                         }
                     }
-                    
+
                     // Fill missing Site Name from FRT file
                     if (!rowWithFrt['Site Name'] || rowWithFrt['Site Name'] === null || rowWithFrt['Site Name'] === '') {
                         const frtSiteName = frtRow['Site Name(Create TT)'];
@@ -1705,14 +1732,14 @@
                 } else if (frtData.length > 0 || manualFrtData.length > 0) {
                     rowWithFrt['OWS FRT'] = null;
                 }
-                
+
                 // Calculate FRT Remarks
-                const ticketCreatedBy = frtData.length > 0 && orderId && frtMap.has(orderId) 
-                    ? String(frtMap.get(orderId)['Ticket Created By'] || '').trim() 
+                const ticketCreatedBy = frtData.length > 0 && orderId && frtMap.has(orderId)
+                    ? String(frtMap.get(orderId)['Ticket Created By'] || '').trim()
                     : '';
                 const owsFrtValue = rowWithFrt['OWS FRT'];
                 const systemCreators = ['System', 'user:System', 'System_Critical'];
-                
+
                 if (systemCreators.includes(ticketCreatedBy) && owsFrtValue && owsFrtValue !== null && owsFrtValue !== '') {
                     rowWithFrt['FRT Remarks'] = 'FRT Available';
                 } else if (systemCreators.includes(ticketCreatedBy) && (owsFrtValue === null || owsFrtValue === undefined || owsFrtValue === '')) {
@@ -1723,20 +1750,20 @@
                         rowWithFrt['FRT Remarks'] = 'FRT Available';
                     } else {
                         rowWithFrt['FRT Remarks'] = 'Manual FRT';
-                        
+
                         // Check for HC PCM conditions
                         const ttType = String(rowWithFrt['TT Type'] || '').trim();
                         const title = String(rowWithFrt['Title'] || '').trim();
                         const alarmName = String(rowWithFrt['Alarm Name'] || '').trim();
-                        
-                        if (ttType === 'MW_HC' || 
-                            title.includes('HC') || title.includes('PT:') || 
+
+                        if (ttType === 'MW_HC' ||
+                            title.includes('HC') || title.includes('PT:') ||
                             alarmName.includes('Health')) {
                             rowWithFrt['FRT Remarks'] = 'HC PCM';
                         }
                     }
                 }
-                
+
                 // Calculate PCM Owner
                 const updatedOwner = String(rowWithFrt['Updated Owner'] || '').trim();
                 if (!updatedOwner || updatedOwner === '' || updatedOwner === 'FLM' || updatedOwner === 'FLM_EM') {
@@ -1744,6 +1771,64 @@
                 } else {
                     rowWithFrt['PCM Owner'] = 'Updated out of FLM';
                 }
+
+                // Calculate Domain based on Impact column
+                const impactValue = String(rowWithFrt['Impact'] || '').trim();
+                let domain = null;
+
+                if (impactValue) {
+                    // Check for other domains first (before Access) to avoid conflicts
+                    if (/IBS/i.test(impactValue)) {
+                        domain = 'IBS';
+                    }
+                    else if (/Wifi/i.test(impactValue)) {
+                        domain = 'Wifi';
+                    }
+                    else if (/TX/i.test(impactValue)) {
+                        domain = 'TX';
+                    }
+                    else if (/DWDM/i.test(impactValue)) {
+                        domain = 'DWDM';
+                    }
+                    else if (/IPRAN/i.test(impactValue)) {
+                        domain = 'IPRAN';
+                    }
+                    else if (/CS CORE/i.test(impactValue)) {
+                        domain = 'CS CORE';
+                    }
+                    else if (/ISP/i.test(impactValue)) {
+                        domain = 'ISP';
+                    }
+                    else if (/BNG/i.test(impactValue)) {
+                        domain = 'BNG';
+                    }
+                    else if (/IPBB/i.test(impactValue)) {
+                        domain = 'IPBB';
+                    }
+                    // Check for Access domain (2G, 3G, LTE, 5G) - using looser pattern to match with underscores
+                    else if (/(2G|3G|LTE|5G)/i.test(impactValue)) {
+                        domain = 'Access';
+                    }
+                    // Check for SA or NSA as standalone words only (exact match, case insensitive)
+                    else if (/^(SA|NSA)$/i.test(impactValue)) {
+                        domain = 'Access';
+                    }
+                }
+                rowWithFrt['Domain'] = domain;
+
+                // Calculate Impact Service based on Impact column
+                let impactService = null;
+                if (impactValue) {
+                    // Check for NSA first (more specific)
+                    if (/NSA/i.test(impactValue)) {
+                        impactService = 'NSA';
+                    }
+                    // Check for SA (but not as part of NSA)
+                    else if (/SA/i.test(impactValue) && !/NSA/i.test(impactValue)) {
+                        impactService = 'SA';
+                    }
+                }
+                rowWithFrt['Impact Service'] = impactService;
 
                 return rowWithFrt;
             });
@@ -1754,10 +1839,10 @@
             const netaskOrderIds = new Set(
                 netaskData.map(row => String(row['Order ID'] || '')).filter(id => id)
             );
-            
+
             // Get all unique OWS Order IDs from TMS CM Operation file that don't exist in Netask
             const allTmsOrderIds = new Set();
-            
+
             // Add CM Operation Order IDs  
             cmData.forEach(row => {
                 const owsOrderId = String(row['OWS Order ID'] || '');
@@ -1768,7 +1853,7 @@
 
             // Create lookup map for TMS CM Operation file
             const cmMap = new Map();
-            
+
             cmData.forEach(row => {
                 const owsOrderId = String(row['OWS Order ID'] || '');
                 if (owsOrderId) {
@@ -1780,12 +1865,12 @@
             const section2Data = Array.from(allTmsOrderIds).map(owsOrderId => {
                 const convertedRow = {};
                 const hasCmData = cmMap.has(owsOrderId);
-                
+
                 // Track data source
                 if (hasCmData) {
                     stats.cmOperationOnly++;
                 }
-                
+
                 // Initialize all Netask columns with null
                 Object.keys(columnMapping).forEach(netaskCol => {
                     convertedRow[netaskCol] = null;
@@ -1800,14 +1885,14 @@
                             convertedRow[netaskCol] = cmRow[cmCol];
                         }
                     });
-                    
+
                     // Special handling for Status column: use CM Status
                     const cmStatus = cmRow['CM Status'];
                     if (cmStatus !== null && cmStatus !== undefined && cmStatus !== '') {
                         convertedRow['Status'] = cmStatus;
                     }
                 }
-                
+
                 // Replace Region_5_H with Region_5
                 if (convertedRow['Region'] === 'Region_5_H') {
                     convertedRow['Region'] = 'Region_5';
@@ -1816,7 +1901,7 @@
                 // Add OWS FRT data from OWS FRT file or Manual FRT file
                 if (frtData.length > 0 && owsOrderId && frtMap.has(owsOrderId)) {
                     const frtRow = frtMap.get(owsOrderId);
-                    
+
                     // Add Fault Recovery Time from OWS FRT file
                     const frtValue = frtRow['Fault Recovery Time(Process TT)'] || frtRow['Fault Recovery Time'];
                     if (frtValue) {
@@ -1825,7 +1910,7 @@
                     } else {
                         convertedRow['OWS FRT'] = null;
                     }
-                    
+
                     // Fill missing Region from FRT file
                     if (!convertedRow['Region'] || convertedRow['Region'] === null || convertedRow['Region'] === '') {
                         const frtRegion = frtRow['Region(Create TT)'];
@@ -1833,7 +1918,7 @@
                             convertedRow['Region'] = frtRegion;
                         }
                     }
-                    
+
                     // Fill missing Site ID from FRT file
                     if (!convertedRow['Site ID'] || convertedRow['Site ID'] === null || convertedRow['Site ID'] === '') {
                         const frtSiteId = frtRow['Site ID(Create TT)'];
@@ -1841,7 +1926,7 @@
                             convertedRow['Site ID'] = frtSiteId;
                         }
                     }
-                    
+
                     // Fill missing Site Name from FRT file
                     if (!convertedRow['Site Name'] || convertedRow['Site Name'] === null || convertedRow['Site Name'] === '') {
                         const frtSiteName = frtRow['Site Name(Create TT)'];
@@ -1862,14 +1947,14 @@
                 } else if (frtData.length > 0 || manualFrtData.length > 0) {
                     convertedRow['OWS FRT'] = null;
                 }
-                
+
                 // Calculate FRT Remarks
-                const ticketCreatedBy = frtData.length > 0 && owsOrderId && frtMap.has(owsOrderId) 
-                    ? String(frtMap.get(owsOrderId)['Ticket Created By'] || '').trim() 
+                const ticketCreatedBy = frtData.length > 0 && owsOrderId && frtMap.has(owsOrderId)
+                    ? String(frtMap.get(owsOrderId)['Ticket Created By'] || '').trim()
                     : '';
                 const owsFrtValue = convertedRow['OWS FRT'];
                 const systemCreators = ['System', 'user:System', 'System_Critical'];
-                
+
                 if (systemCreators.includes(ticketCreatedBy) && owsFrtValue && owsFrtValue !== null && owsFrtValue !== '') {
                     convertedRow['FRT Remarks'] = 'FRT Available';
                 } else if (systemCreators.includes(ticketCreatedBy) && (owsFrtValue === null || owsFrtValue === undefined || owsFrtValue === '')) {
@@ -1880,20 +1965,20 @@
                         convertedRow['FRT Remarks'] = 'FRT Available';
                     } else {
                         convertedRow['FRT Remarks'] = 'Manual FRT';
-                        
+
                         // Check for HC PCM conditions
                         const ttType = String(convertedRow['TT Type'] || '').trim();
                         const title = String(convertedRow['Title'] || '').trim();
                         const alarmName = String(convertedRow['Alarm Name'] || '').trim();
-                        
-                        if (ttType === 'MW_HC' || 
-                            title.includes('HC') || title.includes('PT:') || 
+
+                        if (ttType === 'MW_HC' ||
+                            title.includes('HC') || title.includes('PT:') ||
                             alarmName.includes('Health')) {
                             convertedRow['FRT Remarks'] = 'HC PCM';
                         }
                     }
                 }
-                
+
                 // Calculate PCM Owner
                 const updatedOwner = String(convertedRow['Updated Owner'] || '').trim();
                 if (!updatedOwner || updatedOwner === '' || updatedOwner === 'FLM' || updatedOwner === 'FLM_EM') {
@@ -1901,6 +1986,64 @@
                 } else {
                     convertedRow['PCM Owner'] = 'Updated out of FLM';
                 }
+
+                // Calculate Domain based on Impact column
+                const impactValue = String(convertedRow['Impact'] || '').trim();
+                let domain = null;
+
+                if (impactValue) {
+                    // Check for other domains first (before Access) to avoid conflicts
+                    if (/IBS/i.test(impactValue)) {
+                        domain = 'IBS';
+                    }
+                    else if (/Wifi/i.test(impactValue)) {
+                        domain = 'Wifi';
+                    }
+                    else if (/TX/i.test(impactValue)) {
+                        domain = 'TX';
+                    }
+                    else if (/DWDM/i.test(impactValue)) {
+                        domain = 'DWDM';
+                    }
+                    else if (/IPRAN/i.test(impactValue)) {
+                        domain = 'IPRAN';
+                    }
+                    else if (/CS CORE/i.test(impactValue)) {
+                        domain = 'CS CORE';
+                    }
+                    else if (/ISP/i.test(impactValue)) {
+                        domain = 'ISP';
+                    }
+                    else if (/BNG/i.test(impactValue)) {
+                        domain = 'BNG';
+                    }
+                    else if (/IPBB/i.test(impactValue)) {
+                        domain = 'IPBB';
+                    }
+                    // Check for Access domain (2G, 3G, LTE, 5G) - using looser pattern to match with underscores
+                    else if (/(2G|3G|LTE|5G)/i.test(impactValue)) {
+                        domain = 'Access';
+                    }
+                    // Check for SA or NSA as standalone words only (exact match, case insensitive)
+                    else if (/^(SA|NSA)$/i.test(impactValue)) {
+                        domain = 'Access';
+                    }
+                }
+                convertedRow['Domain'] = domain;
+
+                // Calculate Impact Service based on Impact column
+                let impactService = null;
+                if (impactValue) {
+                    // Check for NSA first (more specific)
+                    if (/NSA/i.test(impactValue)) {
+                        impactService = 'NSA';
+                    }
+                    // Check for SA (but not as part of NSA)
+                    else if (/SA/i.test(impactValue) && !/NSA/i.test(impactValue)) {
+                        impactService = 'SA';
+                    }
+                }
+                convertedRow['Impact Service'] = impactService;
 
                 // Fill hardcoded values for Section 2 records only
                 convertedRow['Sub Project'] = 'LATIS';
@@ -1920,24 +2063,26 @@
             // Create formatted Excel workbook
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Running PCMs');
-            
+
             // Build headers based on uploaded files and available data
             let headers = Object.keys(columnMapping);
-            
+
             // Add PCM Source column
             headers.push('PCM Source');
-            
+
             // Add OWS FRT column if FRT file or Manual FRT file was uploaded
             if (frtData.length > 0 || manualFrtData.length > 0) {
                 headers.push('OWS FRT');
             }
-            
+
             // Add PCM Year, PCM Month, FRT Remarks, and PCM Owner as the last columns
             headers.push('PCM Year');
             headers.push('PCM Month');
             headers.push('FRT Remarks');
             headers.push('PCM Owner');
-            
+            headers.push('Domain');
+            headers.push('Impact Service');
+
             // Add PCM Source values and calculate PCM Year/Month for each section
             // Note: FRT Remarks is already calculated in section1Data and section2Data
             section1Data.forEach(row => {
@@ -1947,7 +2092,7 @@
                 row['PCM Year'] = extractYear(createdAt);
                 row['PCM Month'] = extractMonthName(createdAt);
             });
-            
+
             section2Data.forEach(row => {
                 row['PCM Source'] = 'TMS';
                 // Calculate PCM Year and PCM Month from Created At
@@ -1955,9 +2100,9 @@
                 row['PCM Year'] = extractYear(createdAt);
                 row['PCM Month'] = extractMonthName(createdAt);
             });
-            
 
-            
+
+
             // Ensure all data rows have the same columns as headers
             finalData.forEach(row => {
                 headers.forEach(header => {
@@ -1966,11 +2111,11 @@
                     }
                 });
             });
-            
+
             // Define date/time columns that need formatting
             const dateTimeColumns = [
                 'Created At',
-                'Last Update', 
+                'Last Update',
                 'SLA',
                 'Create Fault First Time Occured',
                 'Alarm Time',
@@ -1983,11 +2128,11 @@
                 'Completed',
                 'OWS FRT'
             ];
-            
+
             // Add headers with formatting (only for columns with data)
             const headerRow = worksheet.addRow(headers);
             headerRow.height = 25;
-            
+
             // Apply formatting to all header cells (including empty ones)
             headerRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
                 if (colNumber <= headers.length) {
@@ -2002,7 +2147,7 @@
                     };
                 }
             });
-            
+
             // Add Section 1 data (Netask records)
             if (section1Data.length > 0) {
                 section1Data.forEach(row => {
@@ -2015,7 +2160,7 @@
                         return value;
                     });
                     const dataRow = worksheet.addRow(rowValues);
-                    
+
                     // Apply text alignment to each cell (including empty cells)
                     dataRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
                         const header = headers[colNumber - 1];
@@ -2037,7 +2182,7 @@
                     });
                 });
             }
-            
+
             // Add Section 2 data (TMS-only records)
             if (section2Data.length > 0) {
                 section2Data.forEach(row => {
@@ -2050,14 +2195,14 @@
                         return value;
                     });
                     const dataRow = worksheet.addRow(rowValues);
-                    
+
                     // Apply text alignment to each cell (including empty cells)
                     dataRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
                         const header = headers[colNumber - 1];
                         if (header === 'Title') {
                             // Title column: left alignment for data rows
                             cell.alignment = { horizontal: 'left', vertical: 'middle' };
-                } else {
+                        } else {
                             // All other columns: center alignment
                             cell.alignment = { horizontal: 'center', vertical: 'middle' };
                         }
@@ -2072,20 +2217,20 @@
                     });
                 });
             }
-            
+
             // Section 3 data (FRT-only records) is no longer supported
-            
+
             // Auto-fit columns and apply date formatting where needed
             headers.forEach((header, index) => {
                 const column = worksheet.getColumn(index + 1);
                 column.width = Math.min(Math.max(header.length + 2, 12), 50);
-                
+
                 // Apply date format to specific columns
                 if (dateTimeColumns.includes(header)) {
                     column.numFmt = 'YYYY-MM-DD HH:mm:ss';
                 }
             });
-            
+
             // Apply proper date formatting to preserve exact time values without timezone conversion
             for (let rowIndex = 2; rowIndex <= finalData.length + 1; rowIndex++) {
                 dateTimeColumns.forEach(header => {
@@ -2102,7 +2247,7 @@
                     }
                 });
             }
-            
+
             // Borders applied to all cells for professional appearance
 
             return { workbook: workbook, stats: stats, finalData: finalData };
@@ -2110,12 +2255,12 @@
 
         function showMessage(message, type) {
             const messageElement = document.getElementById('status-message');
-            
+
             // Clear any existing timeout
             if (messageElement.hideTimeout) {
                 clearTimeout(messageElement.hideTimeout);
             }
-            
+
             // Create message content with close button
             messageElement.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
@@ -2123,17 +2268,17 @@
                     <button onclick="hideMessage()" style="background: none; border: none; color: inherit; cursor: pointer; font-size: 18px; opacity: 0.7; padding: 0; line-height: 1;" title="Close">×</button>
                 </div>
             `;
-            
+
             messageElement.className = `status-message ${type}`;
             messageElement.style.display = 'block';
-            
+
             // Auto-hide success and info messages after 4 seconds
             if (type === 'success' || type === 'info') {
                 messageElement.hideTimeout = setTimeout(() => {
                     hideMessage();
                 }, 4000);
             }
-            
+
             // Auto-hide error messages after 6 seconds
             if (type === 'error') {
                 messageElement.hideTimeout = setTimeout(() => {
@@ -2145,7 +2290,7 @@
         function hideMessage() {
             const messageElement = document.getElementById('status-message');
             messageElement.classList.add('fadeOut');
-            
+
             setTimeout(() => {
                 messageElement.style.display = 'none';
                 messageElement.classList.remove('fadeOut');
@@ -2155,7 +2300,7 @@
         function generateHDFeedbackReport(finalData) {
             // Valid FRT Remarks values
             const validFrtRemarks = ['Alarm Still Active', 'FRT Available', 'Manual FRT', 'HC PCM'];
-            
+
             // Group data by PCM Owner and FRT Remarks
             const reportData = {
                 'Running under FLM': {
@@ -2175,15 +2320,15 @@
             // Get all unique regions and check if there are any empty/null regions
             const allRegions = finalData.map(row => row['Region']).filter(region => region);
             const regions = [...new Set(allRegions)].sort();
-            
+
             // Check if there are any empty/null regions (Stuck values)
             const hasStuckValues = finalData.some(row => !row['Region'] || row['Region'] === null || row['Region'] === '');
-            
+
             // Only add "Stuck" column if there are actually stuck values
             if (hasStuckValues) {
                 regions.push('Stuck');
             }
-            
+
             // Initialize all regions with 0 counts
             Object.keys(reportData).forEach(owner => {
                 Object.keys(reportData[owner]).forEach(remark => {
@@ -2198,12 +2343,12 @@
                 const owner = row['PCM Owner'] || 'Running under FLM';
                 let remark = row['FRT Remarks'] || 'Manual FRT';
                 const region = row['Region'];
-                
+
                 // Validate FRT Remarks - use 'Manual FRT' as default for invalid values
                 if (!validFrtRemarks.includes(remark)) {
                     remark = 'Manual FRT';
                 }
-                
+
                 // Determine which column to use - "Stuck" for empty/null regions only if Stuck column exists
                 let targetRegion;
                 if (!region || region === null || region === '') {
@@ -2211,7 +2356,7 @@
                 } else {
                     targetRegion = region;
                 }
-                
+
                 // Only count if we have a valid target region
                 if (targetRegion && reportData[owner] && reportData[owner][remark]) {
                     reportData[owner][remark][targetRegion] = (reportData[owner][remark][targetRegion] || 0) + 1;
@@ -2220,7 +2365,7 @@
 
             // Generate HTML table
             let tableHTML = '<table class="feedback-table">';
-            
+
             // Header row
             tableHTML += '<thead><tr>';
             tableHTML += '<th>HD Feedback</th>';
@@ -2238,7 +2383,7 @@
                     const regionTotal = Object.values(reportData[owner]).reduce((sum, remark) => sum + (remark[region] || 0), 0);
                     ownerTotal += regionTotal;
                 });
-                
+
                 const ownerClass = owner === 'Running under FLM' ? 'running-under-flm' : 'updated-out-of-flm';
                 tableHTML += `<tr class="category-row ${ownerClass}">`;
                 tableHTML += `<td><span class="expand-icon">−</span>${owner}</td>`;
@@ -2255,7 +2400,7 @@
                     regions.forEach(region => {
                         remarkTotal += reportData[owner][remark][region] || 0;
                     });
-                    
+
                     tableHTML += `<tr class="subcategory-row ${ownerClass}">`;
                     tableHTML += `<td>${remark}</td>`;
                     regions.forEach(region => {
@@ -2270,7 +2415,7 @@
             // Grand total row
             let grandTotal = 0;
             regions.forEach(region => {
-                const regionGrandTotal = Object.values(reportData).reduce((sum, owner) => 
+                const regionGrandTotal = Object.values(reportData).reduce((sum, owner) =>
                     sum + Object.values(owner).reduce((sum2, remark) => sum2 + (remark[region] || 0), 0), 0);
                 grandTotal += regionGrandTotal;
             });
@@ -2278,7 +2423,7 @@
             tableHTML += '<tr class="total-row">';
             tableHTML += '<td>Grand Total</td>';
             regions.forEach(region => {
-                const regionGrandTotal = Object.values(reportData).reduce((sum, owner) => 
+                const regionGrandTotal = Object.values(reportData).reduce((sum, owner) =>
                     sum + Object.values(owner).reduce((sum2, remark) => sum2 + (remark[region] || 0), 0), 0);
                 tableHTML += `<td>${regionGrandTotal > 0 ? regionGrandTotal : ''}</td>`;
             });
@@ -2286,7 +2431,7 @@
             tableHTML += '</tr>';
 
             tableHTML += '</tbody></table>';
-            
+
             return tableHTML;
         }
 
@@ -2295,7 +2440,7 @@
 
         function populateSummaryFilters(finalData) {
             originalSummaryData = finalData;
-            
+
             // Get unique values for each filter
             const years = [...new Set(finalData.map(row => row['PCM Year']).filter(year => year))].sort();
             const months = [...new Set(finalData.map(row => row['PCM Month']).filter(month => month))].sort();
@@ -2303,15 +2448,15 @@
             // Get unique regions and check if there are any empty/null regions
             const allRegions = finalData.map(row => row['Region']).filter(region => region);
             const regions = [...new Set(allRegions)].sort();
-            
+
             // Check if there are any empty/null regions (Stuck values)
             const hasStuckValues = finalData.some(row => !row['Region'] || row['Region'] === null || row['Region'] === '');
-            
+
             // Only add "Stuck" to filter if there are actually stuck values
             if (hasStuckValues) {
                 regions.push('Stuck');
             }
-            
+
             // Populate PCM Year checkboxes
             const yearContainer = document.getElementById('pcm-year-filters');
             yearContainer.innerHTML = `
@@ -2327,7 +2472,7 @@
                 label.innerHTML = `<input type="checkbox" value="${year}" checked style="margin-right: 8px;"> ${year}`;
                 yearContainer.appendChild(label);
             });
-            
+
             // Populate PCM Month checkboxes
             const monthContainer = document.getElementById('pcm-month-filters');
             monthContainer.innerHTML = `
@@ -2343,7 +2488,7 @@
                 label.innerHTML = `<input type="checkbox" value="${month}" checked style="margin-right: 8px;"> ${month}`;
                 monthContainer.appendChild(label);
             });
-            
+
             // Populate Skill checkboxes
             const skillContainer = document.getElementById('skill-filters');
             skillContainer.innerHTML = `
@@ -2359,7 +2504,7 @@
                 label.innerHTML = `<input type="checkbox" value="${skill}" checked style="margin-right: 8px;"> ${skill}`;
                 skillContainer.appendChild(label);
             });
-            
+
             // Populate Region checkboxes
             const regionContainer = document.getElementById('region-filters');
             regionContainer.innerHTML = `
@@ -2375,51 +2520,51 @@
                 label.innerHTML = `<input type="checkbox" value="${region}" checked style="margin-right: 8px;"> ${region}`;
                 regionContainer.appendChild(label);
             });
-            
+
             // Add dropdown toggle functionality
             setupMultiselectDropdown('year');
             setupMultiselectDropdown('month');
             setupMultiselectDropdown('skill');
             setupMultiselectDropdown('region');
-            
+
             // Add event listeners for "All" checkboxes with a small delay to ensure DOM is ready
             setTimeout(() => {
                 const yearAllCheckbox = document.getElementById('year-all');
                 const monthAllCheckbox = document.getElementById('month-all');
                 const skillAllCheckbox = document.getElementById('skill-all');
                 const regionAllCheckbox = document.getElementById('region-all');
-                
+
                 // "All" checkbox event listeners are now handled in the container event listeners above
-                
+
                 // Initial text updates will happen when Summary section becomes visible
-                
-            // Add event listeners for individual checkboxes using event delegation
-            if (yearContainer) {
-                yearContainer.addEventListener('change', function(e) {
-                    if (e.target.type === 'checkbox') {
-                        if (e.target.id === 'year-all') {
-                            // Handle "All" checkbox
-                            const yearCheckboxes = yearContainer.querySelectorAll('input[type="checkbox"]:not(#year-all)');
-                            yearCheckboxes.forEach(cb => cb.checked = e.target.checked);
-                        } else {
-                            // Handle individual checkbox
-                            const allChecked = Array.from(yearContainer.querySelectorAll('input[type="checkbox"]:not(#year-all)')).every(cb => cb.checked);
-                            const noneChecked = Array.from(yearContainer.querySelectorAll('input[type="checkbox"]:not(#year-all)')).every(cb => !cb.checked);
-                            const yearAllCheckbox = document.getElementById('year-all');
-                            if (yearAllCheckbox) {
-                                yearAllCheckbox.checked = allChecked;
-                                yearAllCheckbox.indeterminate = !allChecked && !noneChecked;
+
+                // Add event listeners for individual checkboxes using event delegation
+                if (yearContainer) {
+                    yearContainer.addEventListener('change', function (e) {
+                        if (e.target.type === 'checkbox') {
+                            if (e.target.id === 'year-all') {
+                                // Handle "All" checkbox
+                                const yearCheckboxes = yearContainer.querySelectorAll('input[type="checkbox"]:not(#year-all)');
+                                yearCheckboxes.forEach(cb => cb.checked = e.target.checked);
+                            } else {
+                                // Handle individual checkbox
+                                const allChecked = Array.from(yearContainer.querySelectorAll('input[type="checkbox"]:not(#year-all)')).every(cb => cb.checked);
+                                const noneChecked = Array.from(yearContainer.querySelectorAll('input[type="checkbox"]:not(#year-all)')).every(cb => !cb.checked);
+                                const yearAllCheckbox = document.getElementById('year-all');
+                                if (yearAllCheckbox) {
+                                    yearAllCheckbox.checked = allChecked;
+                                    yearAllCheckbox.indeterminate = !allChecked && !noneChecked;
+                                }
                             }
+                            // Update text immediately
+                            updateSelectedText('year');
+                            applySummaryFilters();
                         }
-                        // Update text immediately
-                        updateSelectedText('year');
-                        applySummaryFilters();
-                    }
-                });
-            }
-                
+                    });
+                }
+
                 if (monthContainer) {
-                    monthContainer.addEventListener('change', function(e) {
+                    monthContainer.addEventListener('change', function (e) {
                         if (e.target.type === 'checkbox') {
                             if (e.target.id === 'month-all') {
                                 // Handle "All" checkbox
@@ -2441,9 +2586,9 @@
                         }
                     });
                 }
-                
+
                 if (skillContainer) {
-                    skillContainer.addEventListener('change', function(e) {
+                    skillContainer.addEventListener('change', function (e) {
                         if (e.target.type === 'checkbox') {
                             if (e.target.id === 'skill-all') {
                                 // Handle "All" checkbox
@@ -2465,9 +2610,9 @@
                         }
                     });
                 }
-                
+
                 if (regionContainer) {
-                    regionContainer.addEventListener('change', function(e) {
+                    regionContainer.addEventListener('change', function (e) {
                         if (e.target.type === 'checkbox') {
                             if (e.target.id === 'region-all') {
                                 // Handle "All" checkbox
@@ -2494,32 +2639,32 @@
 
         function applySummaryFilters() {
             if (!originalSummaryData) return;
-            
+
             // Only apply filters if the Summary section is visible
             const summarySection = document.getElementById('hd-feedback-report');
             if (!summarySection || summarySection.style.display === 'none') {
                 return;
             }
-            
+
             // Get selected values from checkboxes with null checks
             const yearContainer = document.getElementById('pcm-year-filters');
             const monthContainer = document.getElementById('pcm-month-filters');
             const skillContainer = document.getElementById('skill-filters');
             const regionContainer = document.getElementById('region-filters');
-            
+
             if (!yearContainer || !monthContainer || !skillContainer || !regionContainer) {
                 console.warn('Filter containers not found');
                 return;
             }
-            
+
             const selectedYears = Array.from(yearContainer.querySelectorAll('input[type="checkbox"]:checked:not(#year-all)')).map(cb => cb.value);
             const selectedMonths = Array.from(monthContainer.querySelectorAll('input[type="checkbox"]:checked:not(#month-all)')).map(cb => cb.value);
             const selectedSkills = Array.from(skillContainer.querySelectorAll('input[type="checkbox"]:checked:not(#skill-all)')).map(cb => cb.value);
             const selectedRegions = Array.from(regionContainer.querySelectorAll('input[type="checkbox"]:checked:not(#region-all)')).map(cb => cb.value);
-            
+
             // Check if there are any stuck values in the original data
             const hasStuckValues = originalSummaryData.some(row => !row['Region'] || row['Region'] === null || row['Region'] === '');
-            
+
             // Filter the data based on selected criteria
             let filteredData = originalSummaryData.filter(row => {
                 const yearMatch = selectedYears.length === 0 || selectedYears.includes(String(row['PCM Year']));
@@ -2544,7 +2689,7 @@
 
                 return yearMatch && monthMatch && skillMatch && regionMatch;
             });
-            
+
             // Regenerate the summary table with filtered data
             const reportHTML = generateHDFeedbackReport(filteredData);
             document.getElementById('feedback-table-container').innerHTML = reportHTML;
@@ -2553,8 +2698,8 @@
         function setupMultiselectDropdown(type) {
             const trigger = document.getElementById(`${type}-trigger`);
             const dropdown = document.getElementById(`${type}-dropdown`);
-            
-            trigger.addEventListener('click', function(e) {
+
+            trigger.addEventListener('click', function (e) {
                 e.stopPropagation();
                 // Close other dropdowns
                 document.querySelectorAll('.multiselect-dropdown').forEach(dd => {
@@ -2563,9 +2708,9 @@
                 // Toggle current dropdown
                 dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
             });
-            
+
             // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
                     dropdown.style.display = 'none';
                 }
@@ -2594,7 +2739,7 @@
                     const fileItem = document.createElement('div');
                     fileItem.className = 'input-file-item';
                     fileItem.onclick = () => downloadInputFile(fileType.key);
-                    
+
                     fileItem.innerHTML = `
                         <div class="input-file-icon">${fileType.icon}</div>
                         <div class="input-file-text">
@@ -2602,7 +2747,7 @@
                             <small>Click to download</small>
                         </div>
                     `;
-                    
+
                     inputFilesList.appendChild(fileItem);
                 }
             });
@@ -2632,18 +2777,18 @@
             if (uploadedFiles[fileType]) {
                 const workbook = uploadedFiles[fileType];
                 const filename = getInputFilename(fileType);
-                
-                workbook.xlsx.writeBuffer().then(function(buffer) {
+
+                workbook.xlsx.writeBuffer().then(function (buffer) {
                     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                     const url = URL.createObjectURL(blob);
-                    
+
                     const link = document.createElement('a');
                     link.href = url;
                     link.download = filename;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                    
+
                     URL.revokeObjectURL(url);
                 });
             }
@@ -2660,12 +2805,12 @@
         }
 
         // Set up modal event listeners
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Close modal when clicking X
             document.getElementById('close-download-modal').addEventListener('click', hideDownloadModal);
-            
+
             // Close modal when clicking outside
-            document.getElementById('download-modal').addEventListener('click', function(e) {
+            document.getElementById('download-modal').addEventListener('click', function (e) {
                 if (e.target === this) {
                     hideDownloadModal();
                 }
@@ -2681,24 +2826,24 @@
             if (!summarySection || summarySection.style.display === 'none') {
                 return;
             }
-            
+
             // Handle different ID patterns for year and month vs skill and region
             const containerId = (type === 'year' || type === 'month') ? `pcm-${type}-filters` : `${type}-filters`;
             const container = document.getElementById(containerId);
             const selectedText = document.getElementById(`${type}-selected-text`);
             const allCheckbox = document.getElementById(`${type}-all`);
-            
+
             // Add null checks to prevent errors - silently return if elements don't exist yet
             if (!container || !selectedText || !allCheckbox) {
                 return; // Silently return without warning during initial setup
             }
-            
+
             const individualCheckboxes = container.querySelectorAll(`input[type="checkbox"]:not(#${type}-all)`);
-            
+
             const selectedValues = Array.from(individualCheckboxes)
                 .filter(cb => cb.checked)
                 .map(cb => cb.value);
-            
+
             let newText;
             if (allCheckbox.checked) {
                 newText = `All ${type.charAt(0).toUpperCase() + type.slice(1)}s`;
@@ -2711,10 +2856,11 @@
             } else {
                 newText = `${selectedValues.length} selected`;
             }
-            
+
             selectedText.textContent = newText;
         }
 
     </script>
 </body>
+
 </html>
