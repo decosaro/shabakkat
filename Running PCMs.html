@@ -849,11 +849,18 @@
                     <h3 style="color: #374151; margin-bottom: 15px; font-size: 1.2em;">📋 Summary</h3>
 
                     <div class="filter-section" style="margin-top: 20px; margin-bottom: 20px;">
-                        <h4 style="color: #374151; margin-bottom: 15px; font-size: 1em;">🔍 Summary Filters</h4>
-                        <div class="filter-options" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
-                            <div class="filter-option">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="color: #374151; margin: 0; font-size: 1em;">🔍 Summary Filters</h4>
+                            <button id="clear-filters-btn"
+                                style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9em; transition: all 0.2s ease;">
+                                Clear Filters
+                            </button>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start;">
+                            <div style="min-width: 150px; flex: 0 0 auto;">
                                 <label
-                                    style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">PCM
+                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">PCM
                                     Year</label>
                                 <div class="multiselect-container" style="position: relative;">
                                     <div class="multiselect-trigger" id="year-trigger"
@@ -867,9 +874,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="filter-option">
+                            <div style="min-width: 150px; flex: 0 0 auto;">
                                 <label
-                                    style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">PCM
+                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">PCM
                                     Month</label>
                                 <div class="multiselect-container" style="position: relative;">
                                     <div class="multiselect-trigger" id="month-trigger"
@@ -883,9 +890,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="filter-option">
+                            <div style="min-width: 120px; flex: 0 0 auto;">
                                 <label
-                                    style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">Skill</label>
+                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Skill</label>
                                 <div class="multiselect-container" style="position: relative;">
                                     <div class="multiselect-trigger" id="skill-trigger"
                                         style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
@@ -898,9 +905,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="filter-option">
+                            <div style="min-width: 130px; flex: 0 0 auto;">
                                 <label
-                                    style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151;">Region</label>
+                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Region</label>
                                 <div class="multiselect-container" style="position: relative;">
                                     <div class="multiselect-trigger" id="region-trigger"
                                         style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
@@ -913,40 +920,71 @@
                                     </div>
                                 </div>
                             </div>
+                            <div style="min-width: 130px; flex: 0 0 auto;">
+                                <label
+                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Domain</label>
+                                <div class="multiselect-container" style="position: relative;">
+                                    <div class="multiselect-trigger" id="domain-trigger"
+                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                        <span id="domain-selected-text">All Domains</span>
+                                        <span>▼</span>
+                                    </div>
+                                    <div class="multiselect-dropdown" id="domain-dropdown"
+                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                        <div id="domain-filters" style="padding: 10px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="min-width: 160px; flex: 0 0 auto;">
+                                <label
+                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Impact
+                                    Service</label>
+                                <div class="multiselect-container" style="position: relative;">
+                                    <div class="multiselect-trigger" id="impact-service-trigger"
+                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                        <span id="impact-service-selected-text">All Impact Services</span>
+                                        <span>▼</span>
+                                    </div>
+                                    <div class="multiselect-dropdown" id="impact-service-dropdown"
+                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                        <div id="impact-service-filters" style="padding: 10px;"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div id="feedback-table-container"></div>
                 </div>
 
-                <div id="download-section" class="download-section">
-                    <a id="download-button" class="download-button">
-                        📥 Download
-                    </a>
-                </div>
+                <div id="feedback-table-container"></div>
+            </div>
 
-                <!-- Download Options Modal -->
-                <div id="download-modal" class="modal" style="display: none;">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>📥 Download Options</h3>
-                            <span class="close" id="close-download-modal">&times;</span>
-                        </div>
-                        <div class="modal-body">
-                            <p>Choose what you would like to download:</p>
-                            <div class="download-options">
-                                <button id="download-merged" class="download-option-btn">
-                                    <div class="download-option-icon">📋</div>
-                                    <div class="download-option-text">
-                                        <strong>Merged File</strong>
-                                        <small>Complete merged data with all PCMs</small>
-                                    </div>
-                                </button>
-                                <div class="input-files-section">
-                                    <h4>Input Files</h4>
-                                    <div id="input-files-list" class="input-files-list">
-                                        <!-- Individual input files will be populated here -->
-                                    </div>
+            <div id="download-section" class="download-section">
+                <a id="download-button" class="download-button">
+                    📥 Download
+                </a>
+            </div>
+
+            <!-- Download Options Modal -->
+            <div id="download-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>📥 Download Options</h3>
+                        <span class="close" id="close-download-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Choose what you would like to download:</p>
+                        <div class="download-options">
+                            <button id="download-merged" class="download-option-btn">
+                                <div class="download-option-icon">📋</div>
+                                <div class="download-option-text">
+                                    <strong>Merged File</strong>
+                                    <small>Complete merged data with all PCMs</small>
+                                </div>
+                            </button>
+                            <div class="input-files-section">
+                                <h4>Input Files</h4>
+                                <div id="input-files-list" class="input-files-list">
+                                    <!-- Individual input files will be populated here -->
                                 </div>
                             </div>
                         </div>
@@ -954,6 +992,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Floating notification element -->
@@ -1569,6 +1608,8 @@
                         updateSelectedText('month');
                         updateSelectedText('skill');
                         updateSelectedText('region');
+                        updateSelectedText('domain');
+                        updateSelectedText('impact-service');
                     }, 200);
 
                     // Update success message based on filter type and data source
@@ -2443,7 +2484,13 @@
 
             // Get unique values for each filter
             const years = [...new Set(finalData.map(row => row['PCM Year']).filter(year => year))].sort();
-            const months = [...new Set(finalData.map(row => row['PCM Month']).filter(month => month))].sort();
+
+            // Sort months in chronological order
+            const monthOrder = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            const uniqueMonths = [...new Set(finalData.map(row => row['PCM Month']).filter(month => month))];
+            const months = uniqueMonths.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
+
             const skills = [...new Set(finalData.map(row => row['Skill']).filter(skill => skill))].sort();
             // Get unique regions and check if there are any empty/null regions
             const allRegions = finalData.map(row => row['Region']).filter(region => region);
@@ -2456,6 +2503,10 @@
             if (hasStuckValues) {
                 regions.push('Stuck');
             }
+
+            // Get unique domains and impact services
+            const domains = [...new Set(finalData.map(row => row['Domain']).filter(domain => domain))].sort();
+            const impactServices = [...new Set(finalData.map(row => row['Impact Service']).filter(service => service))].sort();
 
             // Populate PCM Year checkboxes
             const yearContainer = document.getElementById('pcm-year-filters');
@@ -2521,11 +2572,45 @@
                 regionContainer.appendChild(label);
             });
 
+            // Populate Domain checkboxes
+            const domainContainer = document.getElementById('domain-filters');
+            domainContainer.innerHTML = `
+                <label style="display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: 600;">
+                    <input type="checkbox" id="domain-all" checked style="margin-right: 8px;"> All Domains
+                </label>
+            `;
+            domains.forEach(domain => {
+                const label = document.createElement('label');
+                label.style.display = 'block';
+                label.style.marginBottom = '5px';
+                label.style.fontSize = '0.9em';
+                label.innerHTML = `<input type="checkbox" value="${domain}" checked style="margin-right: 8px;"> ${domain}`;
+                domainContainer.appendChild(label);
+            });
+
+            // Populate Impact Service checkboxes
+            const impactServiceContainer = document.getElementById('impact-service-filters');
+            impactServiceContainer.innerHTML = `
+                <label style="display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: 600;">
+                    <input type="checkbox" id="impact-service-all" checked style="margin-right: 8px;"> All Impact Services
+                </label>
+            `;
+            impactServices.forEach(service => {
+                const label = document.createElement('label');
+                label.style.display = 'block';
+                label.style.marginBottom = '5px';
+                label.style.fontSize = '0.9em';
+                label.innerHTML = `<input type="checkbox" value="${service}" checked style="margin-right: 8px;"> ${service}`;
+                impactServiceContainer.appendChild(label);
+            });
+
             // Add dropdown toggle functionality
             setupMultiselectDropdown('year');
             setupMultiselectDropdown('month');
             setupMultiselectDropdown('skill');
             setupMultiselectDropdown('region');
+            setupMultiselectDropdown('domain');
+            setupMultiselectDropdown('impact-service');
 
             // Add event listeners for "All" checkboxes with a small delay to ensure DOM is ready
             setTimeout(() => {
@@ -2558,6 +2643,7 @@
                             }
                             // Update text immediately
                             updateSelectedText('year');
+                            updateDynamicFilters();
                             applySummaryFilters();
                         }
                     });
@@ -2582,6 +2668,7 @@
                             }
                             // Update text immediately
                             updateSelectedText('month');
+                            updateDynamicFilters();
                             applySummaryFilters();
                         }
                     });
@@ -2606,6 +2693,7 @@
                             }
                             // Update text immediately
                             updateSelectedText('skill');
+                            updateDynamicFilters();
                             applySummaryFilters();
                         }
                     });
@@ -2630,6 +2718,53 @@
                             }
                             // Update text immediately
                             updateSelectedText('region');
+                            updateDynamicFilters();
+                            applySummaryFilters();
+                        }
+                    });
+                }
+
+                const domainContainer = document.getElementById('domain-filters');
+                if (domainContainer) {
+                    domainContainer.addEventListener('change', function (e) {
+                        if (e.target.type === 'checkbox') {
+                            if (e.target.id === 'domain-all') {
+                                const domainCheckboxes = domainContainer.querySelectorAll('input[type="checkbox"]:not(#domain-all)');
+                                domainCheckboxes.forEach(cb => cb.checked = e.target.checked);
+                            } else {
+                                const allChecked = Array.from(domainContainer.querySelectorAll('input[type="checkbox"]:not(#domain-all)')).every(cb => cb.checked);
+                                const noneChecked = Array.from(domainContainer.querySelectorAll('input[type="checkbox"]:not(#domain-all)')).every(cb => !cb.checked);
+                                const domainAllCheckbox = document.getElementById('domain-all');
+                                if (domainAllCheckbox) {
+                                    domainAllCheckbox.checked = allChecked;
+                                    domainAllCheckbox.indeterminate = !allChecked && !noneChecked;
+                                }
+                            }
+                            updateSelectedText('domain');
+                            updateDynamicFilters();
+                            applySummaryFilters();
+                        }
+                    });
+                }
+
+                const impactServiceContainer = document.getElementById('impact-service-filters');
+                if (impactServiceContainer) {
+                    impactServiceContainer.addEventListener('change', function (e) {
+                        if (e.target.type === 'checkbox') {
+                            if (e.target.id === 'impact-service-all') {
+                                const impactServiceCheckboxes = impactServiceContainer.querySelectorAll('input[type="checkbox"]:not(#impact-service-all)');
+                                impactServiceCheckboxes.forEach(cb => cb.checked = e.target.checked);
+                            } else {
+                                const allChecked = Array.from(impactServiceContainer.querySelectorAll('input[type="checkbox"]:not(#impact-service-all)')).every(cb => cb.checked);
+                                const noneChecked = Array.from(impactServiceContainer.querySelectorAll('input[type="checkbox"]:not(#impact-service-all)')).every(cb => !cb.checked);
+                                const impactServiceAllCheckbox = document.getElementById('impact-service-all');
+                                if (impactServiceAllCheckbox) {
+                                    impactServiceAllCheckbox.checked = allChecked;
+                                    impactServiceAllCheckbox.indeterminate = !allChecked && !noneChecked;
+                                }
+                            }
+                            updateSelectedText('impact-service');
+                            updateDynamicFilters();
                             applySummaryFilters();
                         }
                     });
@@ -2662,6 +2797,11 @@
             const selectedSkills = Array.from(skillContainer.querySelectorAll('input[type="checkbox"]:checked:not(#skill-all)')).map(cb => cb.value);
             const selectedRegions = Array.from(regionContainer.querySelectorAll('input[type="checkbox"]:checked:not(#region-all)')).map(cb => cb.value);
 
+            const domainContainer = document.getElementById('domain-filters');
+            const impactServiceContainer = document.getElementById('impact-service-filters');
+            const selectedDomains = domainContainer ? Array.from(domainContainer.querySelectorAll('input[type="checkbox"]:checked:not(#domain-all)')).map(cb => cb.value) : [];
+            const selectedImpactServices = impactServiceContainer ? Array.from(impactServiceContainer.querySelectorAll('input[type="checkbox"]:checked:not(#impact-service-all)')).map(cb => cb.value) : [];
+
             // Check if there are any stuck values in the original data
             const hasStuckValues = originalSummaryData.some(row => !row['Region'] || row['Region'] === null || row['Region'] === '');
 
@@ -2670,6 +2810,8 @@
                 const yearMatch = selectedYears.length === 0 || selectedYears.includes(String(row['PCM Year']));
                 const monthMatch = selectedMonths.length === 0 || selectedMonths.includes(String(row['PCM Month']));
                 const skillMatch = selectedSkills.length === 0 || selectedSkills.includes(String(row['Skill']));
+                const domainMatch = selectedDomains.length === 0 || selectedDomains.includes(String(row['Domain']));
+                const impactServiceMatch = selectedImpactServices.length === 0 || selectedImpactServices.includes(String(row['Impact Service']));
 
                 // Handle Region filtering with "Stuck" for empty/null values
                 let regionMatch = true;
@@ -2687,7 +2829,7 @@
                     }
                 }
 
-                return yearMatch && monthMatch && skillMatch && regionMatch;
+                return yearMatch && monthMatch && skillMatch && regionMatch && domainMatch && impactServiceMatch;
             });
 
             // Regenerate the summary table with filtered data
@@ -2818,6 +2960,22 @@
 
             // Download merged file
             document.getElementById('download-merged').addEventListener('click', downloadMergedFile);
+
+            // Clear Filters button
+            const clearFiltersBtn = document.getElementById('clear-filters-btn');
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', clearAllFilters);
+                clearFiltersBtn.addEventListener('mouseenter', function () {
+                    this.style.background = '#dc2626';
+                    this.style.transform = 'translateY(-1px)';
+                    this.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
+                });
+                clearFiltersBtn.addEventListener('mouseleave', function () {
+                    this.style.background = '#ef4444';
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            }
         });
 
         function updateSelectedText(type) {
@@ -2827,15 +2985,26 @@
                 return;
             }
 
-            // Handle different ID patterns for year and month vs skill and region
-            const containerId = (type === 'year' || type === 'month') ? `pcm-${type}-filters` : `${type}-filters`;
+            // Handle different ID patterns
+            let containerId, labelSuffix;
+            if (type === 'year' || type === 'month') {
+                containerId = `pcm-${type}-filters`;
+                labelSuffix = type === 'year' ? 'Years' : 'Months';
+            } else if (type === 'impact-service') {
+                containerId = 'impact-service-filters';
+                labelSuffix = 'Impact Services';
+            } else {
+                containerId = `${type}-filters`;
+                labelSuffix = type.charAt(0).toUpperCase() + type.slice(1) + 's';
+            }
+
             const container = document.getElementById(containerId);
             const selectedText = document.getElementById(`${type}-selected-text`);
             const allCheckbox = document.getElementById(`${type}-all`);
 
             // Add null checks to prevent errors - silently return if elements don't exist yet
             if (!container || !selectedText || !allCheckbox) {
-                return; // Silently return without warning during initial setup
+                return;
             }
 
             const individualCheckboxes = container.querySelectorAll(`input[type="checkbox"]:not(#${type}-all)`);
@@ -2846,9 +3015,9 @@
 
             let newText;
             if (allCheckbox.checked) {
-                newText = `All ${type.charAt(0).toUpperCase() + type.slice(1)}s`;
+                newText = `All ${labelSuffix}`;
             } else if (selectedValues.length === 0) {
-                newText = `No ${type.charAt(0).toUpperCase() + type.slice(1)}s selected`;
+                newText = `No ${labelSuffix} selected`;
             } else if (selectedValues.length === 1) {
                 newText = selectedValues[0];
             } else if (selectedValues.length <= 3) {
@@ -2858,6 +3027,120 @@
             }
 
             selectedText.textContent = newText;
+        }
+
+        function updateDynamicFilters() {
+            if (!originalSummaryData) return;
+
+            // Get currently selected values for all filters
+            const getSelectedValues = (containerId, allId) => {
+                const container = document.getElementById(containerId);
+                if (!container) return [];
+                const allCheckbox = document.getElementById(allId);
+                if (allCheckbox && allCheckbox.checked) return []; // Empty means all selected
+                return Array.from(container.querySelectorAll('input[type="checkbox"]:checked:not(#' + allId + ')')).map(cb => cb.value);
+            };
+
+            const selectedYears = getSelectedValues('pcm-year-filters', 'year-all');
+            const selectedMonths = getSelectedValues('pcm-month-filters', 'month-all');
+            const selectedSkills = getSelectedValues('skill-filters', 'skill-all');
+            const selectedRegions = getSelectedValues('region-filters', 'region-all');
+            const selectedDomains = getSelectedValues('domain-filters', 'domain-all');
+            const selectedImpactServices = getSelectedValues('impact-service-filters', 'impact-service-all');
+
+            // Filter data based on current selections
+            const filteredData = originalSummaryData.filter(row => {
+                const yearMatch = selectedYears.length === 0 || selectedYears.includes(String(row['PCM Year']));
+                const monthMatch = selectedMonths.length === 0 || selectedMonths.includes(String(row['PCM Month']));
+                const skillMatch = selectedSkills.length === 0 || selectedSkills.includes(String(row['Skill']));
+                const regionMatch = selectedRegions.length === 0 || selectedRegions.includes(String(row['Region'])) || (selectedRegions.includes('Stuck') && (!row['Region'] || row['Region'] === null || row['Region'] === ''));
+                const domainMatch = selectedDomains.length === 0 || selectedDomains.includes(String(row['Domain']));
+                const impactServiceMatch = selectedImpactServices.length === 0 || selectedImpactServices.includes(String(row['Impact Service']));
+
+                return yearMatch && monthMatch && skillMatch && regionMatch && domainMatch && impactServiceMatch;
+            });
+
+            // Get available values from filtered data
+            const availableYears = [...new Set(filteredData.map(row => row['PCM Year']).filter(v => v))];
+            const availableMonths = [...new Set(filteredData.map(row => row['PCM Month']).filter(v => v))];
+            const availableSkills = [...new Set(filteredData.map(row => row['Skill']).filter(v => v))];
+            const availableRegions = [...new Set(filteredData.map(row => row['Region']).filter(v => v))];
+            const availableDomains = [...new Set(filteredData.map(row => row['Domain']).filter(v => v))];
+            const availableImpactServices = [...new Set(filteredData.map(row => row['Impact Service']).filter(v => v))];
+
+            // Check if there are stuck values in filtered data
+            const hasStuckInFiltered = filteredData.some(row => !row['Region'] || row['Region'] === null || row['Region'] === '');
+
+            // Update filter options to show/hide based on availability
+            const updateFilterOptions = (containerId, availableValues, allowStuck = false) => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const checkboxes = container.querySelectorAll('input[type="checkbox"]:not([id$="-all"])');
+                checkboxes.forEach(cb => {
+                    const label = cb.parentElement;
+                    const isStuckOption = cb.value === 'Stuck';
+
+                    if (isStuckOption && allowStuck && hasStuckInFiltered) {
+                        label.style.display = 'block';
+                        label.style.opacity = '1';
+                    } else if (isStuckOption && (!allowStuck || !hasStuckInFiltered)) {
+                        label.style.display = 'none';
+                    } else if (availableValues.includes(cb.value)) {
+                        label.style.display = 'block';
+                        label.style.opacity = '1';
+                    } else {
+                        label.style.display = 'none';
+                    }
+                });
+            };
+
+            updateFilterOptions('pcm-year-filters', availableYears.map(String));
+            updateFilterOptions('pcm-month-filters', availableMonths.map(String));
+            updateFilterOptions('skill-filters', availableSkills.map(String));
+            updateFilterOptions('region-filters', availableRegions.map(String), true); // Allow Stuck for regions
+            updateFilterOptions('domain-filters', availableDomains.map(String));
+            updateFilterOptions('impact-service-filters', availableImpactServices.map(String));
+        }
+
+        // Clear Filters function
+        function clearAllFilters() {
+            if (!originalSummaryData) return;
+
+            // Reset all checkboxes to checked state
+            const filterContainers = [
+                'pcm-year-filters',
+                'pcm-month-filters',
+                'skill-filters',
+                'region-filters',
+                'domain-filters',
+                'impact-service-filters'
+            ];
+
+            filterContainers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    cb.checked = true;
+                    cb.indeterminate = false;
+                });
+            });
+
+            // Update all selected text displays
+            updateSelectedText('year');
+            updateSelectedText('month');
+            updateSelectedText('skill');
+            updateSelectedText('region');
+            updateSelectedText('domain');
+            updateSelectedText('impact-service');
+
+            // Reset dynamic filters to show all options
+            updateDynamicFilters();
+
+            // Reapply filters (which will show all data since all are selected)
+            applySummaryFilters();
         }
 
     </script>
