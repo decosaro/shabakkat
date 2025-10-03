@@ -1,4 +1,6 @@
-<html lang="en"><head>
+<html lang="en">
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PCM Process Management</title>
@@ -9,23 +11,23 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f8f9fa;
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
-        
+
         .header {
             background: linear-gradient(135deg, #2c3e50, #34495e);
             color: white;
@@ -33,21 +35,21 @@
             text-align: center;
             border-bottom: 3px solid #e9ecef;
         }
-        
+
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
-        
+
         .header p {
             opacity: 0.9;
             font-size: 1.1rem;
         }
-        
+
         .content {
             padding: 40px;
         }
-        
+
         .section {
             margin-bottom: 40px;
             padding: 25px;
@@ -55,14 +57,14 @@
             border: 1px solid #e9ecef;
             background: #ffffff;
         }
-        
+
         .section h2 {
             color: #2c3e50;
             margin-bottom: 20px;
             font-size: 1.5rem;
             font-weight: 600;
         }
-        
+
         .upload-area {
             border: 2px dashed #dee2e6;
             border-radius: 10px;
@@ -72,33 +74,33 @@
             margin-bottom: 30px;
             transition: all 0.3s ease;
         }
-        
+
         .upload-area:hover {
             border-color: #adb5bd;
             background: #f1f3f5;
         }
-        
+
         .upload-area.dragover {
             border-color: #495057;
             background: #e9ecef;
             transform: scale(1.02);
         }
-        
+
         .upload-area.success {
             border-color: #28a745;
             background: #f0f8f0;
         }
-        
+
         .upload-icon {
             font-size: 3rem;
             color: #6c757d;
             margin-bottom: 20px;
         }
-        
+
         .file-input {
             display: none;
         }
-        
+
         .upload-btn {
             background: #2c3e50;
             color: white;
@@ -110,13 +112,13 @@
             transition: all 0.3s ease;
             font-weight: 500;
         }
-        
+
         .upload-btn:hover {
             background: #34495e;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
-        
+
         .file-info {
             margin-top: 20px;
             padding: 15px;
@@ -124,14 +126,14 @@
             border-radius: 8px;
             border-left: 4px solid #495057;
         }
-        
+
         .worksheets-container {
             margin-top: 30px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
-        
+
         .worksheet-item {
             background: #ffffff;
             border: 1px solid #dee2e6;
@@ -142,24 +144,24 @@
             align-items: center;
             text-align: center;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
+
         .worksheet-item:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             border-color: #adb5bd;
         }
-        
+
         .worksheet-info {
             margin-bottom: 15px;
         }
-        
+
         .worksheet-info h3 {
             color: #333;
             margin-bottom: 10px;
         }
-        
+
         .filename-preview {
             color: #666;
             font-size: 0.9rem;
@@ -168,7 +170,7 @@
             border-radius: 15px;
             margin-top: 10px;
         }
-        
+
         .download-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -182,27 +184,27 @@
             margin: 5px;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
-        
+
         .download-btn:hover {
             background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
-        
+
         .download-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .download-btn.not-matched {
             background: #dc3545;
         }
-        
+
         .download-btn.not-matched:hover {
             background: #c82333;
         }
-        
+
         .process-btn {
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff3742 100%);
             color: white;
@@ -216,19 +218,19 @@
             font-weight: 500;
             box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
         }
-        
+
         .process-btn:hover {
             background: linear-gradient(135deg, #ff5252 0%, #d63031 50%, #e84118 100%);
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
         }
-        
+
         .process-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .loading {
             display: none;
             text-align: center;
@@ -243,7 +245,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .loading::before {
             content: '';
             position: absolute;
@@ -254,7 +256,7 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
             animation: shimmer 2s infinite;
         }
-        
+
         .loading .spinner {
             border: 3px solid rgba(0, 123, 255, 0.1);
             border-top: 3px solid #007bff;
@@ -269,7 +271,7 @@
             position: relative;
             z-index: 1;
         }
-        
+
         .loading p {
             font-size: 1.2rem;
             font-weight: 500;
@@ -280,15 +282,25 @@
             position: relative;
             z-index: 1;
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
         }
 
         /* Column Selection Modal Styles */
@@ -322,6 +334,7 @@
                 opacity: 0;
                 transform: translateY(-50px) scale(0.9);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
@@ -473,7 +486,7 @@
             background: #667eea;
             color: white;
         }
-        
+
         /* Floating notification container */
         #messages {
             position: fixed;
@@ -483,7 +496,7 @@
             max-width: 400px;
             pointer-events: none;
         }
-        
+
         .notification {
             margin-bottom: 10px;
             padding: 15px 20px;
@@ -498,29 +511,29 @@
             max-width: 100%;
             word-wrap: break-word;
         }
-        
+
         .notification.show {
             transform: translateX(0);
             opacity: 1;
         }
-        
+
         .notification.hide {
             transform: translateX(100%);
             opacity: 0;
         }
-        
+
         .error {
             background: #f8d7da;
             color: #721c24;
             border-left: 4px solid #dc3545;
         }
-        
+
         .success {
             background: #d4edda;
             color: #155724;
             border-left: 4px solid #28a745;
         }
-        
+
         .notification::before {
             content: '';
             position: absolute;
@@ -532,7 +545,7 @@
             border-radius: 50%;
             background: currentColor;
         }
-        
+
         .notification .close-btn {
             position: absolute;
             top: 8px;
@@ -550,11 +563,11 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .notification .close-btn:hover {
             opacity: 1;
         }
-        
+
         .style-info {
             background: #fff3cd;
             color: #856404;
@@ -564,7 +577,7 @@
             margin-top: 10px;
             font-size: 0.9rem;
         }
-        
+
         .filename-preview {
             background: #e8f5e8;
             border: 1px solid #c3e6cb;
@@ -576,21 +589,21 @@
             margin-top: 5px;
             display: inline-block;
         }
-        
+
         .filename-preview.not-matched {
             background: #f8d7da;
             border: 1px solid #f5c6cb;
             color: #721c24;
         }
-        
+
         .closure-section {
             border-color: #ff6b6b;
         }
-        
+
         .closure-section h2 {
             color: #ff6b6b;
         }
-        
+
         .file-status {
             display: inline-block;
             padding: 5px 15px;
@@ -599,24 +612,24 @@
             font-weight: bold;
             margin-left: 10px;
         }
-        
+
         .status-pending {
             background: #ffeaa7;
             color: #856404;
         }
-        
+
         .status-uploaded {
             background: #81ecec;
             color: #00b894;
         }
-        
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 15px;
             margin-top: 15px;
         }
-        
+
         .stat-item {
             background: #f8f9ff;
             padding: 15px;
@@ -624,48 +637,48 @@
             text-align: center;
             border-left: 4px solid #667eea;
         }
-        
+
         .stat-item.warning {
             border-left-color: #dc3545;
             background: #fff5f5;
         }
-        
+
         .stat-number {
             font-size: 1.5rem;
             font-weight: bold;
             color: #667eea;
         }
-        
+
         .stat-number.warning {
             color: #dc3545;
         }
-        
+
         .stat-label {
             color: #666;
             font-size: 0.9rem;
         }
-        
+
         /* Reference section styles removed - files now auto-load from URLs */
-        
+
         .reference-status {
             padding: 10px;
             border-radius: 5px;
             margin-top: 10px;
             font-size: 0.9rem;
         }
-        
+
         .reference-loaded {
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
-        
+
         .reference-error {
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-        
+
         .download-buttons {
             display: flex;
             justify-content: center;
@@ -673,7 +686,7 @@
             flex-wrap: wrap;
             margin-top: 15px;
         }
-        
+
         /* Modern Floating Footer Styles */
         .floating-footer {
             position: fixed;
@@ -694,7 +707,7 @@
             transition: all 0.3s ease;
             cursor: default;
         }
-        
+
         .floating-footer:hover {
             background-color: rgba(255, 255, 255, 1);
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -703,13 +716,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             <h1>PCM Process Management</h1>
 
         </div>
-        
+
         <div class="content">
             <!-- Reference files are automatically downloaded from URLs when the page loads -->
 
@@ -725,28 +739,29 @@
                     </button>
                     <input type="file" id="fileInput" class="file-input" accept=".xlsx">
                 </div>
-                
+
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
                     <p>Processing your Excel file...</p>
                 </div>
-                
+
                 <div id="fileInfo" class="file-info" style="display: none;">
                     <h4 id="fileName"></h4>
                     <p id="fileDetails"></p>
                 </div>
-                
+
                 <div id="worksheets" class="worksheets-container"></div>
             </div>
 
             <!-- Enhanced Closure Processing Section -->
             <div class="section closure-section">
                 <h2>Closure Validation</h2>
-                
+
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                     <!-- Region FB Upload -->
                     <div>
-                        <h3>Region FB File <span class="file-status status-pending" id="regionStatus">Pending</span></h3>
+                        <h3>Region FB File <span class="file-status status-pending" id="regionStatus">Pending</span>
+                        </h3>
                         <div class="upload-area" id="regionUploadArea">
                             <h4>Region FB Excel File</h4>
                             <button class="upload-btn" onclick="document.getElementById('regionFileInput').click()">
@@ -762,7 +777,8 @@
 
                     <!-- Running PCMs Upload -->
                     <div>
-                        <h3>Running PCMs File <span class="file-status status-pending" id="pcmStatus">Pending</span></h3>
+                        <h3>Running PCMs File <span class="file-status status-pending" id="pcmStatus">Pending</span>
+                        </h3>
                         <div class="upload-area" id="pcmUploadArea">
                             <h4>Running PCMs Excel File</h4>
                             <button class="upload-btn" onclick="document.getElementById('pcmFileInput').click()">
@@ -778,9 +794,11 @@
 
                     <!-- OWS FRT Upload -->
                     <div>
-                        <h3>OWS FRT File <span class="file-status status-pending" id="owsFrtStatus">Pending</span></h3>
+                        <h3>OWS FRT File <span class="file-status status-pending" id="owsFrtStatus">Optional</span></h3>
                         <div class="upload-area" id="owsFrtUploadArea">
-                            <h4>OWS FRT Excel File</h4>
+                            <h4>OWS FRT Excel File (Optional)</h4>
+                            <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">Only needed if Running PCMs
+                                doesn't have "OWS FRT" column</p>
                             <button class="upload-btn" onclick="document.getElementById('owsFrtFileInput').click()">
                                 Choose File
                             </button>
@@ -826,20 +844,30 @@
 
                 <div style="text-align: center; margin-top: 30px;">
                     <div class="download-section" id="downloadSection" style="display: none;">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin: 20px 0;">
-                            <select id="downloadTypeSelect" style="padding: 10px 15px; border: 2px solid #667eea; border-radius: 8px; background: white; font-size: 14px; min-width: 300px;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: center; gap: 15px; margin: 20px 0;">
+                            <select id="downloadTypeSelect"
+                                style="padding: 10px 15px; border: 2px solid #667eea; border-radius: 8px; background: white; font-size: 14px; min-width: 300px;">
                                 <option value="">Select Report to Download</option>
                                 <option value="closure">✅ Validated PCMs</option>
                                 <option value="notMatched">❌ Non-Validated PCMs</option>
-                                <option value="frtIssues" id="frtIssuesOption" style="display: none;">⚠️ FRT Issue PCMs</option>
-                                <option value="frtIssuesWithoutMissed" id="frtIssuesWithoutMissedOption" style="display: none;">🔍 Non-Missed FRT PCMs</option>
-                                <option value="withinSLA" id="withinSLAOption" style="display: none;">✅ Within SLA PCMs</option>
-                                <option value="exceededTargetSLA" id="exceededTargetSLAOption" style="display: none;">🎯 Exceeded Target SLA PCMs</option>
-                                <option value="exceededHurdleSLA" id="exceededHurdleSLAOption" style="display: none;">🚨 Exceeded Hurdle SLA PCMs</option>
-                                <option value="owsFrtMatched" id="owsFrtMatchedOption" style="display: none;">🔗 OWS-FRT Matched PCMs</option>
-                                <option value="owsFrtNotMatched" id="owsFrtNotMatchedOption" style="display: none;">🔗 OWS-FRT Non-Matched PCMs</option>
+                                <option value="frtIssues" id="frtIssuesOption" style="display: none;">⚠️ FRT Issue PCMs
+                                </option>
+                                <option value="frtIssuesWithoutMissed" id="frtIssuesWithoutMissedOption"
+                                    style="display: none;">🔍 Non-Missed FRT PCMs</option>
+                                <option value="withinSLA" id="withinSLAOption" style="display: none;">✅ Within SLA PCMs
+                                </option>
+                                <option value="exceededTargetSLA" id="exceededTargetSLAOption" style="display: none;">🎯
+                                    Exceeded Target SLA PCMs</option>
+                                <option value="exceededHurdleSLA" id="exceededHurdleSLAOption" style="display: none;">🚨
+                                    Exceeded Hurdle SLA PCMs</option>
+                                <option value="owsFrtMatched" id="owsFrtMatchedOption" style="display: none;">🔗 OWS-FRT
+                                    Matched PCMs</option>
+                                <option value="owsFrtNotMatched" id="owsFrtNotMatchedOption" style="display: none;">🔗
+                                    OWS-FRT Non-Matched PCMs</option>
                             </select>
-                            <button class="download-btn" id="downloadSelectedBtn" onclick="downloadSelected()" style="padding: 10px 20px;">
+                            <button class="download-btn" id="downloadSelectedBtn" onclick="downloadSelected()"
+                                style="padding: 10px 20px;">
                                 📥 Download
                             </button>
                         </div>
@@ -853,7 +881,7 @@
 
 
             </div>
-            
+
             <div id="messages"></div>
         </div>
     </div>
@@ -862,7 +890,7 @@
         /* ========================================
            CONFIGURATION & CONSTANTS
            ======================================== */
-        
+
         const REFERENCE_URLS = {
             rcScAtNextask: 'https://tarek-mahran.github.io/shabakkat/RC_SC_AT-%20List%20of%20Nextask%20Owners.xlsx',
             rcScAtTMS: 'https://tarek-mahran.github.io/shabakkat/RC_SC_AT-%20List%20of%20TMS%20Owners.xlsx',
@@ -872,27 +900,27 @@
         /* ========================================
            GLOBAL VARIABLES
            ======================================== */
-        
+
         // Main workbook variables
         let currentWorkbook = null;
         let inputFileName = '';
-        
+
         // Region and PCM workbooks
         let regionWorkbook = null;
         let pcmWorkbook = null;
         let regionFileName = '';
         let pcmFileName = '';
-        
+
         // Closure workbooks
         let closureWorkbook = null;
         let notMatchedClosureWorkbook = null;
-        
+
         // OWS FRT workbooks
         let owsFrtWorkbook = null;
         let owsFrtFileName = '';
         let owsFrtMatchedWorkbook = null;
         let owsFrtNotMatchedWorkbook = null;
-        
+
         // Reference data for enhanced processing
         let rcScAtDataNextask = null;
         let ownersDataNextask = null;
@@ -903,7 +931,7 @@
         /* ========================================
            DOM ELEMENT REFERENCES
            ======================================== */
-        
+
         // Main file upload elements
         const fileInput = document.getElementById('fileInput');
         const uploadArea = document.getElementById('uploadArea');
@@ -948,7 +976,7 @@
         /* ========================================
            EVENT HANDLERS SETUP
            ======================================== */
-        
+
         // OWS FRT file handlers
         owsFrtFileInput.addEventListener('change', (e) => handleOwsFrtFileSelect(e.target.files[0]));
         setupDragDrop(owsFrtUploadArea, handleOwsFrtFile);
@@ -956,13 +984,13 @@
         /* ========================================
            REFERENCE FILE LOADING FUNCTIONS
            ======================================== */
-        
+
         // Auto-load reference files from URLs
         async function loadReferenceFile(type) {
             try {
                 const response = await fetch(REFERENCE_URLS[type]);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
+
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = new ExcelJS.Workbook();
                 await workbook.xlsx.load(arrayBuffer);
@@ -1084,12 +1112,12 @@
         /* ========================================
            UTILITY FUNCTIONS
            ======================================== */
-        
+
         function checkEnhancedProcessingReady() {
             // Check if basic files are uploaded
             if (regionWorkbook && pcmWorkbook) {
                 processBtn.disabled = false;
-                
+
                 if ((rcScAtDataNextask && ownersDataNextask) && (rcScAtDataTMS && ownersDataTMS) && sitesOwnerData) {
                     processBtn.textContent = '🚀 Process Closure Validation';
                     processBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff3742 100%)';
@@ -1125,7 +1153,7 @@
         /* ========================================
            FILE HANDLING FUNCTIONS
            ======================================== */
-        
+
         // Regular file processing functions
         function handleFileSelect(e) {
             const file = e.target.files[0];
@@ -1144,7 +1172,7 @@
             clearMessages();
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 processExcelFile(e.target.result, file.name);
             };
             reader.readAsArrayBuffer(file);
@@ -1178,24 +1206,24 @@
 
         function displayWorksheets() {
             worksheetsContainer.innerHTML = '';
-            
+
             currentWorkbook.worksheets.forEach((worksheet, index) => {
                 const rowCount = worksheet.actualRowCount;
                 const columnCount = worksheet.columnCount;
-                
+
                 let nonEmptyRows = 0;
                 worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
                     const hasData = row.values.some(cell => cell !== null && cell !== undefined && cell !== '');
                     if (hasData) nonEmptyRows++;
                 });
-                
+
                 const safeSheetName = worksheet.name.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
                 const safeInputName = inputFileName.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
                 const previewFilename = `${safeInputName} - ${safeSheetName}.xlsx`;
-                
+
                 const worksheetDiv = document.createElement('div');
                 worksheetDiv.className = 'worksheet-item';
-                
+
                 worksheetDiv.innerHTML = `
                     <div class="worksheet-info">
                         <h3>📋 ${worksheet.name}</h3>
@@ -1205,7 +1233,7 @@
                         ⬇️ Download
                     </button>
                 `;
-                
+
                 worksheetsContainer.appendChild(worksheetDiv);
             });
         }
@@ -1225,22 +1253,22 @@
 
             regionFileName = file.name;
             const reader = new FileReader();
-            reader.onload = async function(e) {
+            reader.onload = async function (e) {
                 try {
                     regionWorkbook = new ExcelJS.Workbook();
                     await regionWorkbook.xlsx.load(e.target.result);
-                    
+
                     regionUploadArea.classList.add('success');
                     regionStatus.textContent = 'Uploaded';
                     regionStatus.className = 'file-status status-uploaded';
-                    
+
                     const regionFileNameEl = document.getElementById('regionFileName');
                     const regionFileDetailsEl = document.getElementById('regionFileDetails');
-                    
+
                     if (regionFileNameEl) regionFileNameEl.textContent = `📄 ${file.name}`;
                     if (regionFileDetailsEl) regionFileDetailsEl.textContent = `Contains ${regionWorkbook.worksheets.length} worksheet(s)`;
                     if (regionFileInfo) regionFileInfo.style.display = 'block';
-                    
+
                     checkEnhancedProcessingReady();
                     showMessage('Region FB file uploaded successfully!', 'success');
                 } catch (error) {
@@ -1264,22 +1292,22 @@
 
             pcmFileName = file.name;
             const reader = new FileReader();
-            reader.onload = async function(e) {
+            reader.onload = async function (e) {
                 try {
                     pcmWorkbook = new ExcelJS.Workbook();
                     await pcmWorkbook.xlsx.load(e.target.result);
-                    
+
                     pcmUploadArea.classList.add('success');
                     pcmStatus.textContent = 'Uploaded';
                     pcmStatus.className = 'file-status status-uploaded';
-                    
+
                     const pcmFileNameEl = document.getElementById('pcmFileName');
                     const pcmFileDetailsEl = document.getElementById('pcmFileDetails');
-                    
+
                     if (pcmFileNameEl) pcmFileNameEl.textContent = `📄 ${file.name}`;
                     if (pcmFileDetailsEl) pcmFileDetailsEl.textContent = `Contains ${pcmWorkbook.worksheets.length} worksheet(s)`;
                     if (pcmFileInfo) pcmFileInfo.style.display = 'block';
-                    
+
                     checkEnhancedProcessingReady();
                     showMessage('Running PCMs file uploaded successfully!', 'success');
                 } catch (error) {
@@ -1304,22 +1332,22 @@
 
             owsFrtFileName = file.name;
             const reader = new FileReader();
-            reader.onload = async function(e) {
+            reader.onload = async function (e) {
                 try {
                     owsFrtWorkbook = new ExcelJS.Workbook();
                     await owsFrtWorkbook.xlsx.load(e.target.result);
-                    
+
                     owsFrtUploadArea.classList.add('success');
                     owsFrtStatus.textContent = 'Uploaded';
                     owsFrtStatus.className = 'file-status status-uploaded';
-                    
+
                     const owsFrtFileNameEl = document.getElementById('owsFrtFileName');
                     const owsFrtFileDetailsEl = document.getElementById('owsFrtFileDetails');
-                    
+
                     if (owsFrtFileNameEl) owsFrtFileNameEl.textContent = `📄 ${file.name}`;
                     if (owsFrtFileDetailsEl) owsFrtFileDetailsEl.textContent = `Contains ${owsFrtWorkbook.worksheets.length} worksheet(s)`;
                     if (owsFrtFileInfo) owsFrtFileInfo.style.display = 'block';
-                    
+
                     checkEnhancedProcessingReady();
                     showMessage('OWS FRT file uploaded successfully!', 'success');
                 } catch (error) {
@@ -1337,25 +1365,25 @@
                     alert('Please upload the Region FB file first.');
                     return;
                 }
-                
+
                 if (!pcmWorkbook) {
                     alert('Please upload the PCM file first.');
                     return;
                 }
-                
+
                 // Show loading indicator
                 closureLoading.style.display = 'block';
                 closureResults.style.display = 'none';
-                
+
                 const downloadSectionEl = document.getElementById('downloadSection');
                 const closureLoadingTextEl = document.getElementById('closureLoadingText');
-                
+
                 if (downloadSectionEl) downloadSectionEl.style.display = 'none';
                 if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Processing...';
-                
+
                 // Add delay to ensure UI updates are rendered
                 await new Promise(resolve => setTimeout(resolve, 100));
-                
+
                 if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Identifying closure sheet...';
 
                 // Find closure sheet in Region FB
@@ -1375,8 +1403,8 @@
                         headerRow.eachCell((cell) => {
                             headers.push((cell.value || '').toString().toLowerCase());
                         });
-                        
-                        if (headers.includes('frt') && headers.includes('root cause') && 
+
+                        if (headers.includes('frt') && headers.includes('root cause') &&
                             headers.includes('sub cause') && headers.includes('action taken')) {
                             closureSheet = worksheet;
                             break;
@@ -1392,7 +1420,7 @@
 
                 // Extract data from closure sheet
                 const closureData = extractClosureData(closureSheet);
-                
+
                 if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Processing PCM data...';
 
                 // Extract data from PCM sheet (assume first sheet)
@@ -1422,7 +1450,7 @@
                 } else {
                     window.frtIssuesWorkbook = null;
                 }
-                
+
                 // Create FRT issues report without Missed FRT values
                 if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating FRT issues report without Missed FRT...';
                 const frtIssuesWithoutMissedData = filterRecordsWithoutMissedFRT(matchedData);
@@ -1437,7 +1465,7 @@
                 console.log('Performing SLA analysis on', matchedData.length, 'matched records');
                 const slaAnalyzedData = performSLAAnalysis(matchedData);
                 console.log('SLA analysis completed on', slaAnalyzedData.length, 'records');
-                
+
                 // Analyze SLA distribution before filtering
                 const slaDistribution = {};
                 slaAnalyzedData.forEach(record => {
@@ -1455,9 +1483,9 @@
                 } else {
                     window.withinSLAWorkbook = null;
                 }
-                
+
                 if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating Exceeded Target SLA report...';
-                const exceededTargetSLAData = slaAnalyzedData.filter(record => 
+                const exceededTargetSLAData = slaAnalyzedData.filter(record =>
                     record.slaRemarks === 'Exceeded Target SLA'
                 );
                 console.log('Exceeded Target SLA records:', exceededTargetSLAData.length);
@@ -1466,9 +1494,9 @@
                 } else {
                     window.exceededTargetSLAWorkbook = null;
                 }
-                
+
                 if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating Exceeded Hurdle SLA report...';
-                const exceededHurdleSLAData = slaAnalyzedData.filter(record => 
+                const exceededHurdleSLAData = slaAnalyzedData.filter(record =>
                     record.slaRemarks === 'Exceeded Hurdle SLA'
                 );
                 console.log('Exceeded Hurdle SLA records:', exceededHurdleSLAData.length);
@@ -1487,15 +1515,15 @@
                 const totalRecordsEl = document.getElementById('totalRecords');
                 const matchedRecordsEl = document.getElementById('matchedRecords');
                 const notMatchedRecordsEl = document.getElementById('notMatchedRecords');
-                
+
                 if (totalRecordsEl) totalRecordsEl.textContent = mergedData.length;
                 if (matchedRecordsEl) matchedRecordsEl.textContent = matchedData.length;
                 if (notMatchedRecordsEl) notMatchedRecordsEl.textContent = notMatchedData.length;
-                
+
                 // Update FRT Issue PCMs and Exceeded Hurdle SLA PCMs counts
                 const rcaValidatedEl = document.getElementById('rcaValidated');
                 const ownerMatchedEl = document.getElementById('ownerMatched');
-                
+
                 if (rcaValidatedEl) rcaValidatedEl.textContent = frtIssuesData ? frtIssuesData.length : 0;
                 if (ownerMatchedEl) ownerMatchedEl.textContent = exceededHurdleSLAData ? exceededHurdleSLAData.length : 0;
 
@@ -1505,7 +1533,7 @@
                 const month = today.toLocaleString('default', { month: 'short' });
                 const matchedFilename = `Closure - ${day} ${month}.xlsx`;
                 const notMatchedFilename = `Closure Not Matched RCA - ${day} ${month}.xlsx`;
-                
+
 
 
                 // Show/hide download buttons based on data availability
@@ -1515,37 +1543,65 @@
                 const withinSLAOptionEl = document.getElementById('withinSLAOption');
                 const exceededTargetSLAOptionEl = document.getElementById('exceededTargetSLAOption');
                 const exceededHurdleSLAOptionEl = document.getElementById('exceededHurdleSLAOption');
-                
+
                 if (frtIssuesOptionEl) frtIssuesOptionEl.style.display = (frtIssuesData.length > 0) ? 'block' : 'none';
                 if (frtIssuesWithoutMissedOptionEl) frtIssuesWithoutMissedOptionEl.style.display = (frtIssuesWithoutMissedData.length > 0) ? 'block' : 'none';
                 if (withinSLAOptionEl) withinSLAOptionEl.style.display = (withinSLAData.length > 0) ? 'block' : 'none';
                 if (exceededTargetSLAOptionEl) exceededTargetSLAOptionEl.style.display = (exceededTargetSLAData.length > 0) ? 'block' : 'none';
                 if (exceededHurdleSLAOptionEl) exceededHurdleSLAOptionEl.style.display = (exceededHurdleSLAData.length > 0) ? 'block' : 'none';
 
-                // Process OWS FRT matching if OWS FRT file is uploaded
+                // Process OWS FRT matching - check if Running PCMs has OWS FRT column or if OWS FRT file is uploaded
                 const owsFrtMatchedOptionEl = document.getElementById('owsFrtMatchedOption');
                 const owsFrtNotMatchedOptionEl = document.getElementById('owsFrtNotMatchedOption');
-                
-                if (owsFrtWorkbook) {
-                    if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Processing OWS FRT matching...';
-                    
-                    const owsFrtData = extractOwsFrtData(owsFrtWorkbook.worksheets[0]);
-                    const { owsFrtMatched, owsFrtNotMatched } = performOwsFrtMatching(matchedData, owsFrtData);
-                    
+
+                // Check if Running PCMs file has OWS FRT column
+                const hasOwsFrtInPcm = matchedData.length > 0 && matchedData[0].hasOwsFrtInPcm;
+
+                if (hasOwsFrtInPcm) {
+                    // Use OWS FRT data from Running PCMs file
+                    if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Processing OWS FRT matching from Running PCMs...';
+
+                    const { owsFrtMatched, owsFrtNotMatched } = performOwsFrtMatchingFromPcm(matchedData);
+
                     if (owsFrtMatched.length > 0) {
                         owsFrtMatchedWorkbook = await createOwsFrtReport(owsFrtMatched, 'OWS-FRT Matched PCMs');
                         if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'block';
                     } else {
                         if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'none';
                     }
-                    
+
                     if (owsFrtNotMatched.length > 0) {
                         owsFrtNotMatchedWorkbook = await createOwsFrtReport(owsFrtNotMatched, 'OWS-FRT Non-Matched PCMs');
                         if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'block';
                     } else {
                         if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'none';
                     }
+
+                    showMessage('OWS FRT matching completed using data from Running PCMs file', 'success');
+                } else if (owsFrtWorkbook) {
+                    // Use OWS FRT data from separate OWS FRT file
+                    if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Processing OWS FRT matching from OWS FRT file...';
+
+                    const owsFrtData = extractOwsFrtData(owsFrtWorkbook.worksheets[0]);
+                    const { owsFrtMatched, owsFrtNotMatched } = performOwsFrtMatching(matchedData, owsFrtData);
+
+                    if (owsFrtMatched.length > 0) {
+                        owsFrtMatchedWorkbook = await createOwsFrtReport(owsFrtMatched, 'OWS-FRT Matched PCMs');
+                        if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'block';
+                    } else {
+                        if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'none';
+                    }
+
+                    if (owsFrtNotMatched.length > 0) {
+                        owsFrtNotMatchedWorkbook = await createOwsFrtReport(owsFrtNotMatched, 'OWS-FRT Non-Matched PCMs');
+                        if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'block';
+                    } else {
+                        if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'none';
+                    }
+
+                    showMessage('OWS FRT matching completed using separate OWS FRT file', 'success');
                 } else {
+                    // No OWS FRT data available
                     if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'none';
                     if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'none';
                 }
@@ -1555,9 +1611,9 @@
             } catch (error) {
                 closureLoading.style.display = 'none';
                 closureResults.style.display = 'none';
-                
+
                 let errorMessage = 'Error processing closure data: ' + error.message;
-                
+
                 // Provide more specific error messages
                 if (error.message.includes('Cannot read properties')) {
                     errorMessage = 'Error: Unable to read data from uploaded files. Please ensure both files are valid Excel files and try again.';
@@ -1566,7 +1622,7 @@
                 } else if (error.message.includes('worksheets')) {
                     errorMessage = 'Error: Unable to access worksheet data. Please ensure the uploaded files are not corrupted and contain valid data.';
                 }
-                
+
                 showMessage(errorMessage, 'error');
                 console.error('Closure processing error:', error);
             }
@@ -1575,18 +1631,18 @@
         /* ========================================
            DATA PROCESSING & VALIDATION FUNCTIONS
            ======================================== */
-        
+
         function isRCAMatched(record) {
             // A record is considered "RCA matched" if ALL validation columns are matched
-            const rcaMatchingValid = !record.rcaMatching || 
-                                   record.rcaMatching === 'N/A - Reference data not loaded' || 
-                                   (!record.rcaMatching.includes('Not Matched') && record.rcaMatching !== 'Error in calculation');
-            
-            const ownerMatchingValid = record.ownerMatching === 'Matched' || 
-                                     record.ownerMatching === 'N/A - Reference data not loaded';
-            
-            const rcaValidationValid = record.rcaValidation === 'Matched' || 
-                                     record.rcaValidation === 'N/A - Reference data not loaded';
+            const rcaMatchingValid = !record.rcaMatching ||
+                record.rcaMatching === 'N/A - Reference data not loaded' ||
+                (!record.rcaMatching.includes('Not Matched') && record.rcaMatching !== 'Error in calculation');
+
+            const ownerMatchingValid = record.ownerMatching === 'Matched' ||
+                record.ownerMatching === 'N/A - Reference data not loaded';
+
+            const rcaValidationValid = record.rcaValidation === 'Matched' ||
+                record.rcaValidation === 'N/A - Reference data not loaded';
 
             return rcaMatchingValid && ownerMatchingValid && rcaValidationValid;
         }
@@ -1595,7 +1651,7 @@
             const remarks = [];
             const frt = record.frt;
             const createFaultTime = record.createFaultFirstTime;
-            
+
             // Condition 1: If "-" & empty values in "FRT" column, add "Missed FRT"
             if (!frt || frt === '-' || frt.toString().trim() === '') {
                 remarks.push('Missed FRT');
@@ -1604,7 +1660,7 @@
                     const frtDate = new Date(frt);
                     const createFaultDate = new Date(createFaultTime);
                     const now = new Date();
-                    
+
                     // Condition 2: if FRT happens before Create Fault First Time Occurred, add "FRT before occurred time"
                     if (!isNaN(frtDate.getTime()) && !isNaN(createFaultDate.getTime())) {
                         const timeDiff = frtDate.getTime() - createFaultDate.getTime();
@@ -1612,7 +1668,7 @@
                             remarks.push('FRT before occurred time');
                         }
                     }
-                    
+
                     // Condition 3: if value from "NOW() - FRT" > 0, add "FRT in future"
                     if (!isNaN(frtDate.getTime())) {
                         const nowDiff = now.getTime() - frtDate.getTime();
@@ -1627,7 +1683,7 @@
                     }
                 }
             }
-            
+
             return remarks.join(', ');
         }
 
@@ -1646,7 +1702,7 @@
             console.log('FRT Issues found:', filteredData.length, 'out of', data.length);
             return filteredData;
         }
-        
+
         function filterRecordsWithoutMissedFRT(data) {
             return data.filter(record => {
                 const remarks = validateFRTIssues(record);
@@ -1675,14 +1731,14 @@
             const headerRow = sheet.getRow(1);
             const headers = [];
             const originalHeaders = [];
-            
+
             // Get headers (both original and lowercase for comparison)
             headerRow.eachCell((cell, colNumber) => {
                 const originalValue = (cell.value || '').toString();
                 originalHeaders[colNumber] = originalValue;
                 headers[colNumber] = originalValue.toLowerCase();
             });
-            
+
             // Debug: Log all available column headers with their original names
             const columnInfo = [];
             for (let i = 0; i < originalHeaders.length; i++) {
@@ -1699,7 +1755,7 @@
             const subCauseCol = findColumnIndex(headers, ['sub cause', 'subcause']);
             const actionTakenCol = findColumnIndex(headers, ['action taken', 'actiontaken']);
             const ownerCol = findColumnIndex(headers, ['owner']);
-            
+
             // Find Extra Description column - look for any column containing "extra"
             let extraDescCol = null;
             for (let i = 0; i < headers.length; i++) {
@@ -1712,7 +1768,7 @@
                     }
                 }
             }
-            
+
             // Fallback to original method if no "extra" column found
             if (extraDescCol === null) {
                 extraDescCol = findColumnIndex(headers, ['extra description', 'extradescription', 'description']);
@@ -1736,7 +1792,7 @@
                         owner: getCellValue(row, ownerCol),
                         extraDescription: getCellValue(row, extraDescCol)
                     };
-                    
+
                     if (record.orderId) {
                         data.push(record);
                     }
@@ -1750,7 +1806,7 @@
             const data = {};
             const headerRow = sheet.getRow(1);
             const headers = [];
-            
+
             // Get headers
             headerRow.eachCell((cell, colNumber) => {
                 headers[colNumber] = (cell.value || '').toString().toLowerCase();
@@ -1767,6 +1823,14 @@
             const regionCol = findColumnIndex(headers, ['region']);
             const faultLevelCol = findColumnIndex(headers, ['fault level', 'faultlevel']);
             const pcmSourceCol = findColumnIndex(headers, ['pcm source', 'pcmsource']);
+            const owsFrtCol = findColumnIndex(headers, ['ows frt', 'owsfrt']);
+
+            // Check if OWS FRT column exists
+            const hasOwsFrtColumn = owsFrtCol !== null && owsFrtCol !== -1;
+            if (hasOwsFrtColumn) {
+                console.log('✅ Found "OWS FRT" column in Running PCMs file at index:', owsFrtCol);
+                showMessage('Running PCMs file contains "OWS FRT" column - OWS FRT file is optional', 'success');
+            }
 
             // Extract data
             for (let rowNum = 2; rowNum <= sheet.actualRowCount; rowNum++) {
@@ -1783,7 +1847,9 @@
                             subProject: getCellValue(row, subProjectCol),
                             region: getCellValue(row, regionCol),
                             faultLevel: getCellValue(row, faultLevelCol),
-                            pcmSource: getCellValue(row, pcmSourceCol)
+                            pcmSource: getCellValue(row, pcmSourceCol),
+                            owsFrt: hasOwsFrtColumn ? getCellValue(row, owsFrtCol) : null,
+                            hasOwsFrtInPcm: hasOwsFrtColumn
                         };
                     }
                 }
@@ -1797,7 +1863,7 @@
                 // Ensure Order ID is treated as string for lookup
                 const orderIdKey = closureRecord.orderId ? closureRecord.orderId.toString().trim() : '';
                 const pcmRecord = pcmData[orderIdKey] || {};
-                
+
                 const baseRecord = {
                     ...closureRecord,
                     ...pcmRecord,
@@ -1838,18 +1904,18 @@
 
             try {
                 // SC Matching: Check if Sub Cause matches Root Cause (case-insensitive)
-                const scMatch = rcScAtData.find(ref => 
+                const scMatch = rcScAtData.find(ref =>
                     ref.rootCause && record.rootCause &&
-                    ref.rootCause.toString().toLowerCase() === record.rootCause.toString().toLowerCase() && 
+                    ref.rootCause.toString().toLowerCase() === record.rootCause.toString().toLowerCase() &&
                     ref.subCause && record.subCause &&
                     ref.subCause.toString().toLowerCase() === record.subCause.toString().toLowerCase()
                 );
                 const scResult = scMatch ? 'SC Matched' : 'SC Not Matched';
 
                 // AT Matching: Check if Action Taken matches Sub Cause (case-insensitive)
-                const atMatch = rcScAtData.find(ref => 
+                const atMatch = rcScAtData.find(ref =>
                     ref.subCause && record.subCause &&
-                    ref.subCause.toString().toLowerCase() === record.subCause.toString().toLowerCase() && 
+                    ref.subCause.toString().toLowerCase() === record.subCause.toString().toLowerCase() &&
                     ref.actionTaken && record.actionTaken &&
                     ref.actionTaken.toString().toLowerCase() === record.actionTaken.toString().toLowerCase()
                 );
@@ -1871,9 +1937,9 @@
             }
 
             if (!ownersData || !owner) return 'Not Matched';
-            
+
             const ownerTrimmed = owner.toString().trim().toLowerCase();
-            const ownerExists = ownersData.some(refOwner => 
+            const ownerExists = ownersData.some(refOwner =>
                 refOwner && refOwner.toString().trim().toLowerCase() === ownerTrimmed
             );
             return ownerExists ? 'Matched' : 'Not Matched';
@@ -1881,7 +1947,7 @@
 
         function calculateSiteOwner(hubSite) {
             if (!sitesOwnerData || !hubSite) return '';
-            
+
             const hubSiteTrimmed = hubSite.toString().trim().toLowerCase();
             // Direct lookup since keys are already stored in lowercase
             return sitesOwnerData[hubSiteTrimmed] || '';
@@ -1897,7 +1963,7 @@
                 const siteOwner = record.siteOwner ? record.siteOwner.toString().toLowerCase() : '';
                 const subProject = record.subProject.toString().toLowerCase();
                 const rootCause = record.rootCause ? record.rootCause.toString().toLowerCase() : '';
-                
+
                 // Handle case where Site Owner is not available
                 // Note: "Zain" and "LATIS" are case-insensitive (handles ZAIN, zain, Zain, LATIS, latis, Latis, etc.)
                 if (!record.siteOwner || siteOwner === '') {
@@ -1909,7 +1975,7 @@
                     }
                     return 'Not Matched';
                 }
-                
+
                 // Original logic when Site Owner is available
                 if (siteOwner === 'latis' && subProject === 'latis' && rootCause === 'enviroment') {
                     return 'Matched';
@@ -1929,7 +1995,7 @@
         /* ========================================
            REPORT GENERATION FUNCTIONS
            ======================================== */
-        
+
         async function createEnhancedClosureReport(data, sheetName, includeRcaValidation = true) {
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet(sheetName);
@@ -1948,7 +2014,7 @@
 
             // Set headers
             const headerRow = worksheet.addRow(columns);
-            
+
             // Add data
             data.forEach(record => {
                 const baseData = [
@@ -2017,7 +2083,7 @@
             // Apply date formatting to specific columns
             const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
             const frtColumnIndex = columns.indexOf('FRT') + 1;
-            
+
             for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
                 // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
                 if (createFaultColumnIndex > 0) {
@@ -2029,7 +2095,7 @@
                         cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
                     }
                 }
-                
+
                 // Format FRT column - format to YYYY-MM-DD HH:mm:ss
                 if (frtColumnIndex > 0) {
                     const cell = worksheet.getCell(rowIndex, frtColumnIndex);
@@ -2051,11 +2117,11 @@
                         record.frt, record.rootCause, record.subCause, record.actionTaken, record.owner,
                         record.extraDescription, record.hubSite, record.subProject, record.region
                     ];
-                    
+
                     const rcaValues = (includeRcaValidation && !isMatchedReport) ? [
                         record.rcaMatching, record.ownerMatching, record.siteOwner, record.rcaValidation
                     ] : [];
-                    
+
                     const allValues = [...baseValues, ...rcaValues];
                     const cellValue = allValues[index];
                     if (cellValue) {
@@ -2069,12 +2135,12 @@
             if (includeRcaValidation && !isMatchedReport) {
                 const enhancedColumnStart = baseColumns.length + 1; // Start after base columns
                 const enhancedColumnEnd = enhancedColumnStart + rcaValidationColumns.length - 1;
-                
+
                 for (let colIndex = enhancedColumnStart; colIndex <= enhancedColumnEnd; colIndex++) {
                     for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
                         const cell = worksheet.getCell(rowIndex, colIndex);
                         const cellValue = cell.value ? cell.value.toString() : '';
-                        
+
                         // Highlight "Not Matched" values with red background
                         if (cellValue.includes('Not Matched')) {
                             cell.fill = {
@@ -2109,7 +2175,7 @@
 
             // Set headers
             const headerRow = worksheet.addRow(columns);
-            
+
             // Add data
             data.forEach(record => {
                 const rowData = [
@@ -2172,7 +2238,7 @@
             // Apply date formatting to specific columns
             const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
             const frtColumnIndex = columns.indexOf('FRT') + 1;
-            
+
             for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
                 // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
                 if (createFaultColumnIndex > 0) {
@@ -2184,7 +2250,7 @@
                         cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
                     }
                 }
-                
+
                 // Format FRT column - format to YYYY-MM-DD HH:mm:ss
                 if (frtColumnIndex > 0) {
                     const cell = worksheet.getCell(rowIndex, frtColumnIndex);
@@ -2206,7 +2272,7 @@
                         record.frt, record.rootCause, record.subCause, record.actionTaken, record.owner,
                         record.extraDescription, record.hubSite, record.subProject, record.region, record.remarks
                     ];
-                    
+
                     const cellValue = values[index];
                     if (cellValue) {
                         maxLength = Math.max(maxLength, cellValue.toString().length);
@@ -2229,7 +2295,7 @@
 
             return workbook;
         }
-        
+
         async function createFRTIssuesReportWithoutRemarks(data, sheetName) {
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet(sheetName);
@@ -2243,7 +2309,7 @@
 
             // Set headers
             const headerRow = worksheet.addRow(columns);
-            
+
             // Add data
             data.forEach(record => {
                 const rowData = [
@@ -2304,7 +2370,7 @@
             // Apply date formatting to specific columns
             const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
             const frtColumnIndex = columns.indexOf('FRT') + 1;
-            
+
             for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
                 // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
                 if (createFaultColumnIndex > 0) {
@@ -2316,7 +2382,7 @@
                         cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
                     }
                 }
-                
+
                 // Format FRT column - format to YYYY-MM-DD HH:mm:ss
                 if (frtColumnIndex > 0) {
                     const cell = worksheet.getCell(rowIndex, frtColumnIndex);
@@ -2338,7 +2404,7 @@
                         record.frt, record.rootCause, record.subCause, record.actionTaken, record.owner,
                         record.extraDescription, record.hubSite, record.subProject, record.region
                     ];
-                    
+
                     const cellValue = values[index];
                     if (cellValue) {
                         maxLength = Math.max(maxLength, cellValue.toString().length);
@@ -2371,12 +2437,12 @@
                 const cell = row.getCell(colIndex);
                 const value = cell.value;
                 if (value === null || value === undefined) return '';
-                
+
                 // Handle different cell value types
                 if (typeof value === 'object' && value.text) {
                     return value.text.toString().trim();
                 }
-                
+
                 return value.toString().trim();
             } catch (error) {
                 console.warn(`Error reading cell at column ${colIndex}:`, error);
@@ -2387,29 +2453,29 @@
         // Helper function to format date strings to YYYY-MM-DD HH:mm:ss without changing the actual time
         function formatDateStringToStandard(value) {
             if (!value || value === '' || value === '-') return value;
-            
+
             try {
                 const stringValue = value.toString().trim();
-                
+
                 // If already in YYYY-MM-DD HH:mm:ss format, return as is
                 if (stringValue.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
                     return stringValue;
                 }
-                
+
                 // Handle MM/DD/YYYY HH:mm:ss format (like 08/06/2025 15:54:05)
                 const mmddyyyyMatch = stringValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$/);
                 if (mmddyyyyMatch) {
                     const [, month, day, year, hours, minutes, seconds] = mmddyyyyMatch;
                     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hours.padStart(2, '0')}:${minutes}:${seconds}`;
                 }
-                
+
                 // Handle DD/MM/YYYY HH:mm:ss format
                 const ddmmyyyyMatch = stringValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$/);
                 if (ddmmyyyyMatch) {
                     const [, day, month, year, hours, minutes, seconds] = ddmmyyyyMatch;
                     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hours.padStart(2, '0')}:${minutes}:${seconds}`;
                 }
-                
+
                 // Handle Excel serial numbers (like 45908.8253125)
                 const numericValue = parseFloat(stringValue);
                 if (!isNaN(numericValue) && numericValue > 1 && numericValue < 100000) {
@@ -2418,24 +2484,24 @@
                     if (numericValue > 59) { // After Feb 28, 1900 (Excel leap year bug)
                         adjustedValue = numericValue - 1;
                     }
-                    
+
                     // Split into day and time parts for more precise calculation
                     const dayPart = Math.floor(adjustedValue);
                     const timePart = adjustedValue - dayPart;
-                    
+
                     // Calculate base date (Excel epoch: January 1, 1900 is serial number 1)
                     const baseDate = new Date(1900, 0, 1);
                     baseDate.setDate(baseDate.getDate() + dayPart - 1);
-                    
+
                     // Calculate time components from fractional part
                     const totalSeconds = Math.round(timePart * 24 * 60 * 60);
                     const hours = Math.floor(totalSeconds / 3600);
                     const minutes = Math.floor((totalSeconds % 3600) / 60);
                     const seconds = totalSeconds % 60;
-                    
+
                     // Set the time components
                     baseDate.setHours(hours, minutes, seconds, 0);
-                    
+
                     if (!isNaN(baseDate.getTime())) {
                         const year = baseDate.getFullYear();
                         const month = String(baseDate.getMonth() + 1).padStart(2, '0');
@@ -2443,11 +2509,11 @@
                         const hoursStr = String(baseDate.getHours()).padStart(2, '0');
                         const minutesStr = String(baseDate.getMinutes()).padStart(2, '0');
                         const secondsStr = String(baseDate.getSeconds()).padStart(2, '0');
-                        
+
                         return `${year}-${month}-${day} ${hoursStr}:${minutesStr}:${secondsStr}`;
                     }
                 }
-                
+
                 // Handle other date formats by parsing and preserving the exact time components
                 const date = new Date(stringValue);
                 if (!isNaN(date.getTime())) {
@@ -2459,10 +2525,10 @@
                         const year = date.getFullYear();
                         const month = String(date.getMonth() + 1).padStart(2, '0');
                         const day = String(date.getDate()).padStart(2, '0');
-                        
+
                         return `${year}-${month}-${day} ${hours.padStart(2, '0')}:${minutes}:${seconds}`;
                     }
-                    
+
                     // Fallback to UTC formatting if no time pattern found
                     const year = date.getUTCFullYear();
                     const month = String(date.getUTCMonth() + 1).padStart(2, '0');
@@ -2470,10 +2536,10 @@
                     const hours = String(date.getUTCHours()).padStart(2, '0');
                     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                     const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-                    
+
                     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
                 }
-                
+
                 // If parsing fails, return original value
                 return stringValue;
             } catch (error) {
@@ -2488,19 +2554,19 @@
             let validRecords = 0;
             let invalidRecords = 0;
             let negativeDurations = 0;
-            
+
             const result = data.map((record, index) => {
                 // Calculate duration between FRT and Created At
                 const duration = calculateDuration(record.frt, record.createFaultFirstTime);
-                
+
                 // Track negative durations
                 if (duration && duration.startsWith('-')) {
                     negativeDurations++;
                 }
-                
+
                 // Calculate SLA remarks based on duration and fault level
                 const slaRemarks = duration ? calculateSLARemarks(duration, record.faultLevel) : 'N/A';
-                
+
                 // Debug first few records
                 if (index < 5) {
                     console.log(`Record ${index + 1}:`, {
@@ -2512,20 +2578,20 @@
                         slaRemarks: slaRemarks
                     });
                 }
-                
+
                 if (slaRemarks !== 'N/A' && slaRemarks !== 'Invalid Duration' && slaRemarks !== 'Unknown Fault Level') {
                     validRecords++;
                 } else {
                     invalidRecords++;
                 }
-                
+
                 return {
                     ...record,
                     duration: duration || 'N/A',
                     slaRemarks: slaRemarks
                 };
             });
-            
+
             console.log(`SLA Analysis Summary: ${validRecords} valid, ${invalidRecords} invalid records, ${negativeDurations} negative durations`);
             return result;
         }
@@ -2537,13 +2603,13 @@
             // Define columns including Duration and SLA Remarks
             const columns = [
                 'Status', 'Task ID', 'Order ID', 'Title', 'Create Fault First Time Occured',
-                'FRT', 'Root Cause', 'Sub Cause', 'Action Taken', 'Owner', 
+                'FRT', 'Root Cause', 'Sub Cause', 'Action Taken', 'Owner',
                 'Extra Description', 'Hub site', 'Sub Project', 'Region', 'Fault Level', 'Duration', 'SLA Remarks'
             ];
 
             // Set headers
             const headerRow = worksheet.addRow(columns);
-            
+
             // Add data
             data.forEach(record => {
                 const rowData = [
@@ -2607,7 +2673,7 @@
             // Apply date formatting to specific columns
             const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
             const frtColumnIndex = columns.indexOf('FRT') + 1;
-            
+
             for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
                 // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
                 if (createFaultColumnIndex > 0) {
@@ -2619,7 +2685,7 @@
                         cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
                     }
                 }
-                
+
                 // Format FRT column - format to YYYY-MM-DD HH:mm:ss
                 if (frtColumnIndex > 0) {
                     const cell = worksheet.getCell(rowIndex, frtColumnIndex);
@@ -2649,7 +2715,7 @@
             for (let rowNum = 2; rowNum <= worksheet.actualRowCount; rowNum++) {
                 const cell = worksheet.getCell(rowNum, slaRemarksColIndex);
                 const value = cell.value ? cell.value.toString() : '';
-                
+
                 if (value === 'Within SLA') {
                     cell.fill = {
                         type: 'pattern',
@@ -2678,23 +2744,23 @@
             if (!frtTime || !createdAtTime || frtTime === '-' || frtTime.toString().trim() === '') {
                 return null;
             }
-            
+
             try {
                 const frtDate = new Date(frtTime);
                 const createdDate = new Date(createdAtTime);
-                
+
                 if (isNaN(frtDate.getTime()) || isNaN(createdDate.getTime())) {
                     console.log('Invalid date conversion:', { frtTime, createdAtTime, frtDate, createdDate });
                     return null;
                 }
-                
+
                 const durationMs = frtDate.getTime() - createdDate.getTime();
-                
+
                 if (durationMs < 0) {
                     // FRT occurred before create fault time - this is valid data
                     console.log('FRT occurred before Create Fault time - will be handled as exceptional case');
                 }
-                
+
                 // Convert to hours, minutes, seconds (properly handling negative values)
                 const totalSeconds = Math.floor(durationMs / 1000);
                 const isNegative = totalSeconds < 0;
@@ -2702,22 +2768,22 @@
                 const hours = Math.floor(absSeconds / 3600);
                 const minutes = Math.floor((absSeconds % 3600) / 60);
                 const remainingSeconds = absSeconds % 60;
-                
+
                 // Format as [h]:mm:ss with negative sign if needed
                 const duration = `${isNegative ? '-' : ''}${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-                
+
                 // Debug sample durations to confirm calculation
                 if (Math.random() < 0.05) { // Log 5% of calculations
-                    console.log('Duration calculated:', { 
-                        frtTime, 
-                        createdAtTime, 
+                    console.log('Duration calculated:', {
+                        frtTime,
+                        createdAtTime,
                         durationMs: durationMs,
                         isNegative: isNegative,
                         formattedDuration: duration,
-                        totalSeconds 
+                        totalSeconds
                     });
                 }
-                
+
                 return duration;
             } catch (error) {
                 console.warn('Error calculating duration:', error);
@@ -2730,39 +2796,39 @@
                 console.log('Missing data for SLA calculation:', { durationStr, faultLevel });
                 return 'N/A';
             }
-            
+
             try {
                 // Check if duration is negative (starts with -)
                 const isNegative = durationStr.startsWith('-');
                 const cleanDurationStr = isNegative ? durationStr.substring(1) : durationStr;
-                
+
                 // Parse duration string [h]:mm:ss
                 const parts = cleanDurationStr.split(':');
                 if (parts.length !== 3) {
                     console.log('Invalid duration format:', durationStr);
                     return 'Invalid Duration';
                 }
-                
+
                 const hours = parseInt(parts[0]);
                 const minutes = parseInt(parts[1]);
                 const seconds = parseInt(parts[2]);
-                
+
                 if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
                     console.log('Invalid duration numbers:', { hours, minutes, seconds });
                     return 'Invalid Duration';
                 }
-                
+
                 // If duration is negative, FRT occurred before create fault time
                 // This is typically considered "Within SLA" since fault was resolved before formal logging
                 if (isNegative) {
                     console.log('Negative duration detected - treating as Within SLA:', durationStr);
                     return 'Within SLA';
                 }
-                
+
                 // Convert to total seconds for comparison (positive durations only)
                 const totalSeconds = hours * 3600 + minutes * 60 + seconds;
                 const faultLevelLower = faultLevel.toString().toLowerCase();
-                
+
                 // SLA thresholds in seconds
                 const thresholds = {
                     'minor': { hurdle: 23 * 3600 + 59 * 60 + 59, target: 11 * 3600 + 59 * 60 + 59 },
@@ -2770,13 +2836,13 @@
                     'critical': { hurdle: 5 * 3600 + 59 * 60 + 59, target: 3 * 3600 + 59 * 60 + 59 },
                     'emergency': { hurdle: 3 * 3600 + 59 * 60 + 59, target: 1 * 3600 + 59 * 60 + 59 }
                 };
-                
+
                 const threshold = thresholds[faultLevelLower];
                 if (!threshold) {
                     console.log('Unknown fault level:', faultLevel, 'Available levels:', Object.keys(thresholds));
                     return 'Unknown Fault Level';
                 }
-                
+
                 // Check SLA status
                 let result;
                 if (totalSeconds > threshold.hurdle) {
@@ -2786,7 +2852,7 @@
                 } else {
                     result = 'Within SLA';
                 }
-                
+
                 // Debug sample SLA calculations
                 if (Math.random() < 0.1) { // Log 10% of calculations
                     console.log('SLA Calculation:', {
@@ -2798,7 +2864,7 @@
                         result: result
                     });
                 }
-                
+
                 return result;
             } catch (error) {
                 console.warn('Error calculating SLA remarks:', error);
@@ -2819,44 +2885,44 @@
         function showColumnSelectionModal(worksheetIndex) {
             try {
                 console.log('showColumnSelectionModal called with index:', worksheetIndex);
-                
+
                 // Validate inputs
                 if (!currentWorkbook) {
                     showMessage('No workbook loaded. Please upload an Excel file first.', 'error');
                     return;
                 }
-                
+
                 // Convert to number if string and validate
                 const index = typeof worksheetIndex === 'string' ? parseInt(worksheetIndex, 10) : worksheetIndex;
-                
+
                 if (isNaN(index) || index < 0 || index >= currentWorkbook.worksheets.length) {
                     console.error('Invalid worksheet index:', worksheetIndex, 'converted to:', index, 'available range: 0-' + (currentWorkbook.worksheets.length - 1));
                     showMessage(`Invalid worksheet selected. Index: ${index}`, 'error');
                     return;
                 }
-                
+
                 const worksheet = currentWorkbook.worksheets[index];
-                
+
                 if (!worksheet) {
                     console.error('Worksheet not found at index:', index);
                     showMessage('Worksheet not found.', 'error');
                     return;
                 }
-                
+
                 // Set the selected index only after all validations pass
                 selectedWorksheetIndex = index;
-                
+
                 // Get column headers
                 currentWorksheetColumns = [];
                 const headerRow = worksheet.getRow(1);
-                
+
                 // Check if worksheet has any data
                 if (!headerRow || worksheet.actualRowCount === 0) {
                     showMessage('This worksheet appears to be empty.', 'error');
                     selectedWorksheetIndex = null; // Reset if worksheet is empty
                     return;
                 }
-                
+
                 headerRow.eachCell((cell, colNumber) => {
                     const headerValue = (cell.value || `Column ${colNumber}`).toString();
                     const sampleValue = getSampleValue(worksheet, colNumber);
@@ -2866,7 +2932,7 @@
                         sample: sampleValue
                     });
                 });
-                
+
                 // If no columns found, try to detect columns from data
                 if (currentWorksheetColumns.length === 0) {
                     for (let col = 1; col <= worksheet.columnCount; col++) {
@@ -2882,19 +2948,19 @@
 
                 // Populate the modal with column checkboxes
                 populateColumnSelection();
-                
+
                 // Final validation before showing modal
                 if (currentWorksheetColumns.length === 0) {
                     showMessage('No columns found in this worksheet.', 'error');
                     selectedWorksheetIndex = null;
                     return;
                 }
-                
+
                 console.log('Opening modal with', currentWorksheetColumns.length, 'columns for worksheet index', selectedWorksheetIndex);
-                
+
                 // Show modal only if everything is ready
                 document.getElementById('columnSelectionModal').style.display = 'block';
-                
+
             } catch (error) {
                 console.error('Error showing column selection modal:', error);
                 showMessage('Error opening column selection: ' + error.message, 'error');
@@ -2917,12 +2983,12 @@
             currentWorksheetColumns.forEach((column, index) => {
                 const columnItem = document.createElement('div');
                 columnItem.className = 'column-item';
-                
+
                 columnItem.innerHTML = `
                     <input type="checkbox" id="col_${column.index}" checked>
                     <label for="col_${column.index}">${column.header}</label>
                 `;
-                
+
                 columnList.appendChild(columnItem);
             });
         }
@@ -2970,41 +3036,41 @@
         function downloadWithSelectedColumns() {
             try {
                 console.log('downloadWithSelectedColumns called with selectedWorksheetIndex:', selectedWorksheetIndex);
-                
+
                 // Validate prerequisites
                 if (selectedWorksheetIndex === null || selectedWorksheetIndex === undefined) {
                     showMessage('No worksheet selected for download. Please try opening the column selection again.', 'error');
                     closeColumnSelectionModal(); // Close modal to prevent confusion
                     return;
                 }
-                
+
                 // Double-check workbook and worksheet still exist
                 if (!currentWorkbook) {
                     showMessage('Workbook no longer available. Please reload the file.', 'error');
                     closeColumnSelectionModal();
                     return;
                 }
-                
+
                 if (selectedWorksheetIndex < 0 || selectedWorksheetIndex >= currentWorkbook.worksheets.length) {
                     showMessage('Selected worksheet is no longer valid. Please try again.', 'error');
                     closeColumnSelectionModal();
                     return;
                 }
-                
+
                 if (!currentWorksheetColumns || currentWorksheetColumns.length === 0) {
                     showMessage('No columns available for selection. Please try again.', 'error');
                     closeColumnSelectionModal();
                     return;
                 }
-                
+
                 const selectedColumns = [];
                 const checkboxes = document.querySelectorAll('#columnSelectionList input[type="checkbox"]');
-                
+
                 if (checkboxes.length === 0) {
                     showMessage('No column checkboxes found. Please try again.', 'error');
                     return;
                 }
-                
+
                 checkboxes.forEach((checkbox, index) => {
                     if (checkbox.checked && currentWorksheetColumns[index]) {
                         selectedColumns.push(currentWorksheetColumns[index].index);
@@ -3021,11 +3087,11 @@
 
                 // Store the worksheet index before closing modal (which resets it to null)
                 const worksheetIndexToDownload = selectedWorksheetIndex;
-                
+
                 // Close modal and start download
                 closeColumnSelectionModal();
                 downloadWorksheetWithColumns(worksheetIndexToDownload, selectedColumns);
-                
+
             } catch (error) {
                 console.error('Error in downloadWithSelectedColumns:', error);
                 showMessage('Error preparing column selection: ' + error.message, 'error');
@@ -3033,7 +3099,7 @@
         }
 
         // Close modal when clicking outside of it or pressing Escape
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('columnSelectionModal');
             if (event.target === modal) {
                 closeColumnSelectionModal();
@@ -3041,7 +3107,7 @@
         }
 
         // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 const modal = document.getElementById('columnSelectionModal');
                 if (modal && modal.style.display === 'block') {
@@ -3054,33 +3120,33 @@
         function showEnhancedColumnSelectionModal(reportType) {
             try {
                 console.log('showEnhancedColumnSelectionModal called with reportType:', reportType);
-                
+
                 selectedEnhancedReportType = reportType;
                 currentEnhancedWorkbook = getEnhancedWorkbook(reportType);
-                
+
                 if (!currentEnhancedWorkbook) {
                     showMessage(`${getReportDisplayName(reportType)} is not available. Please process the data first.`, 'error');
                     return;
                 }
 
                 const worksheet = currentEnhancedWorkbook.worksheets[0]; // Enhanced reports typically have one worksheet
-                
+
                 if (!worksheet) {
                     showMessage('No worksheet found in the report.', 'error');
                     return;
                 }
-                
+
                 // Get column headers from enhanced report
                 currentEnhancedColumns = [];
                 const headerRow = worksheet.getRow(1);
-                
+
                 // Check if worksheet has any data
                 if (!headerRow || worksheet.actualRowCount === 0) {
                     showMessage('This report appears to be empty.', 'error');
                     selectedEnhancedReportType = null;
                     return;
                 }
-                
+
                 headerRow.eachCell((cell, colNumber) => {
                     const headerValue = (cell.value || `Column ${colNumber}`).toString();
                     const sampleValue = getSampleValue(worksheet, colNumber);
@@ -3090,7 +3156,7 @@
                         sample: sampleValue
                     });
                 });
-                
+
                 // If no columns found, try to detect columns from data
                 if (currentEnhancedColumns.length === 0) {
                     for (let col = 1; col <= worksheet.columnCount; col++) {
@@ -3106,25 +3172,25 @@
 
                 // Populate the modal with column checkboxes
                 populateEnhancedColumnSelection();
-                
+
                 // Final validation before showing modal
                 if (currentEnhancedColumns.length === 0) {
                     showMessage('No columns found in this report.', 'error');
                     selectedEnhancedReportType = null;
                     return;
                 }
-                
+
                 // Update modal title for enhanced reports
                 const modalTitle = document.querySelector('#columnSelectionModal .modal-header h2');
                 const modalSubtitle = document.querySelector('#columnSelectionModal .modal-header p');
                 if (modalTitle) modalTitle.textContent = `📋 Select Columns to Download`;
                 if (modalSubtitle) modalSubtitle.textContent = 'Uncheck the columns you want to exclude from the download file';
-                
+
                 console.log('Opening enhanced modal with', currentEnhancedColumns.length, 'columns for report type', reportType);
-                
+
                 // Show modal only if everything is ready
                 document.getElementById('columnSelectionModal').style.display = 'block';
-                
+
             } catch (error) {
                 console.error('Error showing enhanced column selection modal:', error);
                 showMessage('Error opening column selection: ' + error.message, 'error');
@@ -3172,12 +3238,12 @@
             currentEnhancedColumns.forEach((column, index) => {
                 const columnItem = document.createElement('div');
                 columnItem.className = 'column-item';
-                
+
                 columnItem.innerHTML = `
                     <input type="checkbox" id="enhanced_col_${column.index}" checked>
                     <label for="enhanced_col_${column.index}">${column.header}</label>
                 `;
-                
+
                 columnList.appendChild(columnItem);
             });
         }
@@ -3186,50 +3252,50 @@
         function downloadWithSelectedColumns() {
             try {
                 console.log('downloadWithSelectedColumns called');
-                
+
                 // Check if this is for enhanced reports or regular worksheets
                 if (selectedEnhancedReportType !== null) {
                     downloadEnhancedWithSelectedColumns();
                     return;
                 }
-                
+
                 // Original logic for regular worksheet downloads
                 console.log('downloadWithSelectedColumns called with selectedWorksheetIndex:', selectedWorksheetIndex);
-                
+
                 // Validate prerequisites
                 if (selectedWorksheetIndex === null || selectedWorksheetIndex === undefined) {
                     showMessage('No worksheet selected for download. Please try opening the column selection again.', 'error');
                     closeColumnSelectionModal(); // Close modal to prevent confusion
                     return;
                 }
-                
+
                 // Double-check workbook and worksheet still exist
                 if (!currentWorkbook) {
                     showMessage('Workbook no longer available. Please reload the file.', 'error');
                     closeColumnSelectionModal();
                     return;
                 }
-                
+
                 if (selectedWorksheetIndex < 0 || selectedWorksheetIndex >= currentWorkbook.worksheets.length) {
                     showMessage('Selected worksheet is no longer valid. Please try again.', 'error');
                     closeColumnSelectionModal();
                     return;
                 }
-                
+
                 if (!currentWorksheetColumns || currentWorksheetColumns.length === 0) {
                     showMessage('No columns available for selection. Please try again.', 'error');
                     closeColumnSelectionModal();
                     return;
                 }
-                
+
                 const selectedColumns = [];
                 const checkboxes = document.querySelectorAll('#columnSelectionList input[type="checkbox"]');
-                
+
                 if (checkboxes.length === 0) {
                     showMessage('No column checkboxes found. Please try again.', 'error');
                     return;
                 }
-                
+
                 checkboxes.forEach((checkbox, index) => {
                     if (checkbox.checked && currentWorksheetColumns[index]) {
                         selectedColumns.push(currentWorksheetColumns[index].index);
@@ -3246,11 +3312,11 @@
 
                 // Store the worksheet index before closing modal (which resets it to null)
                 const worksheetIndexToDownload = selectedWorksheetIndex;
-                
+
                 // Close modal and start download
                 closeColumnSelectionModal();
                 downloadWorksheetWithColumns(worksheetIndexToDownload, selectedColumns);
-                
+
             } catch (error) {
                 console.error('Error in downloadWithSelectedColumns:', error);
                 showMessage('Error preparing column selection: ' + error.message, 'error');
@@ -3265,27 +3331,27 @@
                     closeColumnSelectionModal();
                     return;
                 }
-                
+
                 if (!currentEnhancedWorkbook) {
                     showMessage('Report no longer available. Please process the data again.', 'error');
                     closeColumnSelectionModal();
                     return;
                 }
-                
+
                 if (!currentEnhancedColumns || currentEnhancedColumns.length === 0) {
                     showMessage('No columns available for selection. Please try again.', 'error');
                     closeColumnSelectionModal();
                     return;
                 }
-                
+
                 const selectedColumns = [];
                 const checkboxes = document.querySelectorAll('#columnSelectionList input[type="checkbox"]');
-                
+
                 if (checkboxes.length === 0) {
                     showMessage('No column checkboxes found. Please try again.', 'error');
                     return;
                 }
-                
+
                 checkboxes.forEach((checkbox, index) => {
                     if (checkbox.checked && currentEnhancedColumns[index]) {
                         selectedColumns.push(currentEnhancedColumns[index].index);
@@ -3303,11 +3369,11 @@
                 // Store values before closing modal
                 const reportTypeToDownload = selectedEnhancedReportType;
                 const workbookToDownload = currentEnhancedWorkbook;
-                
+
                 // Close modal and start download
                 closeColumnSelectionModal();
                 downloadEnhancedReportWithColumns(reportTypeToDownload, workbookToDownload, selectedColumns);
-                
+
             } catch (error) {
                 console.error('Error in downloadEnhancedWithSelectedColumns:', error);
                 showMessage('Error preparing enhanced column selection: ' + error.message, 'error');
@@ -3332,36 +3398,36 @@
                     selectedColumns,
                     workbookExists: !!workbook
                 });
-                
+
                 showMessage('Preparing download...', 'success');
-                
+
                 // Validate inputs
                 if (!workbook) {
                     throw new Error('No report workbook available');
                 }
-                
+
                 const originalWorksheet = workbook.worksheets[0];
-                
+
                 if (!originalWorksheet) {
                     throw new Error('No worksheet found in the report');
                 }
-                
+
                 console.log('Report worksheet found:', {
                     name: originalWorksheet.name,
                     rowCount: originalWorksheet.rowCount,
                     columnCount: originalWorksheet.columnCount
                 });
-                
+
                 const newWorkbook = new ExcelJS.Workbook();
-                
+
                 // Copy workbook properties
                 newWorkbook.creator = workbook.creator || 'Closure Validation';
                 newWorkbook.lastModifiedBy = workbook.lastModifiedBy;
                 newWorkbook.created = workbook.created || new Date();
                 newWorkbook.modified = new Date();
-                
+
                 const newWorksheet = newWorkbook.addWorksheet(originalWorksheet.name);
-                
+
                 // Copy worksheet properties
                 if (originalWorksheet.properties) {
                     newWorksheet.properties = { ...originalWorksheet.properties };
@@ -3372,10 +3438,10 @@
                 if (originalWorksheet.headerFooter) {
                     newWorksheet.headerFooter = { ...originalWorksheet.headerFooter };
                 }
-                
+
                 // Sort selected columns to maintain order
                 const sortedColumns = [...selectedColumns].sort((a, b) => a - b);
-                
+
                 // Copy column widths for selected columns
                 sortedColumns.forEach((originalColIndex, newColIndex) => {
                     const originalColumn = originalWorksheet.getColumn(originalColIndex);
@@ -3384,28 +3450,28 @@
                         newColumn.width = originalColumn.width;
                     }
                 });
-                
+
                 // Copy data for selected columns only
                 for (let rowNumber = 1; rowNumber <= originalWorksheet.rowCount; rowNumber++) {
                     const originalRow = originalWorksheet.getRow(rowNumber);
                     const newRow = newWorksheet.getRow(rowNumber);
-                    
+
                     if (originalRow.height) {
                         newRow.height = originalRow.height;
                     }
-                    
+
                     newRow.hidden = originalRow.hidden;
                     newRow.outlineLevel = originalRow.outlineLevel;
-                    
+
                     // Copy only selected columns
                     sortedColumns.forEach((originalColIndex, newColIndex) => {
                         const originalCell = originalRow.getCell(originalColIndex);
                         const newCell = newRow.getCell(newColIndex + 1);
-                        
+
                         if (originalCell.value !== null && originalCell.value !== undefined) {
                             newCell.value = originalCell.value;
                         }
-                        
+
                         if (originalCell.style && Object.keys(originalCell.style).length > 0) {
                             try {
                                 newCell.style = JSON.parse(JSON.stringify(originalCell.style));
@@ -3413,7 +3479,7 @@
                                 console.warn(`Style copy error for cell ${newColIndex + 1},${rowNumber}:`, styleError);
                             }
                         }
-                        
+
                         if (originalCell.dataValidation) {
                             try {
                                 newCell.dataValidation = { ...originalCell.dataValidation };
@@ -3421,33 +3487,33 @@
                                 console.warn(`Data validation copy error:`, validationError);
                             }
                         }
-                        
+
                         if (originalCell.hyperlink) {
                             newCell.hyperlink = originalCell.hyperlink;
                         }
-                        
+
                         if (originalCell.comment) {
                             newCell.comment = originalCell.comment;
                         }
                     });
-                    
+
                     newRow.commit();
                 }
-                
+
                 // Generate enhanced report filename
                 const buffer = await newWorkbook.xlsx.writeBuffer();
                 const today = new Date();
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
-                
+
                 const reportDisplayName = getReportDisplayName(reportType);
                 const filename = getEnhancedReportFilename(reportType, day, month);
-                
+
                 console.log('Generated enhanced filename:', filename);
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
-                
+
             } catch (error) {
                 showMessage('Error downloading enhanced report: ' + error.message, 'error');
                 console.error('Enhanced download error:', error);
@@ -3473,18 +3539,18 @@
         async function downloadWorksheet(worksheetIndex) {
             try {
                 showMessage('Preparing download with full formatting...', 'success');
-                
+
                 const originalWorksheet = currentWorkbook.worksheets[worksheetIndex];
                 const newWorkbook = new ExcelJS.Workbook();
-                
+
                 // Copy workbook properties
                 newWorkbook.creator = currentWorkbook.creator || 'Excel Worksheet Separator';
                 newWorkbook.lastModifiedBy = currentWorkbook.lastModifiedBy;
                 newWorkbook.created = currentWorkbook.created || new Date();
                 newWorkbook.modified = new Date();
-                
+
                 const newWorksheet = newWorkbook.addWorksheet(originalWorksheet.name);
-                
+
                 // Copy worksheet properties
                 if (originalWorksheet.properties) {
                     newWorksheet.properties = { ...originalWorksheet.properties };
@@ -3495,7 +3561,7 @@
                 if (originalWorksheet.headerFooter) {
                     newWorksheet.headerFooter = { ...originalWorksheet.headerFooter };
                 }
-                
+
                 // Copy column widths
                 for (let i = 1; i <= originalWorksheet.columnCount; i++) {
                     const originalColumn = originalWorksheet.getColumn(i);
@@ -3504,27 +3570,27 @@
                         newColumn.width = originalColumn.width;
                     }
                 }
-                
+
                 // Copy all data and formatting
                 for (let rowNumber = 1; rowNumber <= originalWorksheet.rowCount; rowNumber++) {
                     const originalRow = originalWorksheet.getRow(rowNumber);
                     const newRow = newWorksheet.getRow(rowNumber);
-                    
+
                     if (originalRow.height) {
                         newRow.height = originalRow.height;
                     }
-                    
+
                     newRow.hidden = originalRow.hidden;
                     newRow.outlineLevel = originalRow.outlineLevel;
-                    
+
                     for (let colNumber = 1; colNumber <= originalWorksheet.columnCount; colNumber++) {
                         const originalCell = originalRow.getCell(colNumber);
                         const newCell = newRow.getCell(colNumber);
-                        
+
                         if (originalCell.value !== null && originalCell.value !== undefined) {
                             newCell.value = originalCell.value;
                         }
-                        
+
                         if (originalCell.style && Object.keys(originalCell.style).length > 0) {
                             try {
                                 newCell.style = JSON.parse(JSON.stringify(originalCell.style));
@@ -3532,7 +3598,7 @@
                                 console.warn(`Style copy error for cell ${colNumber},${rowNumber}:`, styleError);
                             }
                         }
-                        
+
                         if (originalCell.dataValidation) {
                             try {
                                 newCell.dataValidation = { ...originalCell.dataValidation };
@@ -3540,19 +3606,19 @@
                                 console.warn(`Data validation copy error:`, validationError);
                             }
                         }
-                        
+
                         if (originalCell.hyperlink) {
                             newCell.hyperlink = originalCell.hyperlink;
                         }
-                        
+
                         if (originalCell.comment) {
                             newCell.comment = originalCell.comment;
                         }
                     }
-                    
+
                     newRow.commit();
                 }
-                
+
                 // Copy merged cells
                 try {
                     if (originalWorksheet.model && originalWorksheet.model.merges) {
@@ -3567,7 +3633,7 @@
                 } catch (mergeError) {
                     console.warn('Error copying merged cells:', mergeError);
                 }
-                
+
                 // Copy auto filter
                 try {
                     if (originalWorksheet.autoFilter) {
@@ -3576,16 +3642,16 @@
                 } catch (filterError) {
                     console.warn('Error copying auto filter:', filterError);
                 }
-                
+
                 // Generate and download
                 const buffer = await newWorkbook.xlsx.writeBuffer();
                 const safeSheetName = originalWorksheet.name.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
                 const safeInputName = inputFileName.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
                 const filename = `${safeInputName} - ${safeSheetName}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename} with formatting preserved!`, 'success');
-                
+
             } catch (error) {
                 showMessage('Error downloading worksheet: ' + error.message, 'error');
                 console.error('Download error:', error);
@@ -3600,44 +3666,44 @@
                     workbookExists: !!currentWorkbook,
                     worksheetCount: currentWorkbook ? currentWorkbook.worksheets.length : 0
                 });
-                
+
                 showMessage('Preparing download...', 'success');
-                
+
                 // Validate inputs - null/undefined check first
                 if (worksheetIndex === null || worksheetIndex === undefined) {
                     throw new Error('No worksheet index provided. Please try selecting the worksheet again.');
                 }
-                
+
                 if (!currentWorkbook) {
                     throw new Error('No workbook loaded');
                 }
-                
+
                 if (worksheetIndex < 0 || worksheetIndex >= currentWorkbook.worksheets.length) {
                     throw new Error(`Invalid worksheet index: ${worksheetIndex}. Available: 0-${currentWorkbook.worksheets.length - 1}`);
                 }
-                
+
                 const originalWorksheet = currentWorkbook.worksheets[worksheetIndex];
-                
+
                 if (!originalWorksheet) {
                     throw new Error('Worksheet not found at index ' + worksheetIndex);
                 }
-                
+
                 console.log('Worksheet found:', {
                     name: originalWorksheet.name,
                     rowCount: originalWorksheet.rowCount,
                     columnCount: originalWorksheet.columnCount
                 });
-                
+
                 const newWorkbook = new ExcelJS.Workbook();
-                
+
                 // Copy workbook properties
                 newWorkbook.creator = currentWorkbook.creator || 'Excel Worksheet Separator';
                 newWorkbook.lastModifiedBy = currentWorkbook.lastModifiedBy;
                 newWorkbook.created = currentWorkbook.created || new Date();
                 newWorkbook.modified = new Date();
-                
+
                 const newWorksheet = newWorkbook.addWorksheet(originalWorksheet.name);
-                
+
                 // Copy worksheet properties
                 if (originalWorksheet.properties) {
                     newWorksheet.properties = { ...originalWorksheet.properties };
@@ -3648,10 +3714,10 @@
                 if (originalWorksheet.headerFooter) {
                     newWorksheet.headerFooter = { ...originalWorksheet.headerFooter };
                 }
-                
+
                 // Sort selected columns to maintain order
                 const sortedColumns = [...selectedColumns].sort((a, b) => a - b);
-                
+
                 // Copy column widths for selected columns
                 sortedColumns.forEach((originalColIndex, newColIndex) => {
                     const originalColumn = originalWorksheet.getColumn(originalColIndex);
@@ -3660,28 +3726,28 @@
                         newColumn.width = originalColumn.width;
                     }
                 });
-                
+
                 // Copy data for selected columns only
                 for (let rowNumber = 1; rowNumber <= originalWorksheet.rowCount; rowNumber++) {
                     const originalRow = originalWorksheet.getRow(rowNumber);
                     const newRow = newWorksheet.getRow(rowNumber);
-                    
+
                     if (originalRow.height) {
                         newRow.height = originalRow.height;
                     }
-                    
+
                     newRow.hidden = originalRow.hidden;
                     newRow.outlineLevel = originalRow.outlineLevel;
-                    
+
                     // Copy only selected columns
                     sortedColumns.forEach((originalColIndex, newColIndex) => {
                         const originalCell = originalRow.getCell(originalColIndex);
                         const newCell = newRow.getCell(newColIndex + 1);
-                        
+
                         if (originalCell.value !== null && originalCell.value !== undefined) {
                             newCell.value = originalCell.value;
                         }
-                        
+
                         if (originalCell.style && Object.keys(originalCell.style).length > 0) {
                             try {
                                 newCell.style = JSON.parse(JSON.stringify(originalCell.style));
@@ -3689,7 +3755,7 @@
                                 console.warn(`Style copy error for cell ${newColIndex + 1},${rowNumber}:`, styleError);
                             }
                         }
-                        
+
                         if (originalCell.dataValidation) {
                             try {
                                 newCell.dataValidation = { ...originalCell.dataValidation };
@@ -3697,19 +3763,19 @@
                                 console.warn(`Data validation copy error:`, validationError);
                             }
                         }
-                        
+
                         if (originalCell.hyperlink) {
                             newCell.hyperlink = originalCell.hyperlink;
                         }
-                        
+
                         if (originalCell.comment) {
                             newCell.comment = originalCell.comment;
                         }
                     });
-                    
+
                     newRow.commit();
                 }
-                
+
                 // Handle merged cells - only include those that are within selected columns
                 try {
                     if (originalWorksheet.model && originalWorksheet.model.merges) {
@@ -3720,11 +3786,11 @@
                                 if (range.length === 2) {
                                     const startCell = parseCell(range[0]);
                                     const endCell = parseCell(range[1]);
-                                    
+
                                     // Check if merge is within selected columns
                                     const startColInSelected = selectedColumns.indexOf(startCell.col);
                                     const endColInSelected = selectedColumns.indexOf(endCell.col);
-                                    
+
                                     if (startColInSelected !== -1 && endColInSelected !== -1) {
                                         // Create new merge range with adjusted column positions
                                         const newStartCol = startColInSelected + 1;
@@ -3741,25 +3807,25 @@
                 } catch (mergeError) {
                     console.warn('Error copying merged cells:', mergeError);
                 }
-                
+
                 // Generate and download
                 const buffer = await newWorkbook.xlsx.writeBuffer();
-                
+
                 // Safe name generation with validation
                 const worksheetName = originalWorksheet.name || `Worksheet_${worksheetIndex + 1}`;
                 const safeSheetName = worksheetName.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
-                
+
                 const fileName = inputFileName || 'Excel_File';
                 const safeInputName = fileName.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
-                
+
                 const selectedColumnCount = selectedColumns.length;
                 const filename = `${safeInputName} - ${safeSheetName}.xlsx`;
-                
+
                 console.log('Generated filename:', filename);
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
-                
+
             } catch (error) {
                 showMessage('Error downloading worksheet: ' + error.message, 'error');
                 console.error('Download error:', error);
@@ -3803,7 +3869,7 @@
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
                 const filename = `Closure - ${day} ${month}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
             } catch (error) {
@@ -3818,7 +3884,7 @@
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
                 const filename = `Closure Not Matched RCA - ${day} ${month}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
             } catch (error) {
@@ -3832,33 +3898,33 @@
                     showMessage('No FRT issues data available for download', 'error');
                     return;
                 }
-                
+
                 const buffer = await window.frtIssuesWorkbook.xlsx.writeBuffer();
                 const today = new Date();
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
                 const filename = `Closure With FRT issue - ${day} ${month}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
             } catch (error) {
                 showMessage('Error downloading FRT issues file: ' + error.message, 'error');
             }
         }
-        
+
         async function downloadFRTIssuesWithoutMissedFile() {
             try {
                 if (!window.frtIssuesWithoutMissedWorkbook) {
                     showMessage('No FRT issues data (without Missed FRT) available for download', 'error');
                     return;
                 }
-                
+
                 const buffer = await window.frtIssuesWithoutMissedWorkbook.xlsx.writeBuffer();
                 const today = new Date();
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
                 const filename = `Closure With FRT issue (No Missed FRT) - ${day} ${month}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
             } catch (error) {
@@ -3872,13 +3938,13 @@
                     showMessage('No Within SLA data available for download', 'error');
                     return;
                 }
-                
+
                 const buffer = await window.withinSLAWorkbook.xlsx.writeBuffer();
                 const today = new Date();
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
                 const filename = `Within SLA PCMs - ${day} ${month}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
             } catch (error) {
@@ -3892,13 +3958,13 @@
                     showMessage('No Exceeded Target SLA data available for download', 'error');
                     return;
                 }
-                
+
                 const buffer = await window.exceededTargetSLAWorkbook.xlsx.writeBuffer();
                 const today = new Date();
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
                 const filename = `Exceeded Target SLA PCMs - ${day} ${month}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
             } catch (error) {
@@ -3912,13 +3978,13 @@
                     showMessage('No Exceeded Hurdle SLA data available for download', 'error');
                     return;
                 }
-                
+
                 const buffer = await window.exceededHurdleSLAWorkbook.xlsx.writeBuffer();
                 const today = new Date();
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
                 const filename = `Exceeded Hurdle SLA PCMs - ${day} ${month}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
             } catch (error) {
@@ -3927,24 +3993,60 @@
         }
 
         // OWS FRT processing functions
+        function performOwsFrtMatchingFromPcm(closureData) {
+            const owsFrtMatched = [];
+            const owsFrtNotMatched = [];
+
+            closureData.forEach(record => {
+                // Get OWS FRT from the PCM data
+                const owsFrt = record.owsFrt ? record.owsFrt.toString().trim() : '';
+                const closureFrt = record.frt ? record.frt.toString().trim() : '';
+
+                if (owsFrt && owsFrt !== '' && owsFrt !== '-') {
+                    // Check if FRT values match
+                    if (closureFrt === owsFrt) {
+                        owsFrtMatched.push({
+                            ...record,
+                            owsFrt: owsFrt,
+                            owsFrtMatch: 'Matched'
+                        });
+                    } else {
+                        owsFrtNotMatched.push({
+                            ...record,
+                            owsFrt: owsFrt,
+                            owsFrtMatch: 'FRT Mismatch'
+                        });
+                    }
+                } else {
+                    owsFrtNotMatched.push({
+                        ...record,
+                        owsFrt: owsFrt || '',
+                        owsFrtMatch: 'OWS FRT Not Available'
+                    });
+                }
+            });
+
+            return { owsFrtMatched, owsFrtNotMatched };
+        }
+
         function extractOwsFrtData(sheet) {
             const data = {};
             const headers = [];
-            
+
             // Get headers from first row
             const headerRow = sheet.getRow(1);
             headerRow.eachCell((cell, colNumber) => {
                 headers[colNumber] = cell.value ? cell.value.toString().toLowerCase().trim() : '';
             });
-            
+
             // Find required columns
             const woIdCol = findColumnIndex(headers, ['wo id(process tt)', 'wo id', 'woid']);
             const frtCol = findColumnIndex(headers, ['fault recovery time(process tt)', 'fault recovery time', 'frt', 'recovery time', 'recovey time', 'recovery', 'recover time']);
-            
+
             if (woIdCol === -1 || frtCol === -1) {
                 throw new Error('Required columns not found in OWS FRT file. Expected: WO ID and FRT/Recovery Time columns');
             }
-            
+
             // Extract data
             for (let rowNum = 2; rowNum <= sheet.actualRowCount; rowNum++) {
                 const row = sheet.getRow(rowNum);
@@ -3959,23 +4061,23 @@
                     }
                 }
             }
-            
+
             return data;
         }
-        
+
         function performOwsFrtMatching(closureData, owsFrtData) {
             const owsFrtMatched = [];
             const owsFrtNotMatched = [];
-            
+
             closureData.forEach(record => {
                 const orderIdKey = record.orderId ? record.orderId.toString().trim() : '';
                 const owsFrtRecord = owsFrtData[orderIdKey];
-                
+
                 if (owsFrtRecord) {
                     // Check if FRT values match
                     const closureFrt = record.frt ? record.frt.toString().trim() : '';
                     const owsFrt = owsFrtRecord.frt ? owsFrtRecord.frt.toString().trim() : '';
-                    
+
                     if (closureFrt === owsFrt) {
                         owsFrtMatched.push({
                             ...record,
@@ -3997,25 +4099,25 @@
                     });
                 }
             });
-            
+
             return { owsFrtMatched, owsFrtNotMatched };
         }
-        
+
         async function createOwsFrtReport(data, sheetName) {
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet(sheetName);
-            
+
             // Define columns based on report type
             let columns, getRowData;
-            
+
             if (sheetName === 'OWS-FRT Matched PCMs') {
                 // Include OWS FRT and OWS FRT Match columns for matched report
                 columns = [
                     'Status', 'Task ID', 'Order ID', 'Title', 'Create Fault First Time Occured',
-                    'FRT', 'OWS FRT', 'OWS FRT Match', 'Root Cause', 'Sub Cause', 'Action Taken', 
+                    'FRT', 'OWS FRT', 'OWS FRT Match', 'Root Cause', 'Sub Cause', 'Action Taken',
                     'Owner', 'Extra Description', 'Hub site', 'Sub Project', 'Region'
                 ];
-                
+
                 getRowData = (record) => [
                     record.status || '',
                     record.taskId || '',
@@ -4038,10 +4140,10 @@
                 // Include all columns for not matched report
                 columns = [
                     'Status', 'Task ID', 'Order ID', 'Title', 'Create Fault First Time Occured',
-                    'FRT', 'OWS FRT', 'OWS FRT Match', 'Root Cause', 'Sub Cause', 'Action Taken', 
+                    'FRT', 'OWS FRT', 'OWS FRT Match', 'Root Cause', 'Sub Cause', 'Action Taken',
                     'Owner', 'Extra Description', 'Hub site', 'Sub Project', 'Region'
                 ];
-                
+
                 getRowData = (record) => [
                     record.status || '',
                     record.taskId || '',
@@ -4061,16 +4163,16 @@
                     record.region || ''
                 ];
             }
-            
+
             // Set headers
             const headerRow = worksheet.addRow(columns);
-            
+
             // Add data
             data.forEach(record => {
                 const rowData = getRowData(record);
                 worksheet.addRow(rowData);
             });
-            
+
             // Style the header
             headerRow.eachCell((cell) => {
                 cell.font = { bold: true, color: { argb: 'FFFFFF' } };
@@ -4083,7 +4185,7 @@
                     right: { style: 'thin' }
                 };
             });
-            
+
             // Apply text alignment to all data cells
             const titleColumnIndex = columns.indexOf('Title') + 1; // Excel columns are 1-indexed
             for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
@@ -4098,12 +4200,12 @@
                     }
                 }
             }
-            
+
             // Apply date formatting to specific columns
             const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
             const frtColumnIndex = columns.indexOf('FRT') + 1;
             const owsFrtColumnIndex = columns.indexOf('OWS FRT') + 1;
-            
+
             for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
                 // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
                 if (createFaultColumnIndex > 0) {
@@ -4115,7 +4217,7 @@
                         cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
                     }
                 }
-                
+
                 // Format FRT column - format to YYYY-MM-DD HH:mm:ss
                 if (frtColumnIndex > 0) {
                     const cell = worksheet.getCell(rowIndex, frtColumnIndex);
@@ -4126,7 +4228,7 @@
                         cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
                     }
                 }
-                
+
                 // Format OWS FRT column - format to YYYY-MM-DD HH:mm:ss
                 if (owsFrtColumnIndex > 0) {
                     const cell = worksheet.getCell(rowIndex, owsFrtColumnIndex);
@@ -4138,48 +4240,48 @@
                     }
                 }
             }
-            
+
             // Auto-fit columns
             worksheet.columns.forEach(column => {
                 column.width = 15;
             });
-            
+
             return workbook;
         }
-        
+
         async function downloadOwsFrtMatchedFile() {
             try {
                 if (!owsFrtMatchedWorkbook) {
                     showMessage('No OWS FRT matched data available for download', 'error');
                     return;
                 }
-                
+
                 const buffer = await owsFrtMatchedWorkbook.xlsx.writeBuffer();
                 const today = new Date();
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
                 const filename = `OWS-FRT Matched PCMs - ${day} ${month}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
             } catch (error) {
                 showMessage('Error downloading OWS FRT matched file: ' + error.message, 'error');
             }
         }
-        
+
         async function downloadOwsFrtNotMatchedFile() {
             try {
                 if (!owsFrtNotMatchedWorkbook) {
                     showMessage('No OWS FRT not matched data available for download', 'error');
                     return;
                 }
-                
+
                 const buffer = await owsFrtNotMatchedWorkbook.xlsx.writeBuffer();
                 const today = new Date();
                 const day = today.getDate().toString().padStart(2, '0');
                 const month = today.toLocaleString('default', { month: 'short' });
                 const filename = `OWS-FRT Non-Matched PCMs - ${day} ${month}.xlsx`;
-                
+
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
             } catch (error) {
@@ -4202,7 +4304,7 @@
         /* ========================================
            UI HELPER FUNCTIONS
            ======================================== */
-        
+
         function showLoading(show) {
             loading.style.display = show ? 'block' : 'none';
         }
@@ -4210,34 +4312,34 @@
         function showMessage(message, type) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `notification ${type}`;
-            
+
             // Create message content
             const messageContent = document.createElement('span');
             messageContent.textContent = message;
             messageContent.style.paddingRight = '25px'; // Space for close button
-            
+
             // Create close button
             const closeBtn = document.createElement('button');
             closeBtn.className = 'close-btn';
             closeBtn.innerHTML = '×';
             closeBtn.onclick = () => hideNotification(messageDiv);
-            
+
             messageDiv.appendChild(messageContent);
             messageDiv.appendChild(closeBtn);
             messages.appendChild(messageDiv);
-            
+
             // Trigger animation
             setTimeout(() => {
                 messageDiv.classList.add('show');
             }, 10);
-            
+
             // Auto-hide success messages after 5 seconds
             if (type === 'success') {
                 setTimeout(() => {
                     hideNotification(messageDiv);
                 }, 5000);
             }
-            
+
             // Auto-hide error messages after 8 seconds
             if (type === 'error') {
                 setTimeout(() => {
@@ -4245,7 +4347,7 @@
                 }, 8000);
             }
         }
-        
+
         function hideNotification(messageDiv) {
             if (messageDiv && messageDiv.parentNode) {
                 messageDiv.classList.remove('show');
@@ -4267,12 +4369,12 @@
         function downloadSelected() {
             const selectElement = document.getElementById('downloadTypeSelect');
             const selectedValue = selectElement.value;
-            
+
             if (!selectedValue) {
                 showMessage('Please select a report to download.', 'error');
                 return;
             }
-            
+
             // Call the existing modal function with the selected report type
             showEnhancedColumnSelectionModal(selectedValue);
         }
@@ -4280,7 +4382,7 @@
         /* ========================================
            INITIALIZATION
            ======================================== */
-        
+
         window.addEventListener('load', () => {
             // Auto-load reference files after a short delay
             setTimeout(() => {
@@ -4316,11 +4418,12 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Floating Footer -->
     <div class="floating-footer">
         Created By Tarek Mahran
     </div>
 
 </body>
+
 </html>
