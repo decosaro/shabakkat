@@ -760,6 +760,19 @@
             margin-right: 8px;
             cursor: pointer;
             user-select: none;
+            display: inline-block;
+            width: 16px;
+            text-align: center;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        .feedback-table .expand-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .feedback-table tr.hidden-row {
+            display: none;
         }
     </style>
 </head>
@@ -850,61 +863,95 @@
 
                     <!-- Pivot Configuration Modal -->
                     <div id="pivot-config-modal" class="modal" style="display: none;">
-                        <div class="modal-content" style="max-width: 600px;">
+                        <div class="modal-content" style="max-width: 700px;">
                             <div class="modal-header">
                                 <h3>⚙️ Configure Summary Table</h3>
                                 <span class="close" id="close-pivot-modal">&times;</span>
                             </div>
                             <div class="modal-body">
                                 <div style="margin-bottom: 20px;">
-                                    <label
-                                        style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Row
-                                        Groups (Hierarchy)</label>
-                                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                                        <select id="pivot-row-1"
-                                            style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
-                                            <option value="">-- Select Primary Row --</option>
-                                            <option value="PCM Owner" selected>PCM Owner</option>
-                                            <option value="FRT Remarks">FRT Remarks</option>
-                                            <option value="Region">Region</option>
-                                            <option value="Domain">Domain</option>
-                                            <option value="Impact Service">Impact Service</option>
-                                            <option value="Skill">Skill</option>
-                                            <option value="PCM Year">PCM Year</option>
-                                            <option value="PCM Month">PCM Month</option>
-                                        </select>
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="font-weight: 600; color: #374151;">Row Groups (Hierarchy)</label>
+                                        <button id="add-row-btn"
+                                            style="padding: 4px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 500;">
+                                            + Add Row
+                                        </button>
                                     </div>
-                                    <div style="display: flex; gap: 10px;">
-                                        <select id="pivot-row-2"
-                                            style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
-                                            <option value="">-- Select Secondary Row (Optional) --</option>
-                                            <option value="PCM Owner">PCM Owner</option>
-                                            <option value="FRT Remarks" selected>FRT Remarks</option>
-                                            <option value="Region">Region</option>
-                                            <option value="Domain">Domain</option>
-                                            <option value="Impact Service">Impact Service</option>
-                                            <option value="Skill">Skill</option>
-                                            <option value="PCM Year">PCM Year</option>
-                                            <option value="PCM Month">PCM Month</option>
-                                        </select>
+                                    <div id="row-fields-container"
+                                        style="display: flex; flex-direction: column; gap: 8px;">
+                                        <div class="row-field-item"
+                                            style="display: flex; gap: 8px; align-items: center;">
+                                            <select class="pivot-row-select" data-index="0"
+                                                style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                                <option value="">-- Select Row Field --</option>
+                                                <option value="PCM Owner" selected>PCM Owner</option>
+                                                <option value="FRT Remarks">FRT Remarks</option>
+                                                <option value="Region">Region</option>
+                                                <option value="Domain">Domain</option>
+                                                <option value="Impact Service">Impact Service</option>
+                                                <option value="Skill">Skill</option>
+                                                <option value="PCM Year">PCM Year</option>
+                                                <option value="PCM Month">PCM Month</option>
+                                            </select>
+                                            <button class="remove-row-btn"
+                                                style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; display: none;">
+                                                ✕
+                                            </button>
+                                        </div>
+                                        <div class="row-field-item"
+                                            style="display: flex; gap: 8px; align-items: center;">
+                                            <select class="pivot-row-select" data-index="1"
+                                                style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                                <option value="">-- Select Row Field --</option>
+                                                <option value="PCM Owner">PCM Owner</option>
+                                                <option value="FRT Remarks" selected>FRT Remarks</option>
+                                                <option value="Region">Region</option>
+                                                <option value="Domain">Domain</option>
+                                                <option value="Impact Service">Impact Service</option>
+                                                <option value="Skill">Skill</option>
+                                                <option value="PCM Year">PCM Year</option>
+                                                <option value="PCM Month">PCM Month</option>
+                                            </select>
+                                            <button class="remove-row-btn"
+                                                style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                                                ✕
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div style="margin-bottom: 20px;">
-                                    <label
-                                        style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Column
-                                        Field</label>
-                                    <select id="pivot-column"
-                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
-                                        <option value="Region" selected>Region</option>
-                                        <option value="Domain">Domain</option>
-                                        <option value="Impact Service">Impact Service</option>
-                                        <option value="Skill">Skill</option>
-                                        <option value="PCM Year">PCM Year</option>
-                                        <option value="PCM Month">PCM Month</option>
-                                        <option value="FRT Remarks">FRT Remarks</option>
-                                        <option value="PCM Owner">PCM Owner</option>
-                                    </select>
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="font-weight: 600; color: #374151;">Column Fields</label>
+                                        <button id="add-column-btn"
+                                            style="padding: 4px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 500;">
+                                            + Add Column
+                                        </button>
+                                    </div>
+                                    <div id="column-fields-container"
+                                        style="display: flex; flex-direction: column; gap: 8px;">
+                                        <div class="column-field-item"
+                                            style="display: flex; gap: 8px; align-items: center;">
+                                            <select class="pivot-column-select" data-index="0"
+                                                style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                                <option value="">-- Select Column Field --</option>
+                                                <option value="Region" selected>Region</option>
+                                                <option value="Domain">Domain</option>
+                                                <option value="Impact Service">Impact Service</option>
+                                                <option value="Skill">Skill</option>
+                                                <option value="PCM Year">PCM Year</option>
+                                                <option value="PCM Month">PCM Month</option>
+                                                <option value="FRT Remarks">FRT Remarks</option>
+                                                <option value="PCM Owner">PCM Owner</option>
+                                            </select>
+                                            <button class="remove-column-btn"
+                                                style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; display: none;">
+                                                ✕
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div style="margin-bottom: 20px;">
@@ -2428,17 +2475,294 @@
 
         // Store pivot configuration
         let pivotConfig = {
-            row1: 'PCM Owner',
-            row2: 'FRT Remarks',
-            column: 'Region',
+            rows: ['PCM Owner', 'FRT Remarks'],
+            columns: ['Region'],
             value: 'count'
         };
 
         function generateHDFeedbackReport(finalData) {
-            // Use current pivot configuration
-            const row1Field = pivotConfig.row1;
-            const row2Field = pivotConfig.row2;
-            const columnField = pivotConfig.column;
+            const rowFields = pivotConfig.rows.filter(r => r);
+            const columnFields = pivotConfig.columns.filter(c => c);
+
+            if (rowFields.length === 0 || columnFields.length === 0) {
+                return '<p style="color: #6b7280; text-align: center; padding: 20px;">Please configure at least one row and one column field.</p>';
+            }
+
+            // Build hierarchical tree structure for rows
+            const rowTree = {};
+            const allColumnKeys = new Set();
+
+            // Process each record and build tree
+            finalData.forEach(record => {
+                // Get column key
+                const columnKeyParts = columnFields.map(field => {
+                    let value = record[field];
+                    if ((!value || value === null || value === '') && field === 'Region') {
+                        value = 'Stuck';
+                    }
+                    return value || '(Empty)';
+                });
+                const columnKey = columnKeyParts.join('|||');
+                allColumnKeys.add(columnKey);
+
+                // Navigate/build row tree
+                let currentLevel = rowTree;
+                rowFields.forEach((field, index) => {
+                    let value = record[field];
+                    if ((!value || value === null || value === '') && field === 'Region') {
+                        value = 'Stuck';
+                    }
+                    value = value || '(Empty)';
+
+                    if (!currentLevel[value]) {
+                        currentLevel[value] = {
+                            _data: new Map(),
+                            _children: {}
+                        };
+                    }
+
+                    // Add count to this level
+                    const levelData = currentLevel[value]._data;
+                    levelData.set(columnKey, (levelData.get(columnKey) || 0) + 1);
+
+                    currentLevel = currentLevel[value]._children;
+                });
+            });
+
+            const columnKeys = Array.from(allColumnKeys).sort();
+
+            // Build hierarchical column structure
+            const columnTree = {};
+            columnKeys.forEach(columnKey => {
+                const parts = columnKey.split('|||');
+                let currentLevel = columnTree;
+                parts.forEach((part, index) => {
+                    if (!currentLevel[part]) {
+                        currentLevel[part] = {
+                            _isLeaf: index === parts.length - 1,
+                            _children: {}
+                        };
+                    }
+                    currentLevel = currentLevel[part]._children;
+                });
+            });
+
+            // Calculate column spans for hierarchical headers
+            function getLeafCount(tree) {
+                let count = 0;
+                Object.keys(tree).forEach(key => {
+                    const node = tree[key];
+                    if (node._isLeaf) {
+                        count++;
+                    } else {
+                        count += getLeafCount(node._children);
+                    }
+                });
+                return count;
+            }
+
+            // Generate HTML with hierarchical column headers
+            let tableHTML = '<table class="feedback-table"><thead>';
+
+            // Generate header rows for each column level
+            if (columnFields.length > 1) {
+                // Multi-level column headers
+                for (let level = 0; level < columnFields.length; level++) {
+                    tableHTML += '<tr>';
+
+                    // Row header cell (spans all column levels)
+                    if (level === 0) {
+                        tableHTML += `<th rowspan="${columnFields.length}">${rowFields.join(' / ')}</th>`;
+                    }
+
+                    // Render column headers at this level
+                    function renderColumnLevel(tree, currentLevel, targetLevel) {
+                        if (currentLevel === targetLevel) {
+                            Object.keys(tree).sort().forEach(key => {
+                                const node = tree[key];
+                                const leafCount = node._isLeaf ? 1 : getLeafCount(node._children);
+                                const rowspan = node._isLeaf ? columnFields.length - currentLevel : 1;
+
+                                if (node._isLeaf) {
+                                    tableHTML += `<th rowspan="${rowspan}">${key}</th>`;
+                                } else {
+                                    tableHTML += `<th colspan="${leafCount}">${key}</th>`;
+                                }
+                            });
+                        } else if (currentLevel < targetLevel) {
+                            Object.keys(tree).sort().forEach(key => {
+                                const node = tree[key];
+                                if (!node._isLeaf) {
+                                    renderColumnLevel(node._children, currentLevel + 1, targetLevel);
+                                }
+                            });
+                        }
+                    }
+
+                    renderColumnLevel(columnTree, 0, level);
+
+                    // Grand Total header (spans all levels)
+                    if (level === 0) {
+                        tableHTML += `<th rowspan="${columnFields.length}">Grand Total</th>`;
+                    }
+
+                    tableHTML += '</tr>';
+                }
+            } else {
+                // Single level column headers
+                tableHTML += '<tr>';
+                tableHTML += `<th>${rowFields.join(' / ')}</th>`;
+                columnKeys.forEach(columnKey => {
+                    tableHTML += `<th>${columnKey}</th>`;
+                });
+                tableHTML += '<th>Grand Total</th></tr>';
+            }
+
+            tableHTML += '</thead><tbody>';
+
+            // Recursive function to render tree with expand/collapse support
+            let rowIdCounter = 0;
+            function renderTree(tree, level, parentClass = '', parentId = null) {
+                const keys = Object.keys(tree).sort();
+
+                keys.forEach(key => {
+                    const node = tree[key];
+                    const data = node._data;
+                    const children = node._children;
+                    const currentRowId = `row-${rowIdCounter++}`;
+
+                    // Calculate totals for this row
+                    let rowTotal = 0;
+                    const rowValues = [];
+                    columnKeys.forEach(columnKey => {
+                        const value = data.get(columnKey) || 0;
+                        rowValues.push(value);
+                        rowTotal += value;
+                    });
+
+                    // Determine row class
+                    const isCategory = Object.keys(children).length > 0;
+                    let rowClass = isCategory ? 'category-row' : 'subcategory-row';
+
+                    // Apply parent class or determine new class
+                    if (level === 0) {
+                        if (key === 'Running under FLM') {
+                            rowClass += ' running-under-flm';
+                            parentClass = 'running-under-flm';
+                        } else if (key === 'Updated out of FLM') {
+                            rowClass += ' updated-out-of-flm';
+                            parentClass = 'updated-out-of-flm';
+                        }
+                    } else if (parentClass) {
+                        rowClass += ' ' + parentClass;
+                    }
+
+                    // Render row with data attributes for expand/collapse
+                    const parentAttr = parentId ? ` data-parent="${parentId}"` : '';
+                    tableHTML += `<tr class="${rowClass}" id="${currentRowId}"${parentAttr}>`;
+
+                    // Add indentation and expand icon
+                    const indent = '&nbsp;'.repeat(level * 4);
+                    const expandIcon = isCategory ? `<span class="expand-icon" onclick="toggleRow('${currentRowId}')">−</span>` : '';
+                    tableHTML += `<td>${indent}${expandIcon}${key}</td>`;
+
+                    // Add column values
+                    rowValues.forEach(value => {
+                        tableHTML += `<td>${value > 0 ? value : ''}</td>`;
+                    });
+
+                    tableHTML += `<td>${rowTotal > 0 ? rowTotal : ''}</td></tr>`;
+
+                    // Recursively render children
+                    if (Object.keys(children).length > 0) {
+                        renderTree(children, level + 1, parentClass, currentRowId);
+                    }
+                });
+            }
+
+            renderTree(rowTree, 0);
+
+            // Grand total row - sum only leaf nodes
+            let grandTotal = 0;
+            const columnTotals = new Map();
+
+            function sumLeafNodes(tree) {
+                Object.keys(tree).forEach(key => {
+                    const node = tree[key];
+                    if (Object.keys(node._children).length === 0) {
+                        // Leaf node - count it
+                        node._data.forEach((count, columnKey) => {
+                            columnTotals.set(columnKey, (columnTotals.get(columnKey) || 0) + count);
+                            grandTotal += count;
+                        });
+                    } else {
+                        // Has children - recurse
+                        sumLeafNodes(node._children);
+                    }
+                });
+            }
+
+            sumLeafNodes(rowTree);
+
+            tableHTML += '<tr class="total-row"><td>Grand Total</td>';
+            columnKeys.forEach(columnKey => {
+                const total = columnTotals.get(columnKey) || 0;
+                tableHTML += `<td>${total > 0 ? total : ''}</td>`;
+            });
+            tableHTML += `<td>${grandTotal > 0 ? grandTotal : ''}</td></tr>`;
+            tableHTML += '</tbody></table>';
+
+            return tableHTML;
+        }
+
+        // Toggle row expand/collapse functionality
+        function toggleRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (!row) return;
+
+            const expandIcon = row.querySelector('.expand-icon');
+            if (!expandIcon) return;
+
+            const isCollapsed = expandIcon.classList.contains('collapsed');
+
+            // Toggle icon
+            if (isCollapsed) {
+                expandIcon.classList.remove('collapsed');
+                expandIcon.textContent = '−';
+            } else {
+                expandIcon.classList.add('collapsed');
+                expandIcon.textContent = '+';
+            }
+
+            // Toggle all descendant rows
+            function toggleDescendants(parentId, show) {
+                const children = document.querySelectorAll(`tr[data-parent="${parentId}"]`);
+                children.forEach(child => {
+                    if (show) {
+                        child.classList.remove('hidden-row');
+                        // If this child was expanded, show its children too
+                        const childIcon = child.querySelector('.expand-icon');
+                        if (childIcon && !childIcon.classList.contains('collapsed')) {
+                            toggleDescendants(child.id, true);
+                        }
+                    } else {
+                        child.classList.add('hidden-row');
+                        // Recursively hide all descendants
+                        toggleDescendants(child.id, false);
+                    }
+                });
+            }
+
+            toggleDescendants(rowId, isCollapsed);
+        }
+
+        // Old version kept for reference
+        function generateHDFeedbackReportOld(finalData) {
+            const rowFields = pivotConfig.rows.filter(r => r);
+            const columnFields = pivotConfig.columns.filter(c => c);
+            const row1Field = rowFields[0];
+            const row2Field = rowFields[1] || null;
+            const columnField = columnFields[0];
 
             // Get unique values for rows and columns
             const row1Values = [...new Set(finalData.map(row => row[row1Field]).filter(v => v))].sort();
@@ -3435,23 +3759,139 @@
                 });
             }
 
+            // Add Row button
+            const addRowBtn = document.getElementById('add-row-btn');
+            if (addRowBtn) {
+                addRowBtn.addEventListener('click', function () {
+                    const container = document.getElementById('row-fields-container');
+                    const currentRows = container.querySelectorAll('.row-field-item').length;
+
+                    if (currentRows >= 5) {
+                        showMessage('Maximum 5 row fields allowed', 'warning');
+                        return;
+                    }
+
+                    const newRow = document.createElement('div');
+                    newRow.className = 'row-field-item';
+                    newRow.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+                    newRow.innerHTML = `
+                        <select class="pivot-row-select" data-index="${currentRows}"
+                            style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                            <option value="">-- Select Row Field --</option>
+                            <option value="PCM Owner">PCM Owner</option>
+                            <option value="FRT Remarks">FRT Remarks</option>
+                            <option value="Region">Region</option>
+                            <option value="Domain">Domain</option>
+                            <option value="Impact Service">Impact Service</option>
+                            <option value="Skill">Skill</option>
+                            <option value="PCM Year">PCM Year</option>
+                            <option value="PCM Month">PCM Month</option>
+                        </select>
+                        <button class="remove-row-btn" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                            ✕
+                        </button>
+                    `;
+                    container.appendChild(newRow);
+                    updateRemoveButtons();
+                });
+            }
+
+            // Add Column button
+            const addColumnBtn = document.getElementById('add-column-btn');
+            if (addColumnBtn) {
+                addColumnBtn.addEventListener('click', function () {
+                    const container = document.getElementById('column-fields-container');
+                    const currentColumns = container.querySelectorAll('.column-field-item').length;
+
+                    if (currentColumns >= 3) {
+                        showMessage('Maximum 3 column fields allowed', 'warning');
+                        return;
+                    }
+
+                    const newColumn = document.createElement('div');
+                    newColumn.className = 'column-field-item';
+                    newColumn.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+                    newColumn.innerHTML = `
+                        <select class="pivot-column-select" data-index="${currentColumns}"
+                            style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                            <option value="">-- Select Column Field --</option>
+                            <option value="Region">Region</option>
+                            <option value="Domain">Domain</option>
+                            <option value="Impact Service">Impact Service</option>
+                            <option value="Skill">Skill</option>
+                            <option value="PCM Year">PCM Year</option>
+                            <option value="PCM Month">PCM Month</option>
+                            <option value="FRT Remarks">FRT Remarks</option>
+                            <option value="PCM Owner">PCM Owner</option>
+                        </select>
+                        <button class="remove-column-btn" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                            ✕
+                        </button>
+                    `;
+                    container.appendChild(newColumn);
+                    updateRemoveButtons();
+                });
+            }
+
+            // Remove row/column buttons (event delegation)
+            document.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-row-btn')) {
+                    e.target.closest('.row-field-item').remove();
+                    updateRemoveButtons();
+                }
+                if (e.target.classList.contains('remove-column-btn')) {
+                    e.target.closest('.column-field-item').remove();
+                    updateRemoveButtons();
+                }
+            });
+
+            // Update remove button visibility
+            function updateRemoveButtons() {
+                const rowContainer = document.getElementById('row-fields-container');
+                const columnContainer = document.getElementById('column-fields-container');
+
+                if (rowContainer) {
+                    const rowItems = rowContainer.querySelectorAll('.row-field-item');
+                    rowItems.forEach((item, index) => {
+                        const removeBtn = item.querySelector('.remove-row-btn');
+                        if (removeBtn) {
+                            removeBtn.style.display = rowItems.length > 1 ? 'block' : 'none';
+                        }
+                    });
+                }
+
+                if (columnContainer) {
+                    const columnItems = columnContainer.querySelectorAll('.column-field-item');
+                    columnItems.forEach((item, index) => {
+                        const removeBtn = item.querySelector('.remove-column-btn');
+                        if (removeBtn) {
+                            removeBtn.style.display = columnItems.length > 1 ? 'block' : 'none';
+                        }
+                    });
+                }
+            }
+
             if (pivotApplyBtn) {
                 pivotApplyBtn.addEventListener('click', function () {
-                    // Get selected values
-                    pivotConfig.row1 = document.getElementById('pivot-row-1').value;
-                    pivotConfig.row2 = document.getElementById('pivot-row-2').value;
-                    pivotConfig.column = document.getElementById('pivot-column').value;
+                    // Get selected row values
+                    const rowSelects = document.querySelectorAll('.pivot-row-select');
+                    pivotConfig.rows = Array.from(rowSelects).map(select => select.value).filter(v => v);
+
+                    // Get selected column values
+                    const columnSelects = document.querySelectorAll('.pivot-column-select');
+                    pivotConfig.columns = Array.from(columnSelects).map(select => select.value).filter(v => v);
+
                     pivotConfig.value = document.getElementById('pivot-value').value;
 
                     // Validate configuration
-                    if (!pivotConfig.row1 || !pivotConfig.column) {
-                        showMessage('Please select at least Primary Row and Column fields', 'error');
+                    if (pivotConfig.rows.length === 0 || pivotConfig.columns.length === 0) {
+                        showMessage('Please select at least one Row and one Column field', 'error');
                         return;
                     }
 
                     // Check for duplicates
-                    const fields = [pivotConfig.row1, pivotConfig.row2, pivotConfig.column].filter(f => f);
-                    if (new Set(fields).size !== fields.length) {
+                    const allFields = [...pivotConfig.rows, ...pivotConfig.columns];
+                    if (new Set(allFields).size !== allFields.length) {
                         showMessage('Please select different fields for each dimension', 'error');
                         return;
                     }
@@ -3470,21 +3910,81 @@
                 pivotResetBtn.addEventListener('click', function () {
                     // Reset to default configuration
                     pivotConfig = {
-                        row1: 'PCM Owner',
-                        row2: 'FRT Remarks',
-                        column: 'Region',
+                        rows: ['PCM Owner', 'FRT Remarks'],
+                        columns: ['Region'],
                         value: 'count'
                     };
 
-                    // Update select elements
-                    document.getElementById('pivot-row-1').value = 'PCM Owner';
-                    document.getElementById('pivot-row-2').value = 'FRT Remarks';
-                    document.getElementById('pivot-column').value = 'Region';
+                    // Clear and rebuild row fields
+                    const rowContainer = document.getElementById('row-fields-container');
+                    rowContainer.innerHTML = `
+                        <div class="row-field-item" style="display: flex; gap: 8px; align-items: center;">
+                            <select class="pivot-row-select" data-index="0"
+                                style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                <option value="">-- Select Row Field --</option>
+                                <option value="PCM Owner" selected>PCM Owner</option>
+                                <option value="FRT Remarks">FRT Remarks</option>
+                                <option value="Region">Region</option>
+                                <option value="Domain">Domain</option>
+                                <option value="Impact Service">Impact Service</option>
+                                <option value="Skill">Skill</option>
+                                <option value="PCM Year">PCM Year</option>
+                                <option value="PCM Month">PCM Month</option>
+                            </select>
+                            <button class="remove-row-btn" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; display: none;">
+                                ✕
+                            </button>
+                        </div>
+                        <div class="row-field-item" style="display: flex; gap: 8px; align-items: center;">
+                            <select class="pivot-row-select" data-index="1"
+                                style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                <option value="">-- Select Row Field --</option>
+                                <option value="PCM Owner">PCM Owner</option>
+                                <option value="FRT Remarks" selected>FRT Remarks</option>
+                                <option value="Region">Region</option>
+                                <option value="Domain">Domain</option>
+                                <option value="Impact Service">Impact Service</option>
+                                <option value="Skill">Skill</option>
+                                <option value="PCM Year">PCM Year</option>
+                                <option value="PCM Month">PCM Month</option>
+                            </select>
+                            <button class="remove-row-btn" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                                ✕
+                            </button>
+                        </div>
+                    `;
+
+                    // Clear and rebuild column fields
+                    const columnContainer = document.getElementById('column-fields-container');
+                    columnContainer.innerHTML = `
+                        <div class="column-field-item" style="display: flex; gap: 8px; align-items: center;">
+                            <select class="pivot-column-select" data-index="0"
+                                style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                <option value="">-- Select Column Field --</option>
+                                <option value="Region" selected>Region</option>
+                                <option value="Domain">Domain</option>
+                                <option value="Impact Service">Impact Service</option>
+                                <option value="Skill">Skill</option>
+                                <option value="PCM Year">PCM Year</option>
+                                <option value="PCM Month">PCM Month</option>
+                                <option value="FRT Remarks">FRT Remarks</option>
+                                <option value="PCM Owner">PCM Owner</option>
+                            </select>
+                            <button class="remove-column-btn" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; display: none;">
+                                ✕
+                            </button>
+                        </div>
+                    `;
+
                     document.getElementById('pivot-value').value = 'count';
+                    updateRemoveButtons();
 
                     showMessage('Configuration reset to default', 'info');
                 });
             }
+
+            // Initialize remove button visibility
+            updateRemoveButtons();
         });
 
     </script>
