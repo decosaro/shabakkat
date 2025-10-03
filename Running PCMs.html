@@ -848,150 +848,238 @@
                 <div id="hd-feedback-report" class="hd-feedback-report" style="display: none;">
                     <h3 style="color: #374151; margin-bottom: 15px; font-size: 1.2em;">📋 Summary</h3>
 
-                    <div class="filter-section" style="margin-top: 20px; margin-bottom: 20px;">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="color: #374151; margin: 0; font-size: 1em;">🔍 Summary Filters</h4>
+                    <!-- Pivot Configuration Modal -->
+                    <div id="pivot-config-modal" class="modal" style="display: none;">
+                        <div class="modal-content" style="max-width: 600px;">
+                            <div class="modal-header">
+                                <h3>⚙️ Configure Summary Table</h3>
+                                <span class="close" id="close-pivot-modal">&times;</span>
+                            </div>
+                            <div class="modal-body">
+                                <div style="margin-bottom: 20px;">
+                                    <label
+                                        style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Row
+                                        Groups (Hierarchy)</label>
+                                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                        <select id="pivot-row-1"
+                                            style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                            <option value="">-- Select Primary Row --</option>
+                                            <option value="PCM Owner" selected>PCM Owner</option>
+                                            <option value="FRT Remarks">FRT Remarks</option>
+                                            <option value="Region">Region</option>
+                                            <option value="Domain">Domain</option>
+                                            <option value="Impact Service">Impact Service</option>
+                                            <option value="Skill">Skill</option>
+                                            <option value="PCM Year">PCM Year</option>
+                                            <option value="PCM Month">PCM Month</option>
+                                        </select>
+                                    </div>
+                                    <div style="display: flex; gap: 10px;">
+                                        <select id="pivot-row-2"
+                                            style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                            <option value="">-- Select Secondary Row (Optional) --</option>
+                                            <option value="PCM Owner">PCM Owner</option>
+                                            <option value="FRT Remarks" selected>FRT Remarks</option>
+                                            <option value="Region">Region</option>
+                                            <option value="Domain">Domain</option>
+                                            <option value="Impact Service">Impact Service</option>
+                                            <option value="Skill">Skill</option>
+                                            <option value="PCM Year">PCM Year</option>
+                                            <option value="PCM Month">PCM Month</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 20px;">
+                                    <label
+                                        style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Column
+                                        Field</label>
+                                    <select id="pivot-column"
+                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                        <option value="Region" selected>Region</option>
+                                        <option value="Domain">Domain</option>
+                                        <option value="Impact Service">Impact Service</option>
+                                        <option value="Skill">Skill</option>
+                                        <option value="PCM Year">PCM Year</option>
+                                        <option value="PCM Month">PCM Month</option>
+                                        <option value="FRT Remarks">FRT Remarks</option>
+                                        <option value="PCM Owner">PCM Owner</option>
+                                    </select>
+                                </div>
+
+                                <div style="margin-bottom: 20px;">
+                                    <label
+                                        style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Value
+                                        Calculation</label>
+                                    <select id="pivot-value"
+                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                        <option value="count" selected>Count of Records</option>
+                                    </select>
+                                </div>
+
+                                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                                    <button id="pivot-reset-btn"
+                                        style="padding: 10px 20px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                                        Reset to Default
+                                    </button>
+                                    <button id="pivot-apply-btn"
+                                        style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                                        Apply Configuration
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="color: #374151; margin: 0; font-size: 1em;">🔍 Summary Filters</h4>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="pivot-config-btn"
+                                style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9em; transition: all 0.2s ease;">
+                                ⚙️ Configure Table
+                            </button>
                             <button id="clear-filters-btn"
                                 style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9em; transition: all 0.2s ease;">
                                 Clear Filters
                             </button>
                         </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start;">
-                            <div style="min-width: 150px; flex: 0 0 auto;">
-                                <label
-                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">PCM
-                                    Year</label>
-                                <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="year-trigger"
-                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                                        <span id="year-selected-text">All Years</span>
-                                        <span>▼</span>
-                                    </div>
-                                    <div class="multiselect-dropdown" id="year-dropdown"
-                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
-                                        <div id="pcm-year-filters" style="padding: 10px;"></div>
-                                    </div>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start;">
+                        <div style="min-width: 150px; flex: 0 0 auto;">
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">PCM
+                                Year</label>
+                            <div class="multiselect-container" style="position: relative;">
+                                <div class="multiselect-trigger" id="year-trigger"
+                                    style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <span id="year-selected-text">All Years</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="multiselect-dropdown" id="year-dropdown"
+                                    style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div id="pcm-year-filters" style="padding: 10px;"></div>
                                 </div>
                             </div>
-                            <div style="min-width: 150px; flex: 0 0 auto;">
-                                <label
-                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">PCM
-                                    Month</label>
-                                <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="month-trigger"
-                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                                        <span id="month-selected-text">All Months</span>
-                                        <span>▼</span>
-                                    </div>
-                                    <div class="multiselect-dropdown" id="month-dropdown"
-                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
-                                        <div id="pcm-month-filters" style="padding: 10px;"></div>
-                                    </div>
+                        </div>
+                        <div style="min-width: 150px; flex: 0 0 auto;">
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">PCM
+                                Month</label>
+                            <div class="multiselect-container" style="position: relative;">
+                                <div class="multiselect-trigger" id="month-trigger"
+                                    style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <span id="month-selected-text">All Months</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="multiselect-dropdown" id="month-dropdown"
+                                    style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div id="pcm-month-filters" style="padding: 10px;"></div>
                                 </div>
                             </div>
-                            <div style="min-width: 120px; flex: 0 0 auto;">
-                                <label
-                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Skill</label>
-                                <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="skill-trigger"
-                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                                        <span id="skill-selected-text">All Skills</span>
-                                        <span>▼</span>
-                                    </div>
-                                    <div class="multiselect-dropdown" id="skill-dropdown"
-                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
-                                        <div id="skill-filters" style="padding: 10px;"></div>
-                                    </div>
+                        </div>
+                        <div style="min-width: 120px; flex: 0 0 auto;">
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Skill</label>
+                            <div class="multiselect-container" style="position: relative;">
+                                <div class="multiselect-trigger" id="skill-trigger"
+                                    style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <span id="skill-selected-text">All Skills</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="multiselect-dropdown" id="skill-dropdown"
+                                    style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div id="skill-filters" style="padding: 10px;"></div>
                                 </div>
                             </div>
-                            <div style="min-width: 130px; flex: 0 0 auto;">
-                                <label
-                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Region</label>
-                                <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="region-trigger"
-                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                                        <span id="region-selected-text">All Regions</span>
-                                        <span>▼</span>
-                                    </div>
-                                    <div class="multiselect-dropdown" id="region-dropdown"
-                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
-                                        <div id="region-filters" style="padding: 10px;"></div>
-                                    </div>
+                        </div>
+                        <div style="min-width: 130px; flex: 0 0 auto;">
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Region</label>
+                            <div class="multiselect-container" style="position: relative;">
+                                <div class="multiselect-trigger" id="region-trigger"
+                                    style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <span id="region-selected-text">All Regions</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="multiselect-dropdown" id="region-dropdown"
+                                    style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div id="region-filters" style="padding: 10px;"></div>
                                 </div>
                             </div>
-                            <div style="min-width: 130px; flex: 0 0 auto;">
-                                <label
-                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Domain</label>
-                                <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="domain-trigger"
-                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                                        <span id="domain-selected-text">All Domains</span>
-                                        <span>▼</span>
-                                    </div>
-                                    <div class="multiselect-dropdown" id="domain-dropdown"
-                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
-                                        <div id="domain-filters" style="padding: 10px;"></div>
-                                    </div>
+                        </div>
+                        <div style="min-width: 130px; flex: 0 0 auto;">
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Domain</label>
+                            <div class="multiselect-container" style="position: relative;">
+                                <div class="multiselect-trigger" id="domain-trigger"
+                                    style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <span id="domain-selected-text">All Domains</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="multiselect-dropdown" id="domain-dropdown"
+                                    style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div id="domain-filters" style="padding: 10px;"></div>
                                 </div>
                             </div>
-                            <div style="min-width: 160px; flex: 0 0 auto;">
-                                <label
-                                    style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Impact
-                                    Service</label>
-                                <div class="multiselect-container" style="position: relative;">
-                                    <div class="multiselect-trigger" id="impact-service-trigger"
-                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                                        <span id="impact-service-selected-text">All Impact Services</span>
-                                        <span>▼</span>
-                                    </div>
-                                    <div class="multiselect-dropdown" id="impact-service-dropdown"
-                                        style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
-                                        <div id="impact-service-filters" style="padding: 10px;"></div>
-                                    </div>
+                        </div>
+                        <div style="min-width: 160px; flex: 0 0 auto;">
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Impact
+                                Service</label>
+                            <div class="multiselect-container" style="position: relative;">
+                                <div class="multiselect-trigger" id="impact-service-trigger"
+                                    style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <span id="impact-service-selected-text">All Impact Services</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="multiselect-dropdown" id="impact-service-dropdown"
+                                    style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div id="impact-service-filters" style="padding: 10px;"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div id="feedback-table-container"></div>
             </div>
 
-            <div id="download-section" class="download-section">
-                <a id="download-button" class="download-button">
-                    📥 Download
-                </a>
-            </div>
+            <div id="feedback-table-container"></div>
+        </div>
 
-            <!-- Download Options Modal -->
-            <div id="download-modal" class="modal" style="display: none;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>📥 Download Options</h3>
-                        <span class="close" id="close-download-modal">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <p>Choose what you would like to download:</p>
-                        <div class="download-options">
-                            <button id="download-merged" class="download-option-btn">
-                                <div class="download-option-icon">📋</div>
-                                <div class="download-option-text">
-                                    <strong>Merged File</strong>
-                                    <small>Complete merged data with all PCMs</small>
-                                </div>
-                            </button>
-                            <div class="input-files-section">
-                                <h4>Input Files</h4>
-                                <div id="input-files-list" class="input-files-list">
-                                    <!-- Individual input files will be populated here -->
-                                </div>
+        <div id="download-section" class="download-section">
+            <a id="download-button" class="download-button">
+                📥 Download
+            </a>
+        </div>
+
+        <!-- Download Options Modal -->
+        <div id="download-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>📥 Download Options</h3>
+                    <span class="close" id="close-download-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Choose what you would like to download:</p>
+                    <div class="download-options">
+                        <button id="download-merged" class="download-option-btn">
+                            <div class="download-option-icon">📋</div>
+                            <div class="download-option-text">
+                                <strong>Merged File</strong>
+                                <small>Complete merged data with all PCMs</small>
+                            </div>
+                        </button>
+                        <div class="input-files-section">
+                            <h4>Input Files</h4>
+                            <div id="input-files-list" class="input-files-list">
+                                <!-- Individual input files will be populated here -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     </div>
 
@@ -2338,7 +2426,173 @@
             }, 300);
         }
 
+        // Store pivot configuration
+        let pivotConfig = {
+            row1: 'PCM Owner',
+            row2: 'FRT Remarks',
+            column: 'Region',
+            value: 'count'
+        };
+
         function generateHDFeedbackReport(finalData) {
+            // Use current pivot configuration
+            const row1Field = pivotConfig.row1;
+            const row2Field = pivotConfig.row2;
+            const columnField = pivotConfig.column;
+
+            // Get unique values for rows and columns
+            const row1Values = [...new Set(finalData.map(row => row[row1Field]).filter(v => v))].sort();
+            const row2Values = row2Field ? [...new Set(finalData.map(row => row[row2Field]).filter(v => v))].sort() : [];
+
+            // Get column values
+            const allColumnValues = finalData.map(row => row[columnField]).filter(v => v);
+            const columnValues = [...new Set(allColumnValues)].sort();
+
+            // Check if there are any empty/null column values (Stuck)
+            const hasStuckValues = finalData.some(row => !row[columnField] || row[columnField] === null || row[columnField] === '');
+            if (hasStuckValues && columnField === 'Region') {
+                columnValues.push('Stuck');
+            }
+
+            // Build data structure
+            const reportData = {};
+            row1Values.forEach(r1 => {
+                reportData[r1] = {};
+                if (row2Field) {
+                    row2Values.forEach(r2 => {
+                        reportData[r1][r2] = {};
+                        columnValues.forEach(col => {
+                            reportData[r1][r2][col] = 0;
+                        });
+                    });
+                } else {
+                    columnValues.forEach(col => {
+                        reportData[r1][col] = 0;
+                    });
+                }
+            });
+
+            // Count records
+            finalData.forEach(row => {
+                const r1Value = row[row1Field];
+                const r2Value = row2Field ? row[row2Field] : null;
+                let colValue = row[columnField];
+
+                // Handle stuck values for Region column
+                if ((!colValue || colValue === null || colValue === '') && columnField === 'Region' && hasStuckValues) {
+                    colValue = 'Stuck';
+                }
+
+                if (r1Value && colValue && reportData[r1Value]) {
+                    if (row2Field && r2Value && reportData[r1Value][r2Value]) {
+                        reportData[r1Value][r2Value][colValue] = (reportData[r1Value][r2Value][colValue] || 0) + 1;
+                    } else if (!row2Field) {
+                        reportData[r1Value][colValue] = (reportData[r1Value][colValue] || 0) + 1;
+                    }
+                }
+            });
+
+            // Generate HTML table
+            let tableHTML = '<table class="feedback-table">';
+
+            // Header row
+            tableHTML += '<thead><tr>';
+            tableHTML += `<th>${row1Field}${row2Field ? ' / ' + row2Field : ''}</th>`;
+            columnValues.forEach(col => {
+                tableHTML += `<th>${col}</th>`;
+            });
+            tableHTML += '<th>Grand Total</th>';
+            tableHTML += '</tr></thead><tbody>';
+
+            // Data rows
+            Object.keys(reportData).forEach(r1Value => {
+                if (row2Field) {
+                    // With secondary row grouping
+                    let r1Total = 0;
+                    columnValues.forEach(col => {
+                        const colTotal = Object.values(reportData[r1Value]).reduce((sum, r2Data) => sum + (r2Data[col] || 0), 0);
+                        r1Total += colTotal;
+                    });
+
+                    const r1Class = r1Value === 'Running under FLM' ? 'running-under-flm' : 'updated-out-of-flm';
+                    tableHTML += `<tr class="category-row ${r1Class}">`;
+                    tableHTML += `<td><span class="expand-icon">−</span>${r1Value}</td>`;
+                    columnValues.forEach(col => {
+                        const colTotal = Object.values(reportData[r1Value]).reduce((sum, r2Data) => sum + (r2Data[col] || 0), 0);
+                        tableHTML += `<td>${colTotal > 0 ? colTotal : ''}</td>`;
+                    });
+                    tableHTML += `<td>${r1Total > 0 ? r1Total : ''}</td>`;
+                    tableHTML += '</tr>';
+
+                    // Subcategory rows
+                    Object.keys(reportData[r1Value]).forEach(r2Value => {
+                        let r2Total = 0;
+                        columnValues.forEach(col => {
+                            r2Total += reportData[r1Value][r2Value][col] || 0;
+                        });
+
+                        tableHTML += `<tr class="subcategory-row ${r1Class}">`;
+                        tableHTML += `<td>${r2Value}</td>`;
+                        columnValues.forEach(col => {
+                            const value = reportData[r1Value][r2Value][col] || 0;
+                            tableHTML += `<td>${value > 0 ? value : ''}</td>`;
+                        });
+                        tableHTML += `<td>${r2Total > 0 ? r2Total : ''}</td>`;
+                        tableHTML += '</tr>';
+                    });
+                } else {
+                    // Without secondary row grouping
+                    let r1Total = 0;
+                    columnValues.forEach(col => {
+                        r1Total += reportData[r1Value][col] || 0;
+                    });
+
+                    tableHTML += `<tr class="category-row">`;
+                    tableHTML += `<td>${r1Value}</td>`;
+                    columnValues.forEach(col => {
+                        const value = reportData[r1Value][col] || 0;
+                        tableHTML += `<td>${value > 0 ? value : ''}</td>`;
+                    });
+                    tableHTML += `<td>${r1Total > 0 ? r1Total : ''}</td>`;
+                    tableHTML += '</tr>';
+                }
+            });
+
+            // Grand total row
+            let grandTotal = 0;
+            columnValues.forEach(col => {
+                const colGrandTotal = Object.values(reportData).reduce((sum, r1Data) => {
+                    if (row2Field) {
+                        return sum + Object.values(r1Data).reduce((sum2, r2Data) => sum2 + (r2Data[col] || 0), 0);
+                    } else {
+                        return sum + (r1Data[col] || 0);
+                    }
+                }, 0);
+                grandTotal += colGrandTotal;
+            });
+
+            tableHTML += '<tr class="total-row">';
+            tableHTML += '<td>Grand Total</td>';
+            columnValues.forEach(col => {
+                const colGrandTotal = Object.values(reportData).reduce((sum, r1Data) => {
+                    if (row2Field) {
+                        return sum + Object.values(r1Data).reduce((sum2, r2Data) => sum2 + (r2Data[col] || 0), 0);
+                    } else {
+                        return sum + (r1Data[col] || 0);
+                    }
+                }, 0);
+                tableHTML += `<td>${colGrandTotal > 0 ? colGrandTotal : ''}</td>`;
+            });
+            tableHTML += `<td>${grandTotal > 0 ? grandTotal : ''}</td>`;
+            tableHTML += '</tr>';
+
+            tableHTML += '</tbody></table>';
+
+            return tableHTML;
+        }
+
+        // Legacy function for backward compatibility
+        function generateHDFeedbackReportLegacy(finalData) {
             // Valid FRT Remarks values
             const validFrtRemarks = ['Alarm Still Active', 'FRT Available', 'Manual FRT', 'HC PCM'];
 
@@ -3142,6 +3396,96 @@
             // Reapply filters (which will show all data since all are selected)
             applySummaryFilters();
         }
+
+        // Pivot Configuration Modal Event Listeners
+        document.addEventListener('DOMContentLoaded', function () {
+            const pivotConfigBtn = document.getElementById('pivot-config-btn');
+            const pivotConfigModal = document.getElementById('pivot-config-modal');
+            const closePivotModal = document.getElementById('close-pivot-modal');
+            const pivotApplyBtn = document.getElementById('pivot-apply-btn');
+            const pivotResetBtn = document.getElementById('pivot-reset-btn');
+
+            if (pivotConfigBtn) {
+                pivotConfigBtn.addEventListener('click', function () {
+                    pivotConfigModal.style.display = 'flex';
+                });
+                pivotConfigBtn.addEventListener('mouseenter', function () {
+                    this.style.background = '#2563eb';
+                    this.style.transform = 'translateY(-1px)';
+                    this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                });
+                pivotConfigBtn.addEventListener('mouseleave', function () {
+                    this.style.background = '#3b82f6';
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            }
+
+            if (closePivotModal) {
+                closePivotModal.addEventListener('click', function () {
+                    pivotConfigModal.style.display = 'none';
+                });
+            }
+
+            if (pivotConfigModal) {
+                pivotConfigModal.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            }
+
+            if (pivotApplyBtn) {
+                pivotApplyBtn.addEventListener('click', function () {
+                    // Get selected values
+                    pivotConfig.row1 = document.getElementById('pivot-row-1').value;
+                    pivotConfig.row2 = document.getElementById('pivot-row-2').value;
+                    pivotConfig.column = document.getElementById('pivot-column').value;
+                    pivotConfig.value = document.getElementById('pivot-value').value;
+
+                    // Validate configuration
+                    if (!pivotConfig.row1 || !pivotConfig.column) {
+                        showMessage('Please select at least Primary Row and Column fields', 'error');
+                        return;
+                    }
+
+                    // Check for duplicates
+                    const fields = [pivotConfig.row1, pivotConfig.row2, pivotConfig.column].filter(f => f);
+                    if (new Set(fields).size !== fields.length) {
+                        showMessage('Please select different fields for each dimension', 'error');
+                        return;
+                    }
+
+                    // Regenerate the report
+                    if (originalSummaryData) {
+                        applySummaryFilters();
+                        showMessage('Table configuration applied successfully', 'success');
+                    }
+
+                    pivotConfigModal.style.display = 'none';
+                });
+            }
+
+            if (pivotResetBtn) {
+                pivotResetBtn.addEventListener('click', function () {
+                    // Reset to default configuration
+                    pivotConfig = {
+                        row1: 'PCM Owner',
+                        row2: 'FRT Remarks',
+                        column: 'Region',
+                        value: 'count'
+                    };
+
+                    // Update select elements
+                    document.getElementById('pivot-row-1').value = 'PCM Owner';
+                    document.getElementById('pivot-row-2').value = 'FRT Remarks';
+                    document.getElementById('pivot-column').value = 'Region';
+                    document.getElementById('pivot-value').value = 'count';
+
+                    showMessage('Configuration reset to default', 'info');
+                });
+            }
+        });
 
     </script>
 </body>
