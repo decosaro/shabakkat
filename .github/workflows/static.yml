@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCM Tools Switcher</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #f8f9fa;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.02);
+            flex-wrap: wrap;
+        }
+
+        .switch-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            min-width: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .switch-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .switch-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .switch-btn:hover::before {
+            left: 100%;
+        }
+
+        .switch-btn.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .switch-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .iframe-container {
+            padding: 0 30px 30px 30px;
+            height: calc(100vh - 160px);
+            min-height: 600px;
+        }
+
+        .iframe-wrapper {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            background: white;
+            position: relative;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 1.2rem;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer-credit {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .footer-credit:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .switch-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .iframe-container {
+                padding: 0 15px 15px 15px;
+                height: calc(100vh - 180px);
+            }
+
+            .footer-credit {
+                font-size: 0.8rem;
+                padding: 6px 16px;
+                bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="button-container">
+            <button class="switch-btn active" onclick="switchIframe('running', this)">
+                📋 Running PCMs
+            </button>
+            <button class="switch-btn" onclick="switchIframe('rca', this)">
+                🔍 RCA Validation
+            </button>
+        </div>
+
+        <div class="iframe-container">
+            <div class="iframe-wrapper">
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    Loading content...
+                </div>
+                <iframe 
+                    id="contentFrame" 
+                    src="https://decosaro.github.io/shabakkat/Running%20PCMs.html"
+                    style="display: none;"
+                    onload="hideLoading()">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urls = {
+            'running': 'https://decosaro.github.io/shabakkat/Running%20PCMs.html',
+            'rca': 'https://decosaro.github.io/shabakkat/RCA%20Validation.html'
+        };
+
+        function switchIframe(type, buttonElement) {
+            // Show loading
+            showLoading();
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.switch-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            buttonElement.classList.add('active');
+            
+            // Change iframe source
+            const iframe = document.getElementById('contentFrame');
+            iframe.src = urls[type];
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('contentFrame').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('contentFrame').style.display = 'block';
+        }
+
+        // Show the initial content
+        window.addEventListener('load', function() {
+            setTimeout(hideLoading, 1000);
+        });
+
+        // Handle iframe loading errors
+        document.getElementById('contentFrame').addEventListener('error', function() {
+            document.getElementById('loading').innerHTML = '<div style="text-align: center;"><div style="font-size: 2rem;">⚠️</div><div>Failed to load content</div></div>';
+        });
+    </script>
+
+    <div class="footer-credit">
+        Created By Tarek Mahran
+    </div>
+</body>
+</html>
