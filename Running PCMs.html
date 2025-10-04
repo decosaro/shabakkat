@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Running PCM Merger</title>
+    <title>Running PCMs</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,14 +16,16 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
             max-width: 1200px;
+            width: 100%;
             margin: 0 auto;
+            padding: 0 10px;
         }
 
         .header {
@@ -36,10 +39,11 @@
             font-size: 2.5em;
             margin-bottom: 10px;
             font-weight: 700;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.02em;
         }
 
         .header p {
@@ -48,16 +52,73 @@
         }
 
         .main-card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border: 1px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: clamp(20px, 4vw, 40px);
+            box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.08), 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             animation: fadeInUp 0.8s ease;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .main-card {
+                border-radius: 12px;
+            }
         }
 
         .upload-section {
             margin-bottom: 30px;
+        }
+
+        .upload-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+        }
+
+        .upload-section-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.25);
+        }
+
+        .upload-section-title {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-section-toggle {
+            color: white;
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .upload-section-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .upload-section-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .upload-section-content.collapsed {
+            max-height: 0;
+            opacity: 0;
         }
 
         .files-grid {
@@ -74,22 +135,25 @@
         }
 
         .file-input-group {
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 2px dashed #cbd5e1;
-            transition: all 0.3s ease;
+            padding: 24px;
+            background: rgba(248, 250, 252, 0.5);
+            border-radius: 16px;
+            border: 2px dashed #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .file-input-group:hover {
-            border-color: #3b82f6;
-            background: #eff6ff;
+            border-color: #6366f1;
+            background: rgba(239, 246, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.1);
         }
 
         .file-input-group.uploaded {
             border-color: #10b981;
-            background: #ecfdf5;
+            background: rgba(236, 253, 245, 0.6);
             border-style: solid;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);
         }
 
         .file-label {
@@ -112,20 +176,20 @@
 
         .file-button {
             display: inline-block;
-            padding: 10px 20px;
-            background: #3b82f6;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
             border: none;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
         }
 
         .file-button:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
         }
 
         .file-status {
@@ -144,24 +208,44 @@
         }
 
         .process-button {
-            width: 100%;
-            padding: 15px;
-            background: #10b981;
+            display: block;
+            margin: 30px auto 0;
+            padding: 16px 48px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 1.2em;
+            border-radius: 16px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .process-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .process-button:hover:not(:disabled)::before {
+            left: 100%;
         }
 
         .process-button:hover:not(:disabled) {
-            background: #059669;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+
+        .process-button:active:not(:disabled) {
+            transform: translateY(-1px) scale(0.98);
         }
 
         .process-button:disabled {
@@ -288,9 +372,11 @@
         }
 
         .modal-content {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             max-width: 500px;
             width: 90%;
             max-height: 80vh;
@@ -441,34 +527,193 @@
         }
 
         .statistics {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 10px;
+            margin-top: 30px;
             display: none;
-            border: 1px solid #e2e8f0;
         }
 
-        .stat-row {
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: clamp(24px, 3vw, 32px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            transition: height 0.3s ease;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.03), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 10px 20px rgba(0, 0, 0, 0.04);
+            border-color: rgba(255, 255, 255, 1);
+        }
+
+        .stat-card:hover::before {
+            height: 5px;
+        }
+
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+
+        .stat-card.total::before {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        }
+
+        .stat-card.total::after {
+            background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.05), transparent 70%);
+        }
+
+        .stat-card.netask::before {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
+        .stat-card.netask::after {
+            background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 70%);
+        }
+
+        .stat-card.tms::before {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+
+        .stat-card.tms::after {
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.05), transparent 70%);
+        }
+
+        .stat-card.frt::before {
+            background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);
+        }
+
+        .stat-card.frt::after {
+            background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.05), transparent 70%);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .stat-row:last-child {
-            border-bottom: none;
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card.total .stat-icon {
+            background: linear-gradient(135deg, #f3f0ff 0%, #e9d5ff 100%);
+        }
+
+        .stat-card.netask .stat-icon {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        }
+
+        .stat-card.tms .stat-icon {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+
+        .stat-card.frt .stat-icon {
+            background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%);
         }
 
         .stat-label {
-            font-weight: 600;
-            color: #374151;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .stat-card:hover .stat-label {
+            color: #64748b;
         }
 
         .stat-value {
-            color: #3b82f6;
-            font-weight: 500;
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-value {
+            transform: scale(1.05);
+            color: #0f172a;
+        }
+
+        @media (max-width: 480px) {
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        .stat-card.filtered {
+            grid-column: span 4;
+        }
+
+        @media (max-width: 1024px) {
+            .stat-card.filtered {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stat-card.filtered {
+                grid-column: span 1;
+            }
         }
 
         @keyframes fadeInDown {
@@ -567,10 +812,10 @@
 
         .filter-section {
             margin: 30px 0;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
+            padding: 24px;
+            background: rgba(248, 250, 252, 0.5);
+            border-radius: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.6);
         }
 
         .filter-options {
@@ -588,17 +833,19 @@
         .filter-option {
             display: flex;
             flex-direction: column;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
             border: 2px solid #e2e8f0;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .filter-option:hover {
-            border-color: #3b82f6;
-            background: #eff6ff;
+            border-color: #6366f1;
+            background: rgba(239, 246, 255, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.1);
         }
 
         .filter-option input[type="radio"] {
@@ -619,8 +866,9 @@
         }
 
         .filter-option.selected {
-            border-color: #3b82f6;
-            background: #eff6ff;
+            border-color: #6366f1;
+            background: rgba(239, 246, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.15);
         }
 
         .filter-label {
@@ -652,36 +900,110 @@
 
         .hd-feedback-report {
             margin-top: 30px;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
+            padding: 24px;
+            background: rgba(248, 250, 252, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.6);
         }
+
+        #feedback-table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -20px;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        #feedback-table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        #feedback-table-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        #feedback-table-container::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+
+        #feedback-table-container::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Scroll hint shadow - removed to eliminate white line */
 
         .feedback-table {
             width: 100%;
+            min-width: 800px;
             border-collapse: collapse;
-            font-size: 0.9em;
-            background: white;
-            border-radius: 8px;
+            font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            table-layout: auto;
+        }
+
+        @media (max-width: 1200px) {
+            .feedback-table {
+                font-size: 0.8em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .feedback-table {
+                font-size: 0.75em;
+                min-width: 600px;
+            }
+
+            #feedback-table-container {
+                margin: 0 -10px;
+                padding: 0 10px;
+            }
+        }
+
+        @media (max-width: 640px) {
+
+            /* Stack buttons vertically on small screens */
+            .hd-feedback-report>div:first-child {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .hd-feedback-report>div:first-child>div {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .hd-feedback-report button {
+                width: 100%;
+            }
         }
 
         .feedback-table th {
-            background: #0d9488;
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
             color: white;
-            padding: 12px 8px;
+            padding: clamp(10px, 1.5vw, 14px) clamp(6px, 1vw, 10px);
             text-align: center;
             font-weight: 600;
-            border: 1px solid #0f766e;
+            border: 1px solid rgba(15, 118, 110, 0.3);
+            white-space: nowrap;
+            min-width: 60px;
         }
 
         .feedback-table td {
-            padding: 8px;
+            padding: clamp(6px, 1vw, 8px);
             text-align: center;
             border: 1px solid #e2e8f0;
             background: white;
+            min-width: 50px;
+        }
+
+        .feedback-table td:first-child {
+            min-width: 150px;
+            white-space: nowrap;
         }
 
         .feedback-table .category-row {
@@ -746,15 +1068,18 @@
         }
 
         .feedback-table .total-row {
-            background: #0d9488;
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
             color: white;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .feedback-table .total-row td {
-            background: #0d9488;
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
             color: white;
-            border-color: #0f766e;
+            border-color: rgba(15, 118, 110, 0.3);
+            padding: clamp(10px, 1.5vw, 14px) clamp(6px, 1vw, 10px);
+            font-size: 1.05em;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .feedback-table .expand-icon {
@@ -781,222 +1106,258 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Running PCM Merger</h1>
+            <h1>Running PCMs</h1>
         </div>
 
         <div class="main-card">
             <div class="upload-section">
-                <div class="files-grid">
-                    <div class="file-input-group" id="group-netask">
-                        <label class="file-label">📁 Netask Running PCMs</label>
-                        <label for="netask-file" class="file-button">Choose File</label>
-                        <input type="file" id="netask-file" class="file-input" accept=".xlsx,.xls">
-                        <div class="file-status" id="netask-status"></div>
+                <div class="upload-section-header" id="upload-section-header">
+                    <div class="upload-section-title">
+                        <span>📂</span>
+                        <span>File Upload Section</span>
+                    </div>
+                    <div class="upload-section-toggle collapsed" id="upload-section-toggle">▼</div>
+                </div>
+                <div class="upload-section-content collapsed" id="upload-section-content">
+                    <div class="files-grid">
+                        <div class="file-input-group" id="group-netask">
+                            <label class="file-label">📁 Netask Running PCMs</label>
+                            <label for="netask-file" class="file-button">Choose File</label>
+                            <input type="file" id="netask-file" class="file-input" accept=".xlsx,.xls">
+                            <div class="file-status" id="netask-status"></div>
+                        </div>
+
+                        <div class="file-input-group" id="group-ows-frt">
+                            <label class="file-label">⏱️ OWS FRT</label>
+                            <label for="ows-frt-file" class="file-button">Choose File</label>
+                            <input type="file" id="ows-frt-file" class="file-input" accept=".xlsx,.xls">
+                            <div class="file-status" id="ows-frt-status"></div>
+                        </div>
+
+                        <div class="file-input-group" id="group-cm-operation">
+                            <label class="file-label">📝 TMS CM Operation</label>
+                            <label for="cm-operation-file" class="file-button">Choose File</label>
+                            <input type="file" id="cm-operation-file" class="file-input" accept=".xlsx,.xls">
+                            <div class="file-status" id="cm-operation-status"></div>
+                        </div>
+
+                        <div class="file-input-group" id="group-manual-frt">
+                            <label class="file-label">📋 Manual FRT</label>
+                            <label for="manual-frt-file" class="file-button">Choose File</label>
+                            <input type="file" id="manual-frt-file" class="file-input" accept=".xlsx,.xls">
+                            <div class="file-status" id="manual-frt-status"></div>
+                        </div>
                     </div>
 
-                    <div class="file-input-group" id="group-ows-frt">
-                        <label class="file-label">⏱️ OWS FRT</label>
-                        <label for="ows-frt-file" class="file-button">Choose File</label>
-                        <input type="file" id="ows-frt-file" class="file-input" accept=".xlsx,.xls">
-                        <div class="file-status" id="ows-frt-status"></div>
+                    <div class="filter-section">
+                        <h3 style="color: #374151; margin-bottom: 15px; font-size: 1.1em;">📋 Filter Options</h3>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="radio" name="filter-type" value="all">
+                                <span class="filter-label">All PCMs</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="filter-type" value="running" checked>
+                                <span class="filter-label">Running PCMs</span>
+                            </label>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="file-input-group" id="group-cm-operation">
-                        <label class="file-label">📝 TMS CM Operation</label>
-                        <label for="cm-operation-file" class="file-button">Choose File</label>
-                        <input type="file" id="cm-operation-file" class="file-input" accept=".xlsx,.xls">
-                        <div class="file-status" id="cm-operation-status"></div>
+            <button id="process-button" class="process-button" disabled>
+                Process Merge Files
+            </button>
+
+            <div class="loader" id="loader"></div>
+
+            <div id="statistics" class="statistics">
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-label">Total PCMs</div>
+                        <div class="stat-value" id="total-records">0</div>
                     </div>
+                    <div class="stat-card netask">
+                        <div class="stat-icon">📁</div>
+                        <div class="stat-label">Netask PCMs</div>
+                        <div class="stat-value" id="netask-records">0</div>
+                    </div>
+                    <div class="stat-card tms">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-label">TMS PCMs</div>
+                        <div class="stat-value" id="tms-only-records">0</div>
+                    </div>
+                    <div class="stat-card frt">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-label">FRT Matched</div>
+                        <div class="stat-value" id="frt-matches">0</div>
+                    </div>
+                    <div class="stat-card filtered" id="filtered-stat" style="display: none;">
+                        <div class="stat-icon">🔍</div>
+                        <div class="stat-label">Records Filtered Out</div>
+                        <div class="stat-value" id="filtered-records">0</div>
+                    </div>
+                </div>
+            </div>
 
-                    <div class="file-input-group" id="group-manual-frt">
-                        <label class="file-label">📋 Manual FRT</label>
-                        <label for="manual-frt-file" class="file-button">Choose File</label>
-                        <input type="file" id="manual-frt-file" class="file-input" accept=".xlsx,.xls">
-                        <div class="file-status" id="manual-frt-status"></div>
+            <div id="hd-feedback-report" class="hd-feedback-report" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: #374151; margin: 0; font-size: 1.2em;">📋 Summary</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button id="filter-btn"
+                            style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9em; transition: all 0.2s ease;">
+                            🔍 Filter
+                        </button>
+                        <button id="screenshot-btn"
+                            style="padding: 8px 16px; background: #8b5cf6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9em; transition: all 0.2s ease;">
+                            📸 Screenshot
+                        </button>
+                        <button id="pivot-config-btn"
+                            style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9em; transition: all 0.2s ease;">
+                            ⚙️ Configure Table
+                        </button>
                     </div>
                 </div>
 
-                <div class="filter-section">
-                    <h3 style="color: #374151; margin-bottom: 15px; font-size: 1.1em;">📋 Filter Options</h3>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="radio" name="filter-type" value="all" checked>
-                            <span class="filter-label">All PCMs</span>
-                        </label>
-                        <label class="filter-option">
-                            <input type="radio" name="filter-type" value="running">
-                            <span class="filter-label">Running PCMs</span>
-                        </label>
-                    </div>
+                <div id="feedback-table-container"></div>
+
+                <div id="download-section" class="download-section">
+                    <a id="download-button" class="download-button">
+                        📥 Download
+                    </a>
                 </div>
+            </div>
+        </div>
 
-                <button id="process-button" class="process-button" disabled>
-                    Process Merge Files
-                </button>
-
-                <div class="loader" id="loader"></div>
-
-                <div id="statistics" class="statistics">
-                    <div class="stat-row">
-                        <span class="stat-label">Total PCMs in Output:</span>
-                        <span class="stat-value" id="total-records">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Netask PCMs:</span>
-                        <span class="stat-value" id="netask-records">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">TMS PCMs:</span>
-                        <span class="stat-value" id="tms-only-records">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">FRT Records Matched:</span>
-                        <span class="stat-value" id="frt-matches">0</span>
-                    </div>
-                    <div class="stat-row" id="filtered-stat" style="display: none;">
-                        <span class="stat-label">Records Filtered Out:</span>
-                        <span class="stat-value" id="filtered-records">0</span>
-                    </div>
+        <!-- Pivot Configuration Modal -->
+        <div id="pivot-config-modal" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 700px;">
+                <div class="modal-header">
+                    <h3>⚙️ Configure Summary Table</h3>
+                    <span class="close" id="close-pivot-modal">&times;</span>
                 </div>
-
-                <div id="hd-feedback-report" class="hd-feedback-report" style="display: none;">
-                    <h3 style="color: #374151; margin-bottom: 15px; font-size: 1.2em;">📋 Summary</h3>
-
-                    <!-- Pivot Configuration Modal -->
-                    <div id="pivot-config-modal" class="modal" style="display: none;">
-                        <div class="modal-content" style="max-width: 700px;">
-                            <div class="modal-header">
-                                <h3>⚙️ Configure Summary Table</h3>
-                                <span class="close" id="close-pivot-modal">&times;</span>
+                <div class="modal-body">
+                    <div style="margin-bottom: 20px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label style="font-weight: 600; color: #374151;">Row Groups (Hierarchy)</label>
+                            <button id="add-row-btn"
+                                style="padding: 4px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 500;">
+                                + Add Row
+                            </button>
+                        </div>
+                        <div id="row-fields-container" style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="row-field-item" style="display: flex; gap: 8px; align-items: center;">
+                                <select class="pivot-row-select" data-index="0"
+                                    style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                    <option value="">-- Select Row Field --</option>
+                                    <option value="PCM Owner" selected>PCM Owner</option>
+                                    <option value="FRT Remarks">FRT Remarks</option>
+                                    <option value="Region">Region</option>
+                                    <option value="Domain">Domain</option>
+                                    <option value="Impact Service">Impact Service</option>
+                                    <option value="Skill">Skill</option>
+                                    <option value="PCM Year">PCM Year</option>
+                                    <option value="PCM Month">PCM Month</option>
+                                    <option value="Fault Level">Severity</option>
+                                    <option value="Sub Project">Sub Project</option>
+                                </select>
+                                <button class="remove-row-btn"
+                                    style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; display: none;">
+                                    ✕
+                                </button>
                             </div>
-                            <div class="modal-body">
-                                <div style="margin-bottom: 20px;">
-                                    <div
-                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                        <label style="font-weight: 600; color: #374151;">Row Groups (Hierarchy)</label>
-                                        <button id="add-row-btn"
-                                            style="padding: 4px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 500;">
-                                            + Add Row
-                                        </button>
-                                    </div>
-                                    <div id="row-fields-container"
-                                        style="display: flex; flex-direction: column; gap: 8px;">
-                                        <div class="row-field-item"
-                                            style="display: flex; gap: 8px; align-items: center;">
-                                            <select class="pivot-row-select" data-index="0"
-                                                style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
-                                                <option value="">-- Select Row Field --</option>
-                                                <option value="PCM Owner" selected>PCM Owner</option>
-                                                <option value="FRT Remarks">FRT Remarks</option>
-                                                <option value="Region">Region</option>
-                                                <option value="Domain">Domain</option>
-                                                <option value="Impact Service">Impact Service</option>
-                                                <option value="Skill">Skill</option>
-                                                <option value="PCM Year">PCM Year</option>
-                                                <option value="PCM Month">PCM Month</option>
-                                            </select>
-                                            <button class="remove-row-btn"
-                                                style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; display: none;">
-                                                ✕
-                                            </button>
-                                        </div>
-                                        <div class="row-field-item"
-                                            style="display: flex; gap: 8px; align-items: center;">
-                                            <select class="pivot-row-select" data-index="1"
-                                                style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
-                                                <option value="">-- Select Row Field --</option>
-                                                <option value="PCM Owner">PCM Owner</option>
-                                                <option value="FRT Remarks" selected>FRT Remarks</option>
-                                                <option value="Region">Region</option>
-                                                <option value="Domain">Domain</option>
-                                                <option value="Impact Service">Impact Service</option>
-                                                <option value="Skill">Skill</option>
-                                                <option value="PCM Year">PCM Year</option>
-                                                <option value="PCM Month">PCM Month</option>
-                                            </select>
-                                            <button class="remove-row-btn"
-                                                style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
-                                                ✕
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="margin-bottom: 20px;">
-                                    <div
-                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                        <label style="font-weight: 600; color: #374151;">Column Fields</label>
-                                        <button id="add-column-btn"
-                                            style="padding: 4px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 500;">
-                                            + Add Column
-                                        </button>
-                                    </div>
-                                    <div id="column-fields-container"
-                                        style="display: flex; flex-direction: column; gap: 8px;">
-                                        <div class="column-field-item"
-                                            style="display: flex; gap: 8px; align-items: center;">
-                                            <select class="pivot-column-select" data-index="0"
-                                                style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
-                                                <option value="">-- Select Column Field --</option>
-                                                <option value="Region" selected>Region</option>
-                                                <option value="Domain">Domain</option>
-                                                <option value="Impact Service">Impact Service</option>
-                                                <option value="Skill">Skill</option>
-                                                <option value="PCM Year">PCM Year</option>
-                                                <option value="PCM Month">PCM Month</option>
-                                                <option value="FRT Remarks">FRT Remarks</option>
-                                                <option value="PCM Owner">PCM Owner</option>
-                                            </select>
-                                            <button class="remove-column-btn"
-                                                style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; display: none;">
-                                                ✕
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="margin-bottom: 20px;">
-                                    <label
-                                        style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Value
-                                        Calculation</label>
-                                    <select id="pivot-value"
-                                        style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
-                                        <option value="count" selected>Count of Records</option>
-                                    </select>
-                                </div>
-
-                                <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                                    <button id="pivot-reset-btn"
-                                        style="padding: 10px 20px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
-                                        Reset to Default
-                                    </button>
-                                    <button id="pivot-apply-btn"
-                                        style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
-                                        Apply Configuration
-                                    </button>
-                                </div>
+                            <div class="row-field-item" style="display: flex; gap: 8px; align-items: center;">
+                                <select class="pivot-row-select" data-index="1"
+                                    style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                    <option value="">-- Select Row Field --</option>
+                                    <option value="PCM Owner">PCM Owner</option>
+                                    <option value="FRT Remarks" selected>FRT Remarks</option>
+                                    <option value="Region">Region</option>
+                                    <option value="Domain">Domain</option>
+                                    <option value="Impact Service">Impact Service</option>
+                                    <option value="Skill">Skill</option>
+                                    <option value="PCM Year">PCM Year</option>
+                                    <option value="PCM Month">PCM Month</option>
+                                    <option value="Fault Level">Severity</option>
+                                    <option value="Sub Project">Sub Project</option>
+                                </select>
+                                <button class="remove-row-btn"
+                                    style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                                    ✕
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h4 style="color: #374151; margin: 0; font-size: 1em;">🔍 Summary Filters</h4>
-                        <div style="display: flex; gap: 10px;">
-                            <button id="pivot-config-btn"
-                                style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9em; transition: all 0.2s ease;">
-                                ⚙️ Configure Table
-                            </button>
-                            <button id="clear-filters-btn"
-                                style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9em; transition: all 0.2s ease;">
-                                Clear Filters
+                    <div style="margin-bottom: 20px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label style="font-weight: 600; color: #374151;">Column Fields</label>
+                            <button id="add-column-btn"
+                                style="padding: 4px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 500;">
+                                + Add Column
                             </button>
                         </div>
+                        <div id="column-fields-container" style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="column-field-item" style="display: flex; gap: 8px; align-items: center;">
+                                <select class="pivot-column-select" data-index="0"
+                                    style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                                    <option value="">-- Select Column Field --</option>
+                                    <option value="Region" selected>Region</option>
+                                    <option value="Domain">Domain</option>
+                                    <option value="Impact Service">Impact Service</option>
+                                    <option value="Skill">Skill</option>
+                                    <option value="PCM Year">PCM Year</option>
+                                    <option value="PCM Month">PCM Month</option>
+                                    <option value="FRT Remarks">FRT Remarks</option>
+                                    <option value="PCM Owner">PCM Owner</option>
+                                    <option value="Fault Level">Severity</option>
+                                    <option value="Sub Project">Sub Project</option>
+                                </select>
+                                <button class="remove-column-btn"
+                                    style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; display: none;">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start;">
-                        <div style="min-width: 150px; flex: 0 0 auto;">
-                            <label
-                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">PCM
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Value
+                            Calculation</label>
+                        <select id="pivot-value"
+                            style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white;">
+                            <option value="count" selected>Count of Records</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button id="pivot-reset-btn"
+                            style="padding: 10px 20px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                            Reset to Default
+                        </button>
+                        <button id="pivot-apply-btn"
+                            style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                            Apply Configuration
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Modal -->
+        <div id="filter-modal" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 800px; max-height: 85vh; overflow-y: auto;">
+                <div class="modal-header">
+                    <h3>🔍 Filter Summary Data</h3>
+                    <span class="close" id="close-filter-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">PCM
                                 Year</label>
                             <div class="multiselect-container" style="position: relative;">
                                 <div class="multiselect-trigger" id="year-trigger"
@@ -1010,9 +1371,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="min-width: 150px; flex: 0 0 auto;">
-                            <label
-                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">PCM
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">PCM
                                 Month</label>
                             <div class="multiselect-container" style="position: relative;">
                                 <div class="multiselect-trigger" id="month-trigger"
@@ -1026,9 +1386,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="min-width: 120px; flex: 0 0 auto;">
+                        <div>
                             <label
-                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Skill</label>
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Skill</label>
                             <div class="multiselect-container" style="position: relative;">
                                 <div class="multiselect-trigger" id="skill-trigger"
                                     style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
@@ -1041,9 +1401,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="min-width: 130px; flex: 0 0 auto;">
+                        <div>
                             <label
-                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Region</label>
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Region</label>
                             <div class="multiselect-container" style="position: relative;">
                                 <div class="multiselect-trigger" id="region-trigger"
                                     style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
@@ -1056,9 +1416,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="min-width: 130px; flex: 0 0 auto;">
+                        <div>
                             <label
-                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Domain</label>
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Domain</label>
                             <div class="multiselect-container" style="position: relative;">
                                 <div class="multiselect-trigger" id="domain-trigger"
                                     style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
@@ -1071,9 +1431,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="min-width: 160px; flex: 0 0 auto;">
-                            <label
-                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #374151; font-size: 0.9em;">Impact
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Impact
                                 Service</label>
                             <div class="multiselect-container" style="position: relative;">
                                 <div class="multiselect-trigger" id="impact-service-trigger"
@@ -1087,46 +1446,86 @@
                                 </div>
                             </div>
                         </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Severity</label>
+                            <div class="multiselect-container" style="position: relative;">
+                                <div class="multiselect-trigger" id="severity-trigger"
+                                    style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <span id="severity-selected-text">All Severities</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="multiselect-dropdown" id="severity-dropdown"
+                                    style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div id="severity-filters" style="padding: 10px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Sub
+                                Project</label>
+                            <div class="multiselect-container" style="position: relative;">
+                                <div class="multiselect-trigger" id="sub-project-trigger"
+                                    style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <span id="sub-project-selected-text">All Sub Projects</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="multiselect-dropdown" id="sub-project-dropdown"
+                                    style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none;">
+                                    <div id="sub-project-filters" style="padding: 10px;"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div id="feedback-table-container"></div>
-        </div>
-
-        <div id="download-section" class="download-section">
-            <a id="download-button" class="download-button">
-                📥 Download
-            </a>
-        </div>
-
-        <!-- Download Options Modal -->
-        <div id="download-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>📥 Download Options</h3>
-                    <span class="close" id="close-download-modal">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <p>Choose what you would like to download:</p>
-                    <div class="download-options">
-                        <button id="download-merged" class="download-option-btn">
-                            <div class="download-option-icon">📋</div>
-                            <div class="download-option-text">
-                                <strong>Merged File</strong>
-                                <small>Complete merged data with all PCMs</small>
-                            </div>
+                    <div style="margin-top: 20px; display: flex; justify-content: space-between; gap: 10px;">
+                        <button id="clear-filters-btn"
+                            style="padding: 10px 24px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                            Clear Filters
                         </button>
-                        <div class="input-files-section">
-                            <h4>Input Files</h4>
-                            <div id="input-files-list" class="input-files-list">
-                                <!-- Individual input files will be populated here -->
-                            </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="cancel-filters-btn"
+                                style="padding: 10px 24px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                                Cancel
+                            </button>
+                            <button id="apply-filters-btn"
+                                style="padding: 10px 24px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                                Apply Filters
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    </div>
+
+    <!-- Download Options Modal -->
+    <div id="download-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📥 Download Options</h3>
+                <span class="close" id="close-download-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Choose what you would like to download:</p>
+                <div class="download-options">
+                    <button id="download-merged" class="download-option-btn">
+                        <div class="download-option-icon">📋</div>
+                        <div class="download-option-text">
+                            <strong>Merged File</strong>
+                            <small>Complete merged data with all PCMs</small>
+                        </div>
+                    </button>
+                    <div class="input-files-section">
+                        <h4>Input Files</h4>
+                        <div id="input-files-list" class="input-files-list">
+                            <!-- Individual input files will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
     </div>
     </div>
@@ -1218,21 +1617,24 @@
             const fileUrls = {
                 netask: 'https://decosaro.github.io/shabakkat/Nextask_PCMs.xlsx',
                 cmOperation: 'https://decosaro.github.io/shabakkat/TMS_PCMs.xlsx',
-                owsFrt: 'https://decosaro.github.io/shabakkat/OWS_FRT.xlsx'
+                owsFrt: 'https://decosaro.github.io/shabakkat/OWS_FRT.xlsx',
+                manualFrt: 'https://decosaro.github.io/shabakkat/Manual_FRT.xlsx'
             };
 
             // GitHub API URLs for file metadata
             const githubApiUrls = {
                 netask: 'https://api.github.com/repos/decosaro/shabakkat/contents/Nextask_PCMs.xlsx',
                 cmOperation: 'https://api.github.com/repos/decosaro/shabakkat/contents/TMS_PCMs.xlsx',
-                owsFrt: 'https://api.github.com/repos/decosaro/shabakkat/contents/OWS_FRT.xlsx'
+                owsFrt: 'https://api.github.com/repos/decosaro/shabakkat/contents/OWS_FRT.xlsx',
+                manualFrt: 'https://api.github.com/repos/decosaro/shabakkat/contents/Manual_FRT.xlsx'
             };
 
             // Alternative: Use commits API to get file info
             const githubCommitsUrls = {
                 netask: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=Nextask_PCMs.xlsx&per_page=1',
                 cmOperation: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=TMS_PCMs.xlsx&per_page=1',
-                owsFrt: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=OWS_FRT.xlsx&per_page=1'
+                owsFrt: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=OWS_FRT.xlsx&per_page=1',
+                manualFrt: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=Manual_FRT.xlsx&per_page=1'
             };
 
             // Service configuration
@@ -1425,6 +1827,14 @@
             if (successCount > 0) {
                 document.getElementById('process-button').disabled = false;
                 showMessage(`Successfully loaded ${successCount} of ${results.length} default files`, 'success');
+
+                // Auto-trigger process if all files loaded successfully
+                if (successCount === results.length) {
+                    setTimeout(() => {
+                        showMessage('Auto-processing files...', 'info');
+                        document.getElementById('process-button').click();
+                    }, 1000);
+                }
             } else {
                 showMessage('Failed to load default files. Please upload files manually.', 'error');
             }
@@ -1446,6 +1856,18 @@
             const checkedRadio = document.querySelector('input[name="filter-type"]:checked');
             if (checkedRadio) {
                 checkedRadio.closest('.filter-option').classList.add('selected');
+            }
+
+            // Upload section collapse/expand functionality
+            const uploadHeader = document.getElementById('upload-section-header');
+            const uploadContent = document.getElementById('upload-section-content');
+            const uploadToggle = document.getElementById('upload-section-toggle');
+
+            if (uploadHeader && uploadContent && uploadToggle) {
+                uploadHeader.addEventListener('click', function () {
+                    uploadContent.classList.toggle('collapsed');
+                    uploadToggle.classList.toggle('collapsed');
+                });
             }
         });
 
@@ -1650,6 +2072,74 @@
             return jsonData;
         }
 
+        // Helper function to calculate Domain from Impact value
+        function calculateDomain(impactValue) {
+            if (!impactValue) return null;
+
+            const value = String(impactValue).trim();
+            const domainPatterns = [
+                { pattern: /IBS/i, domain: 'IBS' },
+                { pattern: /Wifi/i, domain: 'Wifi' },
+                { pattern: /TX/i, domain: 'TX' },
+                { pattern: /DWDM/i, domain: 'DWDM' },
+                { pattern: /IPRAN/i, domain: 'IPRAN' },
+                { pattern: /CS CORE/i, domain: 'CS CORE' },
+                { pattern: /ISP/i, domain: 'ISP' },
+                { pattern: /BNG/i, domain: 'BNG' },
+                { pattern: /IPBB/i, domain: 'IPBB' },
+                { pattern: /(2G|3G|LTE|5G)/i, domain: 'Access' },
+                { pattern: /^(SA|NSA)$/i, domain: 'Access' }
+            ];
+
+            for (const { pattern, domain } of domainPatterns) {
+                if (pattern.test(value)) return domain;
+            }
+            return null;
+        }
+
+        // Helper function to calculate Impact Service from Impact value
+        function calculateImpactService(impactValue) {
+            if (!impactValue) return null;
+
+            const value = String(impactValue).trim();
+            if (/NSA/i.test(value)) return 'NSA';
+            if (/SA/i.test(value) && !/NSA/i.test(value)) return 'SA';
+            return null;
+        }
+
+        // Helper function to calculate FRT Remarks
+        function calculateFRTRemarks(ticketCreatedBy, owsFrtValue, ttType, title, alarmName) {
+            const systemCreators = ['System', 'user:System', 'System_Critical'];
+            const hasValue = owsFrtValue && owsFrtValue !== null && owsFrtValue !== '';
+
+            if (systemCreators.includes(ticketCreatedBy)) {
+                return hasValue ? 'FRT Available' : 'Alarm Still Active';
+            }
+
+            if (hasValue) return 'FRT Available';
+
+            // Check for HC PCM conditions
+            const ttTypeStr = String(ttType || '').trim();
+            const titleStr = String(title || '').trim();
+            const alarmNameStr = String(alarmName || '').trim();
+
+            if (ttTypeStr === 'MW_HC' ||
+                titleStr.includes('HC') || titleStr.includes('PT:') ||
+                alarmNameStr.includes('Health')) {
+                return 'HC PCM';
+            }
+
+            return 'Manual FRT';
+        }
+
+        // Helper function to calculate PCM Owner
+        function calculatePCMOwner(updatedOwner) {
+            const owner = String(updatedOwner || '').trim();
+            return (!owner || owner === 'FLM' || owner === 'FLM_EM')
+                ? 'Running under FLM'
+                : 'Updated out of FLM';
+        }
+
         document.getElementById('process-button').addEventListener('click', processFiles);
 
         function processFiles() {
@@ -1713,27 +2203,27 @@
                     document.getElementById('frt-matches').textContent = result.stats.frtMatches;
 
                     // Show filtered records count if filters were applied
-                    if (result.stats.filteredRecords > 0) {
-                        document.getElementById('filtered-records').textContent = result.stats.filteredRecords;
-                        document.getElementById('filtered-stat').style.display = 'flex';
-                    } else {
-                        document.getElementById('filtered-stat').style.display = 'none';
+                    const filteredStatElement = document.getElementById('filtered-stat');
+                    const filteredRecordsElement = document.getElementById('filtered-records');
+
+                    if (filteredStatElement && filteredRecordsElement) {
+                        if (result.stats.filteredRecords > 0) {
+                            filteredRecordsElement.textContent = result.stats.filteredRecords;
+                            filteredStatElement.style.display = 'block';
+                        } else {
+                            filteredStatElement.style.display = 'none';
+                        }
                     }
 
-                    // Update statistics labels based on data sources present
-                    const netaskPresent = result.stats.netaskRecords > 0;
-                    const tmsPresent = result.stats.tmsOnlyRecords > 0;
-
-                    if (!netaskPresent) {
-                        document.querySelector('#statistics .stat-row:nth-child(2) .stat-label').textContent = 'Netask PCMs:';
-                        document.querySelector('#statistics .stat-row:nth-child(3) .stat-label').textContent = 'TMS PCMs:';
-                    }
                     document.getElementById('statistics').style.display = 'block';
 
                     // Generate and display HD Feedback report
                     const reportHTML = generateHDFeedbackReport(result.finalData);
-                    document.getElementById('feedback-table-container').innerHTML = reportHTML;
+                    const tableContainer = document.getElementById('feedback-table-container');
+                    tableContainer.innerHTML = reportHTML;
                     document.getElementById('hd-feedback-report').style.display = 'block';
+
+                    // Scroll hint removed
 
                     // Populate filter dropdowns
                     populateSummaryFilters(result.finalData);
@@ -1910,102 +2400,25 @@
                     rowWithFrt['OWS FRT'] = null;
                 }
 
-                // Calculate FRT Remarks
+                // Calculate FRT Remarks using helper function
                 const ticketCreatedBy = frtData.length > 0 && orderId && frtMap.has(orderId)
                     ? String(frtMap.get(orderId)['Ticket Created By'] || '').trim()
                     : '';
-                const owsFrtValue = rowWithFrt['OWS FRT'];
-                const systemCreators = ['System', 'user:System', 'System_Critical'];
+                rowWithFrt['FRT Remarks'] = calculateFRTRemarks(
+                    ticketCreatedBy,
+                    rowWithFrt['OWS FRT'],
+                    rowWithFrt['TT Type'],
+                    rowWithFrt['Title'],
+                    rowWithFrt['Alarm Name']
+                );
 
-                if (systemCreators.includes(ticketCreatedBy) && owsFrtValue && owsFrtValue !== null && owsFrtValue !== '') {
-                    rowWithFrt['FRT Remarks'] = 'FRT Available';
-                } else if (systemCreators.includes(ticketCreatedBy) && (owsFrtValue === null || owsFrtValue === undefined || owsFrtValue === '')) {
-                    rowWithFrt['FRT Remarks'] = 'Alarm Still Active';
-                } else {
-                    // For non-system created tickets, check if OWS FRT has value
-                    if (owsFrtValue && owsFrtValue !== null && owsFrtValue !== '') {
-                        rowWithFrt['FRT Remarks'] = 'FRT Available';
-                    } else {
-                        rowWithFrt['FRT Remarks'] = 'Manual FRT';
+                // Calculate PCM Owner using helper function
+                rowWithFrt['PCM Owner'] = calculatePCMOwner(rowWithFrt['Updated Owner']);
 
-                        // Check for HC PCM conditions
-                        const ttType = String(rowWithFrt['TT Type'] || '').trim();
-                        const title = String(rowWithFrt['Title'] || '').trim();
-                        const alarmName = String(rowWithFrt['Alarm Name'] || '').trim();
-
-                        if (ttType === 'MW_HC' ||
-                            title.includes('HC') || title.includes('PT:') ||
-                            alarmName.includes('Health')) {
-                            rowWithFrt['FRT Remarks'] = 'HC PCM';
-                        }
-                    }
-                }
-
-                // Calculate PCM Owner
-                const updatedOwner = String(rowWithFrt['Updated Owner'] || '').trim();
-                if (!updatedOwner || updatedOwner === '' || updatedOwner === 'FLM' || updatedOwner === 'FLM_EM') {
-                    rowWithFrt['PCM Owner'] = 'Running under FLM';
-                } else {
-                    rowWithFrt['PCM Owner'] = 'Updated out of FLM';
-                }
-
-                // Calculate Domain based on Impact column
-                const impactValue = String(rowWithFrt['Impact'] || '').trim();
-                let domain = null;
-
-                if (impactValue) {
-                    // Check for other domains first (before Access) to avoid conflicts
-                    if (/IBS/i.test(impactValue)) {
-                        domain = 'IBS';
-                    }
-                    else if (/Wifi/i.test(impactValue)) {
-                        domain = 'Wifi';
-                    }
-                    else if (/TX/i.test(impactValue)) {
-                        domain = 'TX';
-                    }
-                    else if (/DWDM/i.test(impactValue)) {
-                        domain = 'DWDM';
-                    }
-                    else if (/IPRAN/i.test(impactValue)) {
-                        domain = 'IPRAN';
-                    }
-                    else if (/CS CORE/i.test(impactValue)) {
-                        domain = 'CS CORE';
-                    }
-                    else if (/ISP/i.test(impactValue)) {
-                        domain = 'ISP';
-                    }
-                    else if (/BNG/i.test(impactValue)) {
-                        domain = 'BNG';
-                    }
-                    else if (/IPBB/i.test(impactValue)) {
-                        domain = 'IPBB';
-                    }
-                    // Check for Access domain (2G, 3G, LTE, 5G) - using looser pattern to match with underscores
-                    else if (/(2G|3G|LTE|5G)/i.test(impactValue)) {
-                        domain = 'Access';
-                    }
-                    // Check for SA or NSA as standalone words only (exact match, case insensitive)
-                    else if (/^(SA|NSA)$/i.test(impactValue)) {
-                        domain = 'Access';
-                    }
-                }
-                rowWithFrt['Domain'] = domain;
-
-                // Calculate Impact Service based on Impact column
-                let impactService = null;
-                if (impactValue) {
-                    // Check for NSA first (more specific)
-                    if (/NSA/i.test(impactValue)) {
-                        impactService = 'NSA';
-                    }
-                    // Check for SA (but not as part of NSA)
-                    else if (/SA/i.test(impactValue) && !/NSA/i.test(impactValue)) {
-                        impactService = 'SA';
-                    }
-                }
-                rowWithFrt['Impact Service'] = impactService;
+                // Calculate Domain and Impact Service using helper functions
+                const impactValue = rowWithFrt['Impact'];
+                rowWithFrt['Domain'] = calculateDomain(impactValue);
+                rowWithFrt['Impact Service'] = calculateImpactService(impactValue);
 
                 return rowWithFrt;
             });
@@ -2125,102 +2538,25 @@
                     convertedRow['OWS FRT'] = null;
                 }
 
-                // Calculate FRT Remarks
+                // Calculate FRT Remarks using helper function
                 const ticketCreatedBy = frtData.length > 0 && owsOrderId && frtMap.has(owsOrderId)
                     ? String(frtMap.get(owsOrderId)['Ticket Created By'] || '').trim()
                     : '';
-                const owsFrtValue = convertedRow['OWS FRT'];
-                const systemCreators = ['System', 'user:System', 'System_Critical'];
+                convertedRow['FRT Remarks'] = calculateFRTRemarks(
+                    ticketCreatedBy,
+                    convertedRow['OWS FRT'],
+                    convertedRow['TT Type'],
+                    convertedRow['Title'],
+                    convertedRow['Alarm Name']
+                );
 
-                if (systemCreators.includes(ticketCreatedBy) && owsFrtValue && owsFrtValue !== null && owsFrtValue !== '') {
-                    convertedRow['FRT Remarks'] = 'FRT Available';
-                } else if (systemCreators.includes(ticketCreatedBy) && (owsFrtValue === null || owsFrtValue === undefined || owsFrtValue === '')) {
-                    convertedRow['FRT Remarks'] = 'Alarm Still Active';
-                } else {
-                    // For non-system created tickets, check if OWS FRT has value
-                    if (owsFrtValue && owsFrtValue !== null && owsFrtValue !== '') {
-                        convertedRow['FRT Remarks'] = 'FRT Available';
-                    } else {
-                        convertedRow['FRT Remarks'] = 'Manual FRT';
+                // Calculate PCM Owner using helper function
+                convertedRow['PCM Owner'] = calculatePCMOwner(convertedRow['Updated Owner']);
 
-                        // Check for HC PCM conditions
-                        const ttType = String(convertedRow['TT Type'] || '').trim();
-                        const title = String(convertedRow['Title'] || '').trim();
-                        const alarmName = String(convertedRow['Alarm Name'] || '').trim();
-
-                        if (ttType === 'MW_HC' ||
-                            title.includes('HC') || title.includes('PT:') ||
-                            alarmName.includes('Health')) {
-                            convertedRow['FRT Remarks'] = 'HC PCM';
-                        }
-                    }
-                }
-
-                // Calculate PCM Owner
-                const updatedOwner = String(convertedRow['Updated Owner'] || '').trim();
-                if (!updatedOwner || updatedOwner === '' || updatedOwner === 'FLM' || updatedOwner === 'FLM_EM') {
-                    convertedRow['PCM Owner'] = 'Running under FLM';
-                } else {
-                    convertedRow['PCM Owner'] = 'Updated out of FLM';
-                }
-
-                // Calculate Domain based on Impact column
-                const impactValue = String(convertedRow['Impact'] || '').trim();
-                let domain = null;
-
-                if (impactValue) {
-                    // Check for other domains first (before Access) to avoid conflicts
-                    if (/IBS/i.test(impactValue)) {
-                        domain = 'IBS';
-                    }
-                    else if (/Wifi/i.test(impactValue)) {
-                        domain = 'Wifi';
-                    }
-                    else if (/TX/i.test(impactValue)) {
-                        domain = 'TX';
-                    }
-                    else if (/DWDM/i.test(impactValue)) {
-                        domain = 'DWDM';
-                    }
-                    else if (/IPRAN/i.test(impactValue)) {
-                        domain = 'IPRAN';
-                    }
-                    else if (/CS CORE/i.test(impactValue)) {
-                        domain = 'CS CORE';
-                    }
-                    else if (/ISP/i.test(impactValue)) {
-                        domain = 'ISP';
-                    }
-                    else if (/BNG/i.test(impactValue)) {
-                        domain = 'BNG';
-                    }
-                    else if (/IPBB/i.test(impactValue)) {
-                        domain = 'IPBB';
-                    }
-                    // Check for Access domain (2G, 3G, LTE, 5G) - using looser pattern to match with underscores
-                    else if (/(2G|3G|LTE|5G)/i.test(impactValue)) {
-                        domain = 'Access';
-                    }
-                    // Check for SA or NSA as standalone words only (exact match, case insensitive)
-                    else if (/^(SA|NSA)$/i.test(impactValue)) {
-                        domain = 'Access';
-                    }
-                }
-                convertedRow['Domain'] = domain;
-
-                // Calculate Impact Service based on Impact column
-                let impactService = null;
-                if (impactValue) {
-                    // Check for NSA first (more specific)
-                    if (/NSA/i.test(impactValue)) {
-                        impactService = 'NSA';
-                    }
-                    // Check for SA (but not as part of NSA)
-                    else if (/SA/i.test(impactValue) && !/NSA/i.test(impactValue)) {
-                        impactService = 'SA';
-                    }
-                }
-                convertedRow['Impact Service'] = impactService;
+                // Calculate Domain and Impact Service using helper functions
+                const impactValue = convertedRow['Impact'];
+                convertedRow['Domain'] = calculateDomain(impactValue);
+                convertedRow['Impact Service'] = calculateImpactService(impactValue);
 
                 // Fill hardcoded values for Section 2 records only
                 convertedRow['Sub Project'] = 'LATIS';
@@ -2573,7 +2909,8 @@
 
                     // Row header cell (spans all column levels)
                     if (level === 0) {
-                        tableHTML += `<th rowspan="${columnFields.length}">${rowFields.join(' / ')}</th>`;
+                        const headerText = rowFields.join(' / ') === 'PCM Owner / FRT Remarks' ? 'HD Feedback' : rowFields.join(' / ');
+                        tableHTML += `<th rowspan="${columnFields.length}">${headerText}</th>`;
                     }
 
                     // Render column headers at this level
@@ -2612,7 +2949,8 @@
             } else {
                 // Single level column headers
                 tableHTML += '<tr>';
-                tableHTML += `<th>${rowFields.join(' / ')}</th>`;
+                const headerText = rowFields.join(' / ') === 'PCM Owner / FRT Remarks' ? 'HD Feedback' : rowFields.join(' / ');
+                tableHTML += `<th>${headerText}</th>`;
                 columnKeys.forEach(columnKey => {
                     tableHTML += `<th>${columnKey}</th>`;
                 });
@@ -2757,8 +3095,8 @@
             toggleDescendants(rowId, isCollapsed);
         }
 
-        // Old version kept for reference
-        function generateHDFeedbackReportOld(finalData) {
+        // Removed duplicate function - using optimized generateHDFeedbackReport() above
+        /* function generateHDFeedbackReportOld(finalData) {
             const rowFields = pivotConfig.rows.filter(r => r);
             const columnFields = pivotConfig.columns.filter(c => c);
             const row1Field = rowFields[0];
@@ -2914,10 +3252,10 @@
             tableHTML += '</tbody></table>';
 
             return tableHTML;
-        }
+        } */
 
-        // Legacy function for backward compatibility
-        function generateHDFeedbackReportLegacy(finalData) {
+        // Removed duplicate legacy function - using optimized generateHDFeedbackReport() above
+        /* function generateHDFeedbackReportLegacy(finalData) {
             // Valid FRT Remarks values
             const validFrtRemarks = ['Alarm Still Active', 'FRT Available', 'Manual FRT', 'HC PCM'];
 
@@ -3053,7 +3391,7 @@
             tableHTML += '</tbody></table>';
 
             return tableHTML;
-        }
+        } */
 
         // Store the original data for filtering
         let originalSummaryData = null;
@@ -3083,9 +3421,11 @@
                 regions.push('Stuck');
             }
 
-            // Get unique domains and impact services
+            // Get unique domains, impact services, severities, and sub projects
             const domains = [...new Set(finalData.map(row => row['Domain']).filter(domain => domain))].sort();
             const impactServices = [...new Set(finalData.map(row => row['Impact Service']).filter(service => service))].sort();
+            const severities = [...new Set(finalData.map(row => row['Fault Level']).filter(severity => severity))].sort();
+            const subProjects = [...new Set(finalData.map(row => row['Sub Project']).filter(sp => sp))].sort();
 
             // Populate PCM Year checkboxes
             const yearContainer = document.getElementById('pcm-year-filters');
@@ -3183,6 +3523,38 @@
                 impactServiceContainer.appendChild(label);
             });
 
+            // Populate Severity checkboxes
+            const severityContainer = document.getElementById('severity-filters');
+            severityContainer.innerHTML = `
+                <label style="display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: 600;">
+                    <input type="checkbox" id="severity-all" checked style="margin-right: 8px;"> All Severities
+                </label>
+            `;
+            severities.forEach(severity => {
+                const label = document.createElement('label');
+                label.style.display = 'block';
+                label.style.marginBottom = '5px';
+                label.style.fontSize = '0.9em';
+                label.innerHTML = `<input type="checkbox" value="${severity}" checked style="margin-right: 8px;"> ${severity}`;
+                severityContainer.appendChild(label);
+            });
+
+            // Populate Sub Project checkboxes
+            const subProjectContainer = document.getElementById('sub-project-filters');
+            subProjectContainer.innerHTML = `
+                <label style="display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: 600;">
+                    <input type="checkbox" id="sub-project-all" checked style="margin-right: 8px;"> All Sub Projects
+                </label>
+            `;
+            subProjects.forEach(subProject => {
+                const label = document.createElement('label');
+                label.style.display = 'block';
+                label.style.marginBottom = '5px';
+                label.style.fontSize = '0.9em';
+                label.innerHTML = `<input type="checkbox" value="${subProject}" checked style="margin-right: 8px;"> ${subProject}`;
+                subProjectContainer.appendChild(label);
+            });
+
             // Add dropdown toggle functionality
             setupMultiselectDropdown('year');
             setupMultiselectDropdown('month');
@@ -3190,6 +3562,8 @@
             setupMultiselectDropdown('region');
             setupMultiselectDropdown('domain');
             setupMultiselectDropdown('impact-service');
+            setupMultiselectDropdown('severity');
+            setupMultiselectDropdown('sub-project');
 
             // Add event listeners for "All" checkboxes with a small delay to ensure DOM is ready
             setTimeout(() => {
@@ -3202,152 +3576,49 @@
 
                 // Initial text updates will happen when Summary section becomes visible
 
-                // Add event listeners for individual checkboxes using event delegation
-                if (yearContainer) {
-                    yearContainer.addEventListener('change', function (e) {
-                        if (e.target.type === 'checkbox') {
-                            if (e.target.id === 'year-all') {
-                                // Handle "All" checkbox
-                                const yearCheckboxes = yearContainer.querySelectorAll('input[type="checkbox"]:not(#year-all)');
-                                yearCheckboxes.forEach(cb => cb.checked = e.target.checked);
-                            } else {
-                                // Handle individual checkbox
-                                const allChecked = Array.from(yearContainer.querySelectorAll('input[type="checkbox"]:not(#year-all)')).every(cb => cb.checked);
-                                const noneChecked = Array.from(yearContainer.querySelectorAll('input[type="checkbox"]:not(#year-all)')).every(cb => !cb.checked);
-                                const yearAllCheckbox = document.getElementById('year-all');
-                                if (yearAllCheckbox) {
-                                    yearAllCheckbox.checked = allChecked;
-                                    yearAllCheckbox.indeterminate = !allChecked && !noneChecked;
-                                }
+                // Optimized: Single reusable function for all filter change handlers
+                function setupFilterChangeHandler(container, filterType) {
+                    if (!container) return;
+
+                    container.addEventListener('change', function (e) {
+                        if (e.target.type !== 'checkbox') return;
+
+                        const allCheckboxId = `${filterType}-all`;
+                        const allCheckbox = document.getElementById(allCheckboxId);
+                        const individualCheckboxes = container.querySelectorAll(`input[type="checkbox"]:not(#${allCheckboxId})`);
+
+                        if (e.target.id === allCheckboxId) {
+                            // Handle "All" checkbox
+                            individualCheckboxes.forEach(cb => cb.checked = e.target.checked);
+                        } else {
+                            // Handle individual checkbox
+                            const allChecked = Array.from(individualCheckboxes).every(cb => cb.checked);
+                            const noneChecked = Array.from(individualCheckboxes).every(cb => !cb.checked);
+                            if (allCheckbox) {
+                                allCheckbox.checked = allChecked;
+                                allCheckbox.indeterminate = !allChecked && !noneChecked;
                             }
-                            // Update text immediately
-                            updateSelectedText('year');
-                            updateDynamicFilters();
-                            applySummaryFilters();
                         }
+
+                        updateSelectedText(filterType);
+                        updateDynamicFilters();
+                        applySummaryFilters();
                     });
                 }
 
-                if (monthContainer) {
-                    monthContainer.addEventListener('change', function (e) {
-                        if (e.target.type === 'checkbox') {
-                            if (e.target.id === 'month-all') {
-                                // Handle "All" checkbox
-                                const monthCheckboxes = monthContainer.querySelectorAll('input[type="checkbox"]:not(#month-all)');
-                                monthCheckboxes.forEach(cb => cb.checked = e.target.checked);
-                            } else {
-                                // Handle individual checkbox
-                                const allChecked = Array.from(monthContainer.querySelectorAll('input[type="checkbox"]:not(#month-all)')).every(cb => cb.checked);
-                                const noneChecked = Array.from(monthContainer.querySelectorAll('input[type="checkbox"]:not(#month-all)')).every(cb => !cb.checked);
-                                const monthAllCheckbox = document.getElementById('month-all');
-                                if (monthAllCheckbox) {
-                                    monthAllCheckbox.checked = allChecked;
-                                    monthAllCheckbox.indeterminate = !allChecked && !noneChecked;
-                                }
-                            }
-                            // Update text immediately
-                            updateSelectedText('month');
-                            updateDynamicFilters();
-                            applySummaryFilters();
-                        }
-                    });
-                }
+                // Apply to all filter containers
+                const filterConfigs = [
+                    { container: yearContainer, type: 'year' },
+                    { container: monthContainer, type: 'month' },
+                    { container: skillContainer, type: 'skill' },
+                    { container: regionContainer, type: 'region' },
+                    { container: document.getElementById('domain-filters'), type: 'domain' },
+                    { container: document.getElementById('impact-service-filters'), type: 'impact-service' },
+                    { container: document.getElementById('severity-filters'), type: 'severity' },
+                    { container: document.getElementById('sub-project-filters'), type: 'sub-project' }
+                ];
 
-                if (skillContainer) {
-                    skillContainer.addEventListener('change', function (e) {
-                        if (e.target.type === 'checkbox') {
-                            if (e.target.id === 'skill-all') {
-                                // Handle "All" checkbox
-                                const skillCheckboxes = skillContainer.querySelectorAll('input[type="checkbox"]:not(#skill-all)');
-                                skillCheckboxes.forEach(cb => cb.checked = e.target.checked);
-                            } else {
-                                // Handle individual checkbox
-                                const allChecked = Array.from(skillContainer.querySelectorAll('input[type="checkbox"]:not(#skill-all)')).every(cb => cb.checked);
-                                const noneChecked = Array.from(skillContainer.querySelectorAll('input[type="checkbox"]:not(#skill-all)')).every(cb => !cb.checked);
-                                const skillAllCheckbox = document.getElementById('skill-all');
-                                if (skillAllCheckbox) {
-                                    skillAllCheckbox.checked = allChecked;
-                                    skillAllCheckbox.indeterminate = !allChecked && !noneChecked;
-                                }
-                            }
-                            // Update text immediately
-                            updateSelectedText('skill');
-                            updateDynamicFilters();
-                            applySummaryFilters();
-                        }
-                    });
-                }
-
-                if (regionContainer) {
-                    regionContainer.addEventListener('change', function (e) {
-                        if (e.target.type === 'checkbox') {
-                            if (e.target.id === 'region-all') {
-                                // Handle "All" checkbox
-                                const regionCheckboxes = regionContainer.querySelectorAll('input[type="checkbox"]:not(#region-all)');
-                                regionCheckboxes.forEach(cb => cb.checked = e.target.checked);
-                            } else {
-                                // Handle individual checkbox
-                                const allChecked = Array.from(regionContainer.querySelectorAll('input[type="checkbox"]:not(#region-all)')).every(cb => cb.checked);
-                                const noneChecked = Array.from(regionContainer.querySelectorAll('input[type="checkbox"]:not(#region-all)')).every(cb => !cb.checked);
-                                const regionAllCheckbox = document.getElementById('region-all');
-                                if (regionAllCheckbox) {
-                                    regionAllCheckbox.checked = allChecked;
-                                    regionAllCheckbox.indeterminate = !allChecked && !noneChecked;
-                                }
-                            }
-                            // Update text immediately
-                            updateSelectedText('region');
-                            updateDynamicFilters();
-                            applySummaryFilters();
-                        }
-                    });
-                }
-
-                const domainContainer = document.getElementById('domain-filters');
-                if (domainContainer) {
-                    domainContainer.addEventListener('change', function (e) {
-                        if (e.target.type === 'checkbox') {
-                            if (e.target.id === 'domain-all') {
-                                const domainCheckboxes = domainContainer.querySelectorAll('input[type="checkbox"]:not(#domain-all)');
-                                domainCheckboxes.forEach(cb => cb.checked = e.target.checked);
-                            } else {
-                                const allChecked = Array.from(domainContainer.querySelectorAll('input[type="checkbox"]:not(#domain-all)')).every(cb => cb.checked);
-                                const noneChecked = Array.from(domainContainer.querySelectorAll('input[type="checkbox"]:not(#domain-all)')).every(cb => !cb.checked);
-                                const domainAllCheckbox = document.getElementById('domain-all');
-                                if (domainAllCheckbox) {
-                                    domainAllCheckbox.checked = allChecked;
-                                    domainAllCheckbox.indeterminate = !allChecked && !noneChecked;
-                                }
-                            }
-                            updateSelectedText('domain');
-                            updateDynamicFilters();
-                            applySummaryFilters();
-                        }
-                    });
-                }
-
-                const impactServiceContainer = document.getElementById('impact-service-filters');
-                if (impactServiceContainer) {
-                    impactServiceContainer.addEventListener('change', function (e) {
-                        if (e.target.type === 'checkbox') {
-                            if (e.target.id === 'impact-service-all') {
-                                const impactServiceCheckboxes = impactServiceContainer.querySelectorAll('input[type="checkbox"]:not(#impact-service-all)');
-                                impactServiceCheckboxes.forEach(cb => cb.checked = e.target.checked);
-                            } else {
-                                const allChecked = Array.from(impactServiceContainer.querySelectorAll('input[type="checkbox"]:not(#impact-service-all)')).every(cb => cb.checked);
-                                const noneChecked = Array.from(impactServiceContainer.querySelectorAll('input[type="checkbox"]:not(#impact-service-all)')).every(cb => !cb.checked);
-                                const impactServiceAllCheckbox = document.getElementById('impact-service-all');
-                                if (impactServiceAllCheckbox) {
-                                    impactServiceAllCheckbox.checked = allChecked;
-                                    impactServiceAllCheckbox.indeterminate = !allChecked && !noneChecked;
-                                }
-                            }
-                            updateSelectedText('impact-service');
-                            updateDynamicFilters();
-                            applySummaryFilters();
-                        }
-                    });
-                }
+                filterConfigs.forEach(config => setupFilterChangeHandler(config.container, config.type));
             }, 100); // Small delay to ensure DOM is ready
         }
 
@@ -3378,8 +3649,12 @@
 
             const domainContainer = document.getElementById('domain-filters');
             const impactServiceContainer = document.getElementById('impact-service-filters');
+            const severityContainer = document.getElementById('severity-filters');
+            const subProjectContainer = document.getElementById('sub-project-filters');
             const selectedDomains = domainContainer ? Array.from(domainContainer.querySelectorAll('input[type="checkbox"]:checked:not(#domain-all)')).map(cb => cb.value) : [];
             const selectedImpactServices = impactServiceContainer ? Array.from(impactServiceContainer.querySelectorAll('input[type="checkbox"]:checked:not(#impact-service-all)')).map(cb => cb.value) : [];
+            const selectedSeverities = severityContainer ? Array.from(severityContainer.querySelectorAll('input[type="checkbox"]:checked:not(#severity-all)')).map(cb => cb.value) : [];
+            const selectedSubProjects = subProjectContainer ? Array.from(subProjectContainer.querySelectorAll('input[type="checkbox"]:checked:not(#sub-project-all)')).map(cb => cb.value) : [];
 
             // Check if there are any stuck values in the original data
             const hasStuckValues = originalSummaryData.some(row => !row['Region'] || row['Region'] === null || row['Region'] === '');
@@ -3391,6 +3666,8 @@
                 const skillMatch = selectedSkills.length === 0 || selectedSkills.includes(String(row['Skill']));
                 const domainMatch = selectedDomains.length === 0 || selectedDomains.includes(String(row['Domain']));
                 const impactServiceMatch = selectedImpactServices.length === 0 || selectedImpactServices.includes(String(row['Impact Service']));
+                const severityMatch = selectedSeverities.length === 0 || selectedSeverities.includes(String(row['Fault Level']));
+                const subProjectMatch = selectedSubProjects.length === 0 || selectedSubProjects.includes(String(row['Sub Project']));
 
                 // Handle Region filtering with "Stuck" for empty/null values
                 let regionMatch = true;
@@ -3408,13 +3685,18 @@
                     }
                 }
 
-                return yearMatch && monthMatch && skillMatch && regionMatch && domainMatch && impactServiceMatch;
+                return yearMatch && monthMatch && skillMatch && regionMatch && domainMatch && impactServiceMatch && severityMatch && subProjectMatch;
             });
 
             // Regenerate the summary table with filtered data
             const reportHTML = generateHDFeedbackReport(filteredData);
-            document.getElementById('feedback-table-container').innerHTML = reportHTML;
+            const tableContainer = document.getElementById('feedback-table-container');
+            tableContainer.innerHTML = reportHTML;
+
+            // Scroll hint removed
         }
+
+        // Scroll hint function removed (no longer needed)
 
         function setupMultiselectDropdown(type) {
             const trigger = document.getElementById(`${type}-trigger`);
@@ -3572,6 +3854,9 @@
             } else if (type === 'impact-service') {
                 containerId = 'impact-service-filters';
                 labelSuffix = 'Impact Services';
+            } else if (type === 'sub-project') {
+                containerId = 'sub-project-filters';
+                labelSuffix = 'Sub Projects';
             } else {
                 containerId = `${type}-filters`;
                 labelSuffix = type.charAt(0).toUpperCase() + type.slice(1) + 's';
@@ -3693,7 +3978,9 @@
                 'skill-filters',
                 'region-filters',
                 'domain-filters',
-                'impact-service-filters'
+                'impact-service-filters',
+                'severity-filters',
+                'sub-project-filters'
             ];
 
             filterContainers.forEach(containerId => {
@@ -3714,6 +4001,8 @@
             updateSelectedText('region');
             updateSelectedText('domain');
             updateSelectedText('impact-service');
+            updateSelectedText('severity');
+            updateSelectedText('sub-project');
 
             // Reset dynamic filters to show all options
             updateDynamicFilters();
@@ -3724,11 +4013,170 @@
 
         // Pivot Configuration Modal Event Listeners
         document.addEventListener('DOMContentLoaded', function () {
+            // Filter Modal Event Listeners
+            const filterBtn = document.getElementById('filter-btn');
+            const filterModal = document.getElementById('filter-modal');
+            const closeFilterModal = document.getElementById('close-filter-modal');
+            const applyFiltersBtn = document.getElementById('apply-filters-btn');
+            const cancelFiltersBtn = document.getElementById('cancel-filters-btn');
+
+            if (filterBtn) {
+                filterBtn.addEventListener('click', function () {
+                    filterModal.style.display = 'flex';
+                });
+                filterBtn.addEventListener('mouseenter', function () {
+                    this.style.background = '#059669';
+                    this.style.transform = 'translateY(-1px)';
+                    this.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                });
+                filterBtn.addEventListener('mouseleave', function () {
+                    this.style.background = '#10b981';
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            }
+
+            if (closeFilterModal) {
+                closeFilterModal.addEventListener('click', function () {
+                    filterModal.style.display = 'none';
+                });
+            }
+
+            if (applyFiltersBtn) {
+                applyFiltersBtn.addEventListener('click', function () {
+                    applySummaryFilters();
+                    filterModal.style.display = 'none';
+                });
+            }
+
+            if (cancelFiltersBtn) {
+                cancelFiltersBtn.addEventListener('click', function () {
+                    filterModal.style.display = 'none';
+                });
+            }
+
+            if (filterModal) {
+                filterModal.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            }
+
+            // Pivot Config Modal Event Listeners
             const pivotConfigBtn = document.getElementById('pivot-config-btn');
             const pivotConfigModal = document.getElementById('pivot-config-modal');
             const closePivotModal = document.getElementById('close-pivot-modal');
             const pivotApplyBtn = document.getElementById('pivot-apply-btn');
             const pivotResetBtn = document.getElementById('pivot-reset-btn');
+
+            // Screenshot Button Event Listeners
+            const screenshotBtn = document.getElementById('screenshot-btn');
+            if (screenshotBtn) {
+                screenshotBtn.addEventListener('click', async function () {
+                    const btn = this;
+                    const originalText = btn.innerHTML;
+
+                    try {
+                        // Check if html2canvas is loaded
+                        if (typeof html2canvas === 'undefined') {
+                            throw new Error('Screenshot library not loaded. Please refresh the page.');
+                        }
+
+                        // Show loading state
+                        btn.innerHTML = '⏳ Capturing...';
+                        btn.disabled = true;
+                        btn.style.opacity = '0.7';
+
+                        // Get the table container
+                        const tableContainer = document.getElementById('feedback-table-container');
+                        if (!tableContainer) {
+                            throw new Error('Table container not found');
+                        }
+
+                        const table = tableContainer.querySelector('.feedback-table');
+                        if (!table) {
+                            throw new Error('Table not found. Please process files first.');
+                        }
+
+                        // Store original scroll position
+                        const originalScrollLeft = tableContainer.scrollLeft;
+
+                        // Temporarily remove scroll and set full width
+                        const originalOverflow = tableContainer.style.overflow;
+                        const originalMaxHeight = tableContainer.style.maxHeight;
+                        tableContainer.style.overflow = 'visible';
+                        tableContainer.style.maxHeight = 'none';
+
+                        // Wait a bit for layout to settle
+                        await new Promise(resolve => setTimeout(resolve, 100));
+
+                        // Capture the table
+                        const canvas = await html2canvas(table, {
+                            scale: 2, // Higher quality
+                            useCORS: true,
+                            logging: false,
+                            backgroundColor: '#ffffff',
+                            windowWidth: table.scrollWidth,
+                            windowHeight: table.scrollHeight
+                        });
+
+                        // Restore original styles
+                        tableContainer.style.overflow = originalOverflow;
+                        tableContainer.style.maxHeight = originalMaxHeight;
+                        tableContainer.scrollLeft = originalScrollLeft;
+
+                        // Convert canvas to blob and copy to clipboard
+                        canvas.toBlob(async function (blob) {
+                            try {
+                                // Copy to clipboard
+                                await navigator.clipboard.write([
+                                    new ClipboardItem({
+                                        'image/png': blob
+                                    })
+                                ]);
+
+                                showMessage('Screenshot copied to clipboard! 📋', 'success');
+                            } catch (clipboardError) {
+                                console.error('Clipboard error:', clipboardError);
+
+                                // Fallback: Download the image if clipboard fails
+                                const url = URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                                link.download = `PCM-Summary-${timestamp}.png`;
+                                link.href = url;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                URL.revokeObjectURL(url);
+
+                                showMessage('Clipboard not supported. Screenshot downloaded instead.', 'warning');
+                            }
+                        });
+
+                    } catch (error) {
+                        console.error('Screenshot error:', error);
+                        showMessage('Failed to capture screenshot: ' + error.message, 'error');
+                    } finally {
+                        // Restore button state
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                    }
+                });
+
+                screenshotBtn.addEventListener('mouseenter', function () {
+                    this.style.background = '#7c3aed';
+                    this.style.transform = 'translateY(-1px)';
+                    this.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)';
+                });
+                screenshotBtn.addEventListener('mouseleave', function () {
+                    this.style.background = '#8b5cf6';
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            }
 
             if (pivotConfigBtn) {
                 pivotConfigBtn.addEventListener('click', function () {
@@ -3787,6 +4235,8 @@
                             <option value="Skill">Skill</option>
                             <option value="PCM Year">PCM Year</option>
                             <option value="PCM Month">PCM Month</option>
+                            <option value="Fault Level">Severity</option>
+                            <option value="Sub Project">Sub Project</option>
                         </select>
                         <button class="remove-row-btn" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
                             ✕
@@ -3824,6 +4274,8 @@
                             <option value="PCM Month">PCM Month</option>
                             <option value="FRT Remarks">FRT Remarks</option>
                             <option value="PCM Owner">PCM Owner</option>
+                            <option value="Fault Level">Severity</option>
+                            <option value="Sub Project">Sub Project</option>
                         </select>
                         <button class="remove-column-btn" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
                             ✕
