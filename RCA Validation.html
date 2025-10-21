@@ -706,7 +706,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             cursor: default;
-            visibility: hidden;
         }
 
         .floating-footer:hover {
@@ -1191,7 +1190,6 @@
             } catch (error) {
                 showLoading(false);
                 showMessage('Error processing file: ' + error.message, 'error');
-                console.error('Processing error:', error);
             }
         }
 
@@ -1461,22 +1459,11 @@
 
                 // Perform SLA analysis on ALL matched data (not just FRT issues)
                 if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Performing SLA analysis...';
-                console.log('Performing SLA analysis on', matchedData.length, 'matched records');
                 const slaAnalyzedData = performSLAAnalysis(matchedData);
-                console.log('SLA analysis completed on', slaAnalyzedData.length, 'records');
-
-                // Analyze SLA distribution before filtering
-                const slaDistribution = {};
-                slaAnalyzedData.forEach(record => {
-                    const remarks = record.slaRemarks;
-                    slaDistribution[remarks] = (slaDistribution[remarks] || 0) + 1;
-                });
-                console.log('SLA Distribution:', slaDistribution);
 
                 // Create SLA-filtered reports
                 if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating Within SLA report...';
                 const withinSLAData = slaAnalyzedData.filter(record => record.slaRemarks === 'Within SLA');
-                console.log('Within SLA records:', withinSLAData.length);
                 if (withinSLAData.length > 0) {
                     window.withinSLAWorkbook = await createSLAReport(withinSLAData, 'Within SLA PCMs');
                 } else {
@@ -1487,7 +1474,6 @@
                 const exceededTargetSLAData = slaAnalyzedData.filter(record =>
                     record.slaRemarks === 'Exceeded Target SLA'
                 );
-                console.log('Exceeded Target SLA records:', exceededTargetSLAData.length);
                 if (exceededTargetSLAData.length > 0) {
                     window.exceededTargetSLAWorkbook = await createSLAReport(exceededTargetSLAData, 'Exceeded Target SLA PCMs');
                 } else {
@@ -1498,7 +1484,6 @@
                 const exceededHurdleSLAData = slaAnalyzedData.filter(record =>
                     record.slaRemarks === 'Exceeded Hurdle SLA'
                 );
-                console.log('Exceeded Hurdle SLA records:', exceededHurdleSLAData.length);
                 if (exceededHurdleSLAData.length > 0) {
                     window.exceededHurdleSLAWorkbook = await createSLAReport(exceededHurdleSLAData, 'Exceeded Hurdle SLA PCMs');
                 } else {
@@ -1623,7 +1608,6 @@
                 }
 
                 showMessage(errorMessage, 'error');
-                console.error('Closure processing error:', error);
             }
         }
 
@@ -1663,7 +1647,7 @@
                     // Condition 2: if FRT happens before Create Fault First Time Occurred, add "FRT before occurred time"
                     if (!isNaN(frtDate.getTime()) && !isNaN(createFaultDate.getTime())) {
                         const timeDiff = frtDate.getTime() - createFaultDate.getTime();
-                        if (timeDiff < 0) { // FRT is before create fault time
+                        if (timeDiff < 0) {
                             remarks.push('FRT before occurred time');
                         }
                     }
@@ -1671,12 +1655,11 @@
                     // Condition 3: if value from "NOW() - FRT" > 0, add "FRT in future"
                     if (!isNaN(frtDate.getTime())) {
                         const nowDiff = now.getTime() - frtDate.getTime();
-                        if (nowDiff < 0) { // FRT is in the future
+                        if (nowDiff < 0) {
                             remarks.push('FRT in future');
                         }
                     }
                 } catch (error) {
-                    // If date parsing fails, consider it as missed FRT if not already added
                     if (remarks.length === 0) {
                         remarks.push('Missed FRT');
                     }
@@ -1687,18 +1670,13 @@
         }
 
         function filterRecordsWithFRTIssues(data) {
-            console.log('filterRecordsWithFRTIssues called with', data.length, 'records');
             const filteredData = data.filter(record => {
                 const remarks = validateFRTIssues(record);
-                if (remarks && remarks.trim() !== '') {
-                    console.log('FRT Issue found for Order ID:', record.orderId, 'Remarks:', remarks);
-                }
                 return remarks && remarks.trim() !== '';
             }).map(record => ({
                 ...record,
                 remarks: validateFRTIssues(record)
             }));
-            console.log('FRT Issues found:', filteredData.length, 'out of', data.length);
             return filteredData;
         }
 
@@ -1738,14 +1716,7 @@
                 headers[colNumber] = originalValue.toLowerCase();
             });
 
-            // Debug: Log all available column headers with their original names
-            const columnInfo = [];
-            for (let i = 0; i < originalHeaders.length; i++) {
-                if (originalHeaders[i]) {
-                    columnInfo.push(`${i}: "${originalHeaders[i]}"`);
-                }
-            }
-            console.log('Available closure sheet columns:', columnInfo);
+
 
             // Find column indices
             const orderIdCol = findColumnIndex(headers, ['order id', 'orderid']);
@@ -1762,7 +1733,6 @@
                     const headerLower = headers[i].toLowerCase();
                     if (headerLower.includes('extra')) {
                         extraDescCol = i;
-                        console.log('✅ Found Extra Description column:', `"${originalHeaders[i]}"`, 'at index:', i);
                         break;
                     }
                 }
@@ -1771,11 +1741,6 @@
             // Fallback to original method if no "extra" column found
             if (extraDescCol === null) {
                 extraDescCol = findColumnIndex(headers, ['extra description', 'extradescription', 'description']);
-                if (extraDescCol !== null) {
-                    console.log('✅ Found Extra Description column using fallback method:', `"${originalHeaders[extraDescCol]}"`, 'at index:', extraDescCol);
-                } else {
-                    console.log('⚠️ No Extra Description column found (searched for columns containing "extra" or exact matches for "extra description", "extradescription", "description")');
-                }
             }
 
             // Extract data
@@ -1827,7 +1792,6 @@
             // Check if OWS FRT column exists
             const hasOwsFrtColumn = owsFrtCol !== null && owsFrtCol !== -1;
             if (hasOwsFrtColumn) {
-                console.log('✅ Found "OWS FRT" column in Running PCMs file at index:', owsFrtCol);
                 showMessage('Running PCMs file contains "OWS FRT" column - OWS FRT file is optional', 'success');
             }
 
@@ -2444,7 +2408,6 @@
 
                 return value.toString().trim();
             } catch (error) {
-                console.warn(`Error reading cell at column ${colIndex}:`, error);
                 return '';
             }
         }
@@ -2542,47 +2505,18 @@
                 // If parsing fails, return original value
                 return stringValue;
             } catch (error) {
-                console.warn('Error formatting date string:', error);
                 return value;
             }
         }
 
         // SLA Analysis Functions
         function performSLAAnalysis(data) {
-            console.log('performSLAAnalysis: Processing', data.length, 'records');
-            let validRecords = 0;
-            let invalidRecords = 0;
-            let negativeDurations = 0;
-
-            const result = data.map((record, index) => {
+            const result = data.map((record) => {
                 // Calculate duration between FRT and Created At
                 const duration = calculateDuration(record.frt, record.createFaultFirstTime);
 
-                // Track negative durations
-                if (duration && duration.startsWith('-')) {
-                    negativeDurations++;
-                }
-
                 // Calculate SLA remarks based on duration and fault level
                 const slaRemarks = duration ? calculateSLARemarks(duration, record.faultLevel) : 'N/A';
-
-                // Debug first few records
-                if (index < 5) {
-                    console.log(`Record ${index + 1}:`, {
-                        orderId: record.orderId,
-                        frt: record.frt,
-                        createFaultFirstTime: record.createFaultFirstTime,
-                        faultLevel: record.faultLevel,
-                        duration: duration,
-                        slaRemarks: slaRemarks
-                    });
-                }
-
-                if (slaRemarks !== 'N/A' && slaRemarks !== 'Invalid Duration' && slaRemarks !== 'Unknown Fault Level') {
-                    validRecords++;
-                } else {
-                    invalidRecords++;
-                }
 
                 return {
                     ...record,
@@ -2591,7 +2525,6 @@
                 };
             });
 
-            console.log(`SLA Analysis Summary: ${validRecords} valid, ${invalidRecords} invalid records, ${negativeDurations} negative durations`);
             return result;
         }
 
@@ -2749,16 +2682,10 @@
                 const createdDate = new Date(createdAtTime);
 
                 if (isNaN(frtDate.getTime()) || isNaN(createdDate.getTime())) {
-                    console.log('Invalid date conversion:', { frtTime, createdAtTime, frtDate, createdDate });
                     return null;
                 }
 
                 const durationMs = frtDate.getTime() - createdDate.getTime();
-
-                if (durationMs < 0) {
-                    // FRT occurred before create fault time - this is valid data
-                    console.log('FRT occurred before Create Fault time - will be handled as exceptional case');
-                }
 
                 // Convert to hours, minutes, seconds (properly handling negative values)
                 const totalSeconds = Math.floor(durationMs / 1000);
@@ -2771,28 +2698,14 @@
                 // Format as [h]:mm:ss with negative sign if needed
                 const duration = `${isNegative ? '-' : ''}${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 
-                // Debug sample durations to confirm calculation
-                if (Math.random() < 0.05) { // Log 5% of calculations
-                    console.log('Duration calculated:', {
-                        frtTime,
-                        createdAtTime,
-                        durationMs: durationMs,
-                        isNegative: isNegative,
-                        formattedDuration: duration,
-                        totalSeconds
-                    });
-                }
-
                 return duration;
             } catch (error) {
-                console.warn('Error calculating duration:', error);
                 return null;
             }
         }
 
         function calculateSLARemarks(durationStr, faultLevel) {
             if (!durationStr || !faultLevel) {
-                console.log('Missing data for SLA calculation:', { durationStr, faultLevel });
                 return 'N/A';
             }
 
@@ -2804,7 +2717,6 @@
                 // Parse duration string [h]:mm:ss
                 const parts = cleanDurationStr.split(':');
                 if (parts.length !== 3) {
-                    console.log('Invalid duration format:', durationStr);
                     return 'Invalid Duration';
                 }
 
@@ -2813,14 +2725,11 @@
                 const seconds = parseInt(parts[2]);
 
                 if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
-                    console.log('Invalid duration numbers:', { hours, minutes, seconds });
                     return 'Invalid Duration';
                 }
 
                 // If duration is negative, FRT occurred before create fault time
-                // This is typically considered "Within SLA" since fault was resolved before formal logging
                 if (isNegative) {
-                    console.log('Negative duration detected - treating as Within SLA:', durationStr);
                     return 'Within SLA';
                 }
 
@@ -2838,35 +2747,18 @@
 
                 const threshold = thresholds[faultLevelLower];
                 if (!threshold) {
-                    console.log('Unknown fault level:', faultLevel, 'Available levels:', Object.keys(thresholds));
                     return 'Unknown Fault Level';
                 }
 
                 // Check SLA status
-                let result;
                 if (totalSeconds > threshold.hurdle) {
-                    result = 'Exceeded Hurdle SLA';
+                    return 'Exceeded Hurdle SLA';
                 } else if (totalSeconds > threshold.target) {
-                    result = 'Exceeded Target SLA';
+                    return 'Exceeded Target SLA';
                 } else {
-                    result = 'Within SLA';
+                    return 'Within SLA';
                 }
-
-                // Debug sample SLA calculations
-                if (Math.random() < 0.1) { // Log 10% of calculations
-                    console.log('SLA Calculation:', {
-                        duration: durationStr,
-                        isNegative: isNegative,
-                        faultLevel: faultLevel,
-                        totalSeconds: isNegative ? 'N/A (negative)' : totalSeconds,
-                        threshold: isNegative ? 'N/A (negative)' : threshold,
-                        result: result
-                    });
-                }
-
-                return result;
             } catch (error) {
-                console.warn('Error calculating SLA remarks:', error);
                 return 'Error in calculation';
             }
         }
@@ -2883,8 +2775,6 @@
         // Column Selection Modal Functions
         function showColumnSelectionModal(worksheetIndex) {
             try {
-                console.log('showColumnSelectionModal called with index:', worksheetIndex);
-
                 // Validate inputs
                 if (!currentWorkbook) {
                     showMessage('No workbook loaded. Please upload an Excel file first.', 'error');
@@ -2895,7 +2785,6 @@
                 const index = typeof worksheetIndex === 'string' ? parseInt(worksheetIndex, 10) : worksheetIndex;
 
                 if (isNaN(index) || index < 0 || index >= currentWorkbook.worksheets.length) {
-                    console.error('Invalid worksheet index:', worksheetIndex, 'converted to:', index, 'available range: 0-' + (currentWorkbook.worksheets.length - 1));
                     showMessage(`Invalid worksheet selected. Index: ${index}`, 'error');
                     return;
                 }
@@ -2903,7 +2792,6 @@
                 const worksheet = currentWorkbook.worksheets[index];
 
                 if (!worksheet) {
-                    console.error('Worksheet not found at index:', index);
                     showMessage('Worksheet not found.', 'error');
                     return;
                 }
@@ -2955,13 +2843,10 @@
                     return;
                 }
 
-                console.log('Opening modal with', currentWorksheetColumns.length, 'columns for worksheet index', selectedWorksheetIndex);
-
                 // Show modal only if everything is ready
                 document.getElementById('columnSelectionModal').style.display = 'block';
 
             } catch (error) {
-                console.error('Error showing column selection modal:', error);
                 showMessage('Error opening column selection: ' + error.message, 'error');
                 // Reset state on error
                 selectedWorksheetIndex = null;
@@ -3007,13 +2892,11 @@
                             }
                         }
                     } catch (rowError) {
-                        console.warn(`Error reading row ${rowNum}, column ${colNumber}:`, rowError);
                         continue;
                     }
                 }
                 return 'No data preview';
             } catch (error) {
-                console.warn(`Error getting sample value for column ${colNumber}:`, error);
                 return 'Preview unavailable';
             }
         }
@@ -3034,8 +2917,6 @@
 
         function downloadWithSelectedColumns() {
             try {
-                console.log('downloadWithSelectedColumns called with selectedWorksheetIndex:', selectedWorksheetIndex);
-
                 // Validate prerequisites
                 if (selectedWorksheetIndex === null || selectedWorksheetIndex === undefined) {
                     showMessage('No worksheet selected for download. Please try opening the column selection again.', 'error');
@@ -3081,9 +2962,6 @@
                     return;
                 }
 
-                console.log('Selected columns:', selectedColumns);
-                console.log('Worksheet index:', selectedWorksheetIndex);
-
                 // Store the worksheet index before closing modal (which resets it to null)
                 const worksheetIndexToDownload = selectedWorksheetIndex;
 
@@ -3092,7 +2970,6 @@
                 downloadWorksheetWithColumns(worksheetIndexToDownload, selectedColumns);
 
             } catch (error) {
-                console.error('Error in downloadWithSelectedColumns:', error);
                 showMessage('Error preparing column selection: ' + error.message, 'error');
             }
         }
@@ -3118,8 +2995,6 @@
         // Enhanced Closure Column Selection Functions
         function showEnhancedColumnSelectionModal(reportType) {
             try {
-                console.log('showEnhancedColumnSelectionModal called with reportType:', reportType);
-
                 selectedEnhancedReportType = reportType;
                 currentEnhancedWorkbook = getEnhancedWorkbook(reportType);
 
@@ -3185,13 +3060,10 @@
                 if (modalTitle) modalTitle.textContent = `📋 Select Columns to Download`;
                 if (modalSubtitle) modalSubtitle.textContent = 'Uncheck the columns you want to exclude from the download file';
 
-                console.log('Opening enhanced modal with', currentEnhancedColumns.length, 'columns for report type', reportType);
-
                 // Show modal only if everything is ready
                 document.getElementById('columnSelectionModal').style.display = 'block';
 
             } catch (error) {
-                console.error('Error showing enhanced column selection modal:', error);
                 showMessage('Error opening column selection: ' + error.message, 'error');
                 // Reset state on error
                 selectedEnhancedReportType = null;
@@ -3250,8 +3122,6 @@
         // Update the existing downloadWithSelectedColumns function to handle enhanced reports
         function downloadWithSelectedColumns() {
             try {
-                console.log('downloadWithSelectedColumns called');
-
                 // Check if this is for enhanced reports or regular worksheets
                 if (selectedEnhancedReportType !== null) {
                     downloadEnhancedWithSelectedColumns();
@@ -3259,7 +3129,6 @@
                 }
 
                 // Original logic for regular worksheet downloads
-                console.log('downloadWithSelectedColumns called with selectedWorksheetIndex:', selectedWorksheetIndex);
 
                 // Validate prerequisites
                 if (selectedWorksheetIndex === null || selectedWorksheetIndex === undefined) {
@@ -3306,9 +3175,6 @@
                     return;
                 }
 
-                console.log('Selected columns:', selectedColumns);
-                console.log('Worksheet index:', selectedWorksheetIndex);
-
                 // Store the worksheet index before closing modal (which resets it to null)
                 const worksheetIndexToDownload = selectedWorksheetIndex;
 
@@ -3317,7 +3183,6 @@
                 downloadWorksheetWithColumns(worksheetIndexToDownload, selectedColumns);
 
             } catch (error) {
-                console.error('Error in downloadWithSelectedColumns:', error);
                 showMessage('Error preparing column selection: ' + error.message, 'error');
             }
         }
@@ -3362,9 +3227,6 @@
                     return;
                 }
 
-                console.log('Enhanced report selected columns:', selectedColumns);
-                console.log('Enhanced report type:', selectedEnhancedReportType);
-
                 // Store values before closing modal
                 const reportTypeToDownload = selectedEnhancedReportType;
                 const workbookToDownload = currentEnhancedWorkbook;
@@ -3374,7 +3236,6 @@
                 downloadEnhancedReportWithColumns(reportTypeToDownload, workbookToDownload, selectedColumns);
 
             } catch (error) {
-                console.error('Error in downloadEnhancedWithSelectedColumns:', error);
                 showMessage('Error preparing enhanced column selection: ' + error.message, 'error');
             }
         }
@@ -3392,12 +3253,6 @@
 
         async function downloadEnhancedReportWithColumns(reportType, workbook, selectedColumns) {
             try {
-                console.log('Starting downloadEnhancedReportWithColumns with:', {
-                    reportType,
-                    selectedColumns,
-                    workbookExists: !!workbook
-                });
-
                 showMessage('Preparing download...', 'success');
 
                 // Validate inputs
@@ -3410,12 +3265,6 @@
                 if (!originalWorksheet) {
                     throw new Error('No worksheet found in the report');
                 }
-
-                console.log('Report worksheet found:', {
-                    name: originalWorksheet.name,
-                    rowCount: originalWorksheet.rowCount,
-                    columnCount: originalWorksheet.columnCount
-                });
 
                 const newWorkbook = new ExcelJS.Workbook();
 
@@ -3475,7 +3324,7 @@
                             try {
                                 newCell.style = JSON.parse(JSON.stringify(originalCell.style));
                             } catch (styleError) {
-                                console.warn(`Style copy error for cell ${newColIndex + 1},${rowNumber}:`, styleError);
+                                // Style copy error - skip
                             }
                         }
 
@@ -3483,7 +3332,7 @@
                             try {
                                 newCell.dataValidation = { ...originalCell.dataValidation };
                             } catch (validationError) {
-                                console.warn(`Data validation copy error:`, validationError);
+                                // Data validation copy error - skip
                             }
                         }
 
@@ -3508,14 +3357,11 @@
                 const reportDisplayName = getReportDisplayName(reportType);
                 const filename = getEnhancedReportFilename(reportType, day, month);
 
-                console.log('Generated enhanced filename:', filename);
-
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
 
             } catch (error) {
                 showMessage('Error downloading enhanced report: ' + error.message, 'error');
-                console.error('Enhanced download error:', error);
             }
         }
 
@@ -3594,7 +3440,7 @@
                             try {
                                 newCell.style = JSON.parse(JSON.stringify(originalCell.style));
                             } catch (styleError) {
-                                console.warn(`Style copy error for cell ${colNumber},${rowNumber}:`, styleError);
+                                // Style copy error - skip
                             }
                         }
 
@@ -3602,7 +3448,7 @@
                             try {
                                 newCell.dataValidation = { ...originalCell.dataValidation };
                             } catch (validationError) {
-                                console.warn(`Data validation copy error:`, validationError);
+                                // Data validation copy error - skip
                             }
                         }
 
@@ -3625,12 +3471,12 @@
                             try {
                                 newWorksheet.mergeCells(merge);
                             } catch (mergeError) {
-                                console.warn('Merge cells error:', mergeError);
+                                // Merge cells error - skip
                             }
                         });
                     }
                 } catch (mergeError) {
-                    console.warn('Error copying merged cells:', mergeError);
+                    // Error copying merged cells - skip
                 }
 
                 // Copy auto filter
@@ -3639,7 +3485,7 @@
                         newWorksheet.autoFilter = originalWorksheet.autoFilter;
                     }
                 } catch (filterError) {
-                    console.warn('Error copying auto filter:', filterError);
+                    // Error copying auto filter - skip
                 }
 
                 // Generate and download
@@ -3653,19 +3499,11 @@
 
             } catch (error) {
                 showMessage('Error downloading worksheet: ' + error.message, 'error');
-                console.error('Download error:', error);
             }
         }
 
         async function downloadWorksheetWithColumns(worksheetIndex, selectedColumns) {
             try {
-                console.log('Starting downloadWorksheetWithColumns with:', {
-                    worksheetIndex,
-                    selectedColumns,
-                    workbookExists: !!currentWorkbook,
-                    worksheetCount: currentWorkbook ? currentWorkbook.worksheets.length : 0
-                });
-
                 showMessage('Preparing download...', 'success');
 
                 // Validate inputs - null/undefined check first
@@ -3686,12 +3524,6 @@
                 if (!originalWorksheet) {
                     throw new Error('Worksheet not found at index ' + worksheetIndex);
                 }
-
-                console.log('Worksheet found:', {
-                    name: originalWorksheet.name,
-                    rowCount: originalWorksheet.rowCount,
-                    columnCount: originalWorksheet.columnCount
-                });
 
                 const newWorkbook = new ExcelJS.Workbook();
 
@@ -3751,7 +3583,7 @@
                             try {
                                 newCell.style = JSON.parse(JSON.stringify(originalCell.style));
                             } catch (styleError) {
-                                console.warn(`Style copy error for cell ${newColIndex + 1},${rowNumber}:`, styleError);
+                                // Style copy error - skip
                             }
                         }
 
@@ -3759,7 +3591,7 @@
                             try {
                                 newCell.dataValidation = { ...originalCell.dataValidation };
                             } catch (validationError) {
-                                console.warn(`Data validation copy error:`, validationError);
+                                // Data validation copy error - skip
                             }
                         }
 
@@ -3799,12 +3631,12 @@
                                     }
                                 }
                             } catch (mergeError) {
-                                console.warn('Merge cells error:', mergeError);
+                                // Merge cells error - skip
                             }
                         });
                     }
                 } catch (mergeError) {
-                    console.warn('Error copying merged cells:', mergeError);
+                    // Error copying merged cells - skip
                 }
 
                 // Generate and download
@@ -3820,14 +3652,11 @@
                 const selectedColumnCount = selectedColumns.length;
                 const filename = `${safeInputName} - ${safeSheetName}.xlsx`;
 
-                console.log('Generated filename:', filename);
-
                 downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 showMessage(`✅ Downloaded: ${filename}`, 'success');
 
             } catch (error) {
                 showMessage('Error downloading worksheet: ' + error.message, 'error');
-                console.error('Download error:', error);
             }
         }
 
@@ -4426,4 +4255,3 @@
 </body>
 
 </html>
-
