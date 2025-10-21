@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -2671,16 +2671,11 @@
                             headers: headers
                         });
 
-                        console.log(`Contents API response status for ${fileType}:`, contentsResponse.status);
-
                         if (contentsResponse.ok) {
                             fileData = await contentsResponse.json();
-                            console.log(`Contents API response for ${fileType}:`, fileData);
-                        } else {
-                            console.error(`Contents API failed for ${fileType}:`, contentsResponse.status, contentsResponse.statusText);
                         }
                     } catch (contentsError) {
-                        console.warn(`Contents API failed for ${fileType}:`, contentsError);
+                        // Silently handle API errors
                     }
 
                     // Try to get commit info for last modified date
@@ -2689,19 +2684,14 @@
                             headers: headers
                         });
 
-                        console.log(`Commits API response status for ${fileType}:`, commitsResponse.status);
-
                         if (commitsResponse.ok) {
                             const commits = await commitsResponse.json();
                             if (commits && commits.length > 0) {
                                 commitData = commits[0];
-                                console.log(`Commits API response for ${fileType}:`, commitData);
                             }
-                        } else {
-                            console.error(`Commits API failed for ${fileType}:`, commitsResponse.status, commitsResponse.statusText);
                         }
                     } catch (commitsError) {
-                        console.warn(`Commits API failed for ${fileType}:`, commitsError);
+                        // Silently handle API errors
                     }
 
                     // Determine last modified date
@@ -2722,7 +2712,6 @@
                         downloadUrl: (fileData && fileData.download_url) || (fileData && fileData.html_url) || ''
                     };
                 } catch (error) {
-                    console.warn(`Could not fetch GitHub metadata for ${fileType}:`, error);
                     return null;
                 }
             }
@@ -2741,7 +2730,6 @@
                     // For Active Outages, skip ExcelJS and store raw data directly
                     if (fileType === 'activeOutages') {
                         uploadedFiles[fileType] = { arrayBuffer: arrayBuffer, isRaw: true };
-                        console.log('Stored Active Outages as raw data for XLSX processing');
                     } else {
                         // For other files, use ExcelJS
                         const workbook = new ExcelJS.Workbook();
@@ -2799,7 +2787,6 @@
 
                     return { success: true, fileType, filename: url.split('/').pop() };
                 } catch (error) {
-                    console.error(`Error loading ${fileType}:`, error);
                     return { success: false, fileType, error: error.message };
                 }
             });
@@ -2869,7 +2856,6 @@
                     // For Active Outages, store as raw data for XLSX processing
                     if (fileType === 'activeOutages') {
                         uploadedFiles[fileType] = { arrayBuffer: arrayBuffer, isRaw: true };
-                        console.log('Stored manually uploaded Active Outages as raw data');
                     } else {
                         // For other files, use ExcelJS
                         const workbook = new ExcelJS.Workbook();
@@ -2906,7 +2892,6 @@
                         document.getElementById('process-button').disabled = false;
                     }
                 } catch (error) {
-                    console.log('File upload error:', error.message);
                     showMessage(`Error reading ${file.name}: ${error.message}. Please ensure the file is a valid Excel file and try again.`, 'error');
 
                     // Reset file input
@@ -2925,91 +2910,66 @@
             return `${day} ${month}`;
         }
 
-        // Helper function to extract year from date string
-        function extractYear(dateValue) {
+        // Optimized date extraction with caching
+        const dateParseCache = new Map();
+        const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
+
+        function parseDateOnce(dateValue) {
             if (!dateValue || dateValue === '' || dateValue === '-' || dateValue === null) {
                 return null;
             }
 
+            const cacheKey = String(dateValue);
+            if (dateParseCache.has(cacheKey)) {
+                return dateParseCache.get(cacheKey);
+            }
+
             try {
-                const dateStr = dateValue.toString().trim();
+                const dateStr = cacheKey.trim();
+                let result = { year: null, month: null };
 
-                // Handle YYYY-MM-DD HH:mm:ss format
-                const standardMatch = dateStr.match(/^(\d{4})-\d{2}-\d{2}/);
+                // Handle YYYY-MM-DD format
+                const standardMatch = dateStr.match(/^(\d{4})-(\d{2})-\d{2}/);
                 if (standardMatch) {
-                    return parseInt(standardMatch[1]);
+                    result.year = parseInt(standardMatch[1]);
+                    result.month = MONTH_NAMES[parseInt(standardMatch[2]) - 1];
+                    dateParseCache.set(cacheKey, result);
+                    return result;
                 }
 
-                // Handle MM/DD/YYYY HH:mm:ss format
-                const mmddyyyyMatch = dateStr.match(/^\d{1,2}\/\d{1,2}\/(\d{4})/);
-                if (mmddyyyyMatch) {
-                    return parseInt(mmddyyyyMatch[1]);
+                // Handle MM/DD/YYYY or DD/MM/YYYY format
+                const slashMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                if (slashMatch) {
+                    result.year = parseInt(slashMatch[3]);
+                    result.month = MONTH_NAMES[parseInt(slashMatch[1]) - 1];
+                    dateParseCache.set(cacheKey, result);
+                    return result;
                 }
 
-                // Handle DD/MM/YYYY HH:mm:ss format
-                const ddmmyyyyMatch = dateStr.match(/^\d{1,2}\/\d{1,2}\/(\d{4})/);
-                if (ddmmyyyyMatch) {
-                    return parseInt(ddmmyyyyMatch[1]);
-                }
-
-                // Try to parse as date object
+                // Fallback to Date parsing
                 const date = new Date(dateStr);
                 if (!isNaN(date.getTime())) {
-                    return date.getFullYear();
+                    result.year = date.getFullYear();
+                    result.month = MONTH_NAMES[date.getMonth()];
                 }
 
-                return null;
+                dateParseCache.set(cacheKey, result);
+                return result;
             } catch (error) {
-                console.warn('Error extracting year:', error);
-                return null;
+                dateParseCache.set(cacheKey, { year: null, month: null });
+                return { year: null, month: null };
             }
         }
 
-        // Helper function to extract month name from date string
+        function extractYear(dateValue) {
+            const parsed = parseDateOnce(dateValue);
+            return parsed ? parsed.year : null;
+        }
+
         function extractMonthName(dateValue) {
-            if (!dateValue || dateValue === '' || dateValue === '-' || dateValue === null) {
-                return null;
-            }
-
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'];
-
-            try {
-                const dateStr = dateValue.toString().trim();
-                let month = null;
-
-                // Handle YYYY-MM-DD HH:mm:ss format
-                const standardMatch = dateStr.match(/^\d{4}-(\d{2})-\d{2}/);
-                if (standardMatch) {
-                    month = parseInt(standardMatch[1]) - 1;
-                    return monthNames[month];
-                }
-
-                // Handle MM/DD/YYYY HH:mm:ss format
-                const mmddyyyyMatch = dateStr.match(/^(\d{1,2})\/\d{1,2}\/\d{4}/);
-                if (mmddyyyyMatch) {
-                    month = parseInt(mmddyyyyMatch[1]) - 1;
-                    return monthNames[month];
-                }
-
-                // Handle DD/MM/YYYY HH:mm:ss format (assuming second number is month)
-                const ddmmyyyyMatch = dateStr.match(/^\d{1,2}\/(\d{1,2})\/\d{4}/);
-                if (ddmmyyyyMatch) {
-                    month = parseInt(ddmmyyyyMatch[1]) - 1;
-                    return monthNames[month];
-                }
-
-                // Try to parse as date object
-                const date = new Date(dateStr);
-                if (!isNaN(date.getTime())) {
-                    return monthNames[date.getMonth()];
-                }
-
-                return null;
-            } catch (error) {
-                console.warn('Error extracting month name:', error);
-                return null;
-            }
+            const parsed = parseDateOnce(dateValue);
+            return parsed ? parsed.month : null;
         }
 
         // Cache for formatted dates to avoid repeated processing
@@ -3063,27 +3023,25 @@
 
         // Removed duplicate parseExcelDate - using formatDateStringToStandard directly
 
-        // Helper function to convert ExcelJS worksheet to JSON (optimized)
+        // Optimized worksheet to JSON conversion with early returns
         function worksheetToJson(worksheet) {
-            try {
-                // Validate worksheet exists
-                if (!worksheet || !worksheet.getRow) {
-                    console.log('Invalid worksheet provided to worksheetToJson');
-                    return [];
-                }
+            if (!worksheet?.getRow) return [];
 
+            try {
                 const jsonData = [];
                 const headers = [];
-
-                // Get headers from first row
                 const firstRow = worksheet.getRow(1);
-                if (firstRow) {
-                    firstRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-                        headers[colNumber - 1] = (cell && typeof cell === 'object') ? (cell.value || '') : '';
-                    });
-                }
 
-                // Process data rows (skip header)
+                if (!firstRow) return [];
+
+                // Extract headers
+                firstRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                    headers[colNumber - 1] = cell?.value || '';
+                });
+
+                if (headers.length === 0) return [];
+
+                // Process data rows
                 worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
                     if (rowNumber === 1) return;
 
@@ -3093,7 +3051,7 @@
                     row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
                         const header = headers[colNumber - 1];
                         if (header) {
-                            const value = (cell && typeof cell === 'object') ? (cell.value || null) : null;
+                            const value = cell?.value ?? null;
                             rowData[header] = value;
                             if (value !== null && value !== '') hasData = true;
                         }
@@ -3104,7 +3062,6 @@
 
                 return jsonData;
             } catch (error) {
-                console.log('Error in worksheetToJson:', error.message);
                 return [];
             }
         }
@@ -3575,7 +3532,6 @@
                         }
                     }
                 } catch (error) {
-                    console.log('Error processing Netask data:', error.message);
                     throw new Error('Failed to process Netask file. Please check the file format.');
                 }
             }
@@ -3591,7 +3547,6 @@
                         cmData = worksheetToJson(cmWorksheet);
                     }
                 } catch (error) {
-                    console.log('Error processing CM Operation data:', error.message);
                     throw new Error('Failed to process CM Operation file. Please check the file format.');
                 }
             }
@@ -3614,7 +3569,6 @@
                         frtData = worksheetToJson(frtWorksheet);
                     }
                 } catch (error) {
-                    console.log('Error processing OWS FRT data:', error.message);
                     throw new Error('Failed to process OWS FRT file. Please check the file format.');
                 }
             }
@@ -3624,11 +3578,8 @@
                 try {
                     // Active Outages is stored as raw data for XLSX processing
                     // Skip processing it here as it will be processed separately by processActiveOutagesData()
-                    console.log('Active Outages file loaded, will be processed separately');
                 } catch (error) {
-                    console.log('Error processing Active Outages data:', error.message);
                     // Don't throw error for Active Outages as it's optional
-                    console.log('Active Outages file could not be processed, continuing without it');
                 }
             }
 
@@ -4143,67 +4094,49 @@
                 return '<p style="color: #6b7280; text-align: center; padding: 20px;">Please configure at least one row and one column field.</p>';
             }
 
-            // Build hierarchical tree structure for rows (optimized)
+            // Build hierarchical tree structure (optimized)
             const rowTree = {};
             const allColumnKeys = new Set();
 
-            // Process each record and build tree
             for (const record of enrichedData) {
-                // Get column key (optimized)
-                const columnKeyParts = [];
-                for (const field of columnFields) {
+                // Build column key
+                const columnKey = columnFields.map(field => {
                     let value = record[field];
-                    if ((!value || value === null || value === '') && field === 'Region') {
-                        value = 'Stuck';
-                    }
-                    columnKeyParts.push(value || '(Empty)');
-                }
-                const columnKey = columnKeyParts.join('|||');
+                    return (field === 'Region' && !value) ? 'Stuck' : (value || '(Empty)');
+                }).join('|||');
+
                 allColumnKeys.add(columnKey);
 
-                // Navigate/build row tree (optimized)
+                // Build row tree
                 let currentLevel = rowTree;
                 for (const field of rowFields) {
                     let value = record[field];
-                    if ((!value || value === null || value === '') && field === 'Region') {
-                        value = 'Stuck';
-                    }
-                    value = value || '(Empty)';
+                    value = (field === 'Region' && !value) ? 'Stuck' : (value || '(Empty)');
 
                     if (!currentLevel[value]) {
-                        currentLevel[value] = {
-                            _data: new Map(),
-                            _children: {}
-                        };
+                        currentLevel[value] = { _data: new Map(), _children: {} };
                     }
 
-                    // Add count to this level
                     const levelData = currentLevel[value]._data;
                     levelData.set(columnKey, (levelData.get(columnKey) || 0) + 1);
-
                     currentLevel = currentLevel[value]._children;
                 }
             }
 
             const columnKeys = [...allColumnKeys].sort();
 
-            // Build hierarchical column structure (optimized)
+            // Build hierarchical column structure
             const columnTree = {};
             for (const columnKey of columnKeys) {
                 const parts = columnKey.split('|||');
                 let currentLevel = columnTree;
-                const lastIndex = parts.length - 1;
 
-                for (let i = 0; i <= lastIndex; i++) {
-                    const part = parts[i];
+                parts.forEach((part, i) => {
                     if (!currentLevel[part]) {
-                        currentLevel[part] = {
-                            _isLeaf: i === lastIndex,
-                            _children: {}
-                        };
+                        currentLevel[part] = { _isLeaf: i === parts.length - 1, _children: {} };
                     }
                     currentLevel = currentLevel[part]._children;
-                }
+                });
             }
 
             return buildPivotTableHTML(rowTree, columnTree, columnKeys, columnFields);
@@ -4457,24 +4390,21 @@
                 return;
             }
 
-            // Helper function to get unique values including empty/null (optimized)
+            // Optimized unique values extraction
             function getUniqueValues(fieldName) {
                 const values = new Set();
                 let hasEmpty = false;
 
                 for (const row of dataToFilter) {
                     const value = row[fieldName];
-                    if (value && value !== null && value !== '') {
+                    if (value != null && value !== '') {
                         values.add(String(value).trim());
                     } else {
                         hasEmpty = true;
                     }
                 }
 
-                const sortedValues = Array.from(values).sort();
-                if (hasEmpty) sortedValues.push('(Empty)');
-
-                return sortedValues;
+                return hasEmpty ? [...values].sort().concat('(Empty)') : [...values].sort();
             }
 
             // Get unique values for each filter from HD Feedback data (including empty values)
@@ -4516,7 +4446,6 @@
         function populateFilterDropdown(filterType, values) {
             const container = document.getElementById(`${filterType}-filters`);
             if (!container) {
-                console.warn(`Filter container not found: ${filterType}-filters`);
                 return;
             }
 
@@ -4591,14 +4520,11 @@
             const selectedFaultLevels = getSelectedFilterValues('fault-level');
             const selectedEOLs = getSelectedFilterValues('eol');
 
-            // Helper function to check if value matches filter (optimized)
+            // Optimized filter matching
             function matchesFilter(value, selectedValues) {
                 if (selectedValues.length === 0) return true;
-
-                const actualValue = value && value !== null && value !== '' ? String(value).trim() : '';
-
-                return (selectedValues.includes('(Empty)') && actualValue === '') ||
-                    selectedValues.includes(actualValue);
+                const actualValue = (value != null && value !== '') ? String(value).trim() : '';
+                return actualValue === '' ? selectedValues.includes('(Empty)') : selectedValues.includes(actualValue);
             }
 
             // Filter the data
@@ -4621,12 +4547,10 @@
             showMessage(`Filter applied - showing ${filteredData.length} of ${dataToFilter.length} records`, 'success');
         }
 
-        // Helper function to get selected filter values (optimized)
+        // Optimized filter value extraction
         function getSelectedFilterValues(filterType) {
             const container = document.getElementById(`${filterType}-filters`);
-            if (!container) return [];
-
-            return [...container.querySelectorAll('.filter-checkbox:checked')].map(cb => cb.value);
+            return container ? [...container.querySelectorAll('.filter-checkbox:checked')].map(cb => cb.value) : [];
         }
 
         // Scroll hint function removed (no longer needed)
@@ -4636,7 +4560,6 @@
             const dropdown = document.getElementById(`${type}-dropdown`);
 
             if (!trigger || !dropdown) {
-                console.warn(`Multiselect dropdown elements not found for type: ${type}`);
                 return;
             }
 
@@ -4670,7 +4593,6 @@
         function populateInputFiles() {
             const inputFilesList = document.getElementById('input-files-list');
             if (!inputFilesList) {
-                console.warn('Input files list element not found');
                 return;
             }
             inputFilesList.innerHTML = '';
@@ -5393,7 +5315,10 @@
             const hdFullscreenLoadHoBtn = document.getElementById('hd-fullscreen-load-ho-btn');
             if (hdFullscreenLoadHoBtn) {
                 hdFullscreenLoadHoBtn.addEventListener('click', function () {
-                    hdLoadHoFile.click();
+                    const hdLoadHoFile = document.getElementById('hd-load-ho-file');
+                    if (hdLoadHoFile) {
+                        hdLoadHoFile.click();
+                    }
                 });
             }
 
@@ -5473,7 +5398,6 @@
                         arrayBuffer = uploadedFiles.activeOutages.arrayBuffer;
                     } else {
                         // If it's an ExcelJS workbook, we can't use it - need raw data
-                        console.log('Active Outages needs raw data for XLSX parsing');
                         resolve([]);
                         return;
                     }
@@ -5483,13 +5407,11 @@
                     try {
                         workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
                     } catch (parseError) {
-                        console.log('Active Outages parsing failed:', parseError.message);
                         resolve([]);
                         return;
                     }
 
                     if (!workbook || !workbook.Sheets) {
-                        console.log('Active Outages file has no valid sheets');
                         resolve([]);
                         return;
                     }
@@ -5597,7 +5519,6 @@
                     // Active Outages processing completed
                     resolve(allData);
                 } catch (error) {
-                    console.log('Active Outages processing failed:', error.message);
                     resolve([]);
                 }
             });
@@ -5608,7 +5529,6 @@
             const container = document.getElementById('active-outages-container');
 
             if (!container) {
-                console.warn('Active Outages table container not found');
                 return;
             }
 
@@ -5670,7 +5590,6 @@
             const container = document.getElementById('hd-feedback-table-container');
 
             if (!container) {
-                console.warn('HD Feedback table container not found');
                 return;
             }
 
@@ -5689,6 +5608,13 @@
 
             // Store and use processed data
             processedHDFeedbackData = enrichedData;
+
+            // Sort by "Created At" column (oldest first)
+            enrichedData.sort((a, b) => {
+                const dateA = a['Created At'] ? new Date(a['Created At']) : new Date(0);
+                const dateB = b['Created At'] ? new Date(b['Created At']) : new Date(0);
+                return dateA - dateB; // Ascending order (oldest first)
+            });
 
             // Apply column filters if any exist
             let filteredData = enrichedData;
@@ -6160,7 +6086,7 @@
                         row['Duration'] = formattedDuration;
                     }
                 } catch (error) {
-                    console.error('Error calculating duration:', error);
+                    // Silently handle duration calculation errors
                 }
             }
         }
@@ -6195,8 +6121,6 @@
 
                         showMessage(`${tableName} screenshot copied to clipboard! 📋`, 'success');
                     } catch (clipboardError) {
-                        console.error('Clipboard error:', clipboardError);
-
                         // Fallback: Download the image if clipboard fails
                         const url = URL.createObjectURL(blob);
                         const link = document.createElement('a');
@@ -6213,7 +6137,6 @@
                 });
 
             } catch (error) {
-                console.error('Screenshot error:', error);
                 showMessage('Failed to capture screenshot: ' + error.message, 'error');
             }
         }
@@ -6254,8 +6177,6 @@
             document.getElementById('netask-records').textContent = netaskRecords;
             document.getElementById('tms-only-records').textContent = tmsRecords;
             document.getElementById('frt-matches').textContent = frtMatches;
-
-            console.log(`Statistics updated from HD Feedback: Total=${totalRecords}, Netask=${netaskRecords}, TMS=${tmsRecords}, FRT=${frtMatches}`);
         }
 
         // Function to load HO file and update Feedback and FRT columns
@@ -6267,16 +6188,17 @@
                 showMessage('Loading HO file...', 'info');
 
                 const arrayBuffer = await file.arrayBuffer();
-                const workbook = new ExcelJS.Workbook();
-                await workbook.xlsx.load(arrayBuffer);
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
 
-                const worksheet = workbook.worksheets[0];
-                if (!worksheet) {
+                const firstSheetName = workbook.SheetNames[0];
+                if (!firstSheetName) {
                     throw new Error('No worksheet found in the file');
                 }
 
-                // Convert worksheet to JSON
-                const hoData = worksheetToJson(worksheet);
+                const worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert worksheet to JSON using XLSX
+                const hoData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
 
                 if (!hoData || hoData.length === 0) {
                     throw new Error('No data found in the file');
@@ -6358,13 +6280,18 @@
                 // Update statistics
                 updateStatisticsFromHDFeedback();
 
+                // Refresh fullscreen view if it's currently active
+                const fullscreenOverlay = document.getElementById('hd-fullscreen-overlay');
+                if (fullscreenOverlay && fullscreenOverlay.classList.contains('active')) {
+                    showHDFeedbackFullscreen();
+                }
+
                 showMessage(`HO file loaded successfully! Updated ${updatedCount} records.`, 'success');
 
                 // Reset file input
                 event.target.value = '';
 
             } catch (error) {
-                console.error('Load HO file error:', error);
                 showMessage(`Error loading HO file: ${error.message}`, 'error');
                 event.target.value = '';
             }
@@ -6491,7 +6418,6 @@
 
                 showMessage('HD Feedback data exported successfully!', 'success');
             } catch (error) {
-                console.error('Export error:', error);
                 showMessage('Failed to export data: ' + error.message, 'error');
             }
         }
@@ -6506,10 +6432,17 @@
                 return;
             }
 
+            // Sort by "Created At" column (oldest first)
+            const sortedData = [...processedHDFeedbackData].sort((a, b) => {
+                const dateA = a['Created At'] ? new Date(a['Created At']) : new Date(0);
+                const dateB = b['Created At'] ? new Date(b['Created At']) : new Date(0);
+                return dateA - dateB; // Ascending order (oldest first)
+            });
+
             // Apply column filters to get filtered data
-            let dataToDisplay = processedHDFeedbackData;
+            let dataToDisplay = sortedData;
             if (Object.keys(hdColumnFilters).length > 0) {
-                dataToDisplay = applyHDColumnFilters(processedHDFeedbackData);
+                dataToDisplay = applyHDColumnFilters(sortedData);
             }
 
             // Build the table HTML with filters
@@ -6633,9 +6566,6 @@
                 return;
             }
 
-            // Log error but don't show user messages for all errors
-            console.warn('Application error:', event.error?.message || 'Unknown error');
-
             // Only show critical errors to users
             if (event.error && event.error.message && event.error.message.includes('Cannot read properties')) {
                 showMessage('Error processing files. Please ensure all uploaded files are valid Excel files and try again.', 'error');
@@ -6654,9 +6584,6 @@
                 event.preventDefault();
                 return;
             }
-
-            // Log rejection but don't show user messages for all rejections
-            console.warn('Promise rejection:', event.reason?.message || 'Unknown rejection');
         });
 
     </script>
