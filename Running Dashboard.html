@@ -1585,7 +1585,7 @@
 
                     <!-- Dashboard Chart and Table -->
                     <div class="dashboard-chart-table-grid"
-                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px;">
                         <!-- Chart Container -->
                         <div class="chart-container"
                             style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);">
@@ -1611,7 +1611,7 @@
 
                     <!-- Summary Section -->
                     <div class="summary-section"
-                        style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);">
+                        style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); margin-top: 30px;">
                         <div id="hd-feedback-report" class="hd-feedback-report">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -1925,14 +1925,7 @@
                         </div>
                     </div>
                 </div>
-                <div
-                    style="margin-top: 15px; padding: 10px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px;">
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.9em; color: #0369a1;">
-                        <span>💡</span>
-                        <span><strong>Dynamic Filtering:</strong> Options update automatically based on your selections.
-                            Grayed out options are not available with current filters.</span>
-                    </div>
-                </div>
+
                 <div style="margin-top: 20px; display: flex; justify-content: space-between; gap: 10px;">
                     <button id="clear-filters-btn"
                         style="padding: 10px 24px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
@@ -2129,69 +2122,67 @@
                 return 'Backlog';
 
             } catch (error) {
-                console.warn('Error calculating POD/Backlog status:', error);
                 return 'Unknown';
             }
         }
 
-        // Column mapping based on the final user specifications - complete and accurate
-        // Note: For Status column, CM Status takes priority over TMS Status when both are available
+        // Column mapping for TMS CM Operation file to Netask format
         const columnMapping = {
-            'Status': { tms: 'Status', cm: 'CM Status' },
-            'Task ID': { tms: null, cm: 'Order No' },
-            'Order ID': { tms: 'OWS Order ID', cm: 'OWS Order ID' },
-            'TT ID': { tms: 'OWS TT ID', cm: 'OWS TT ID' },
-            'TT Type': { tms: 'OWS TT Type', cm: 'OWS TT Type' },
-            'Region': { tms: 'Region', cm: 'Region' },
-            'Site ID': { tms: 'Site ID', cm: 'Site ID' },
-            'Site Name': { tms: 'Site ID', cm: 'Site ID' },
-            'Root Cause': { tms: 'Root Cause', cm: 'Root Cause' },
-            'Sub Cause': { tms: 'Sub cause', cm: 'Sub cause' },
-            'Action Taken': { tms: 'Action Taken', cm: 'Action Taken' },
-            'FME': { tms: null, cm: null },
-            'Created At': { tms: 'Create Time', cm: 'Create Time' },
-            'Last Update': { tms: null, cm: null },
-            'SLA': { tms: 'SLA Status', cm: 'SLA Status' },
-            'Title': { tms: 'Order Title', cm: 'Order Title' },
-            'Create Fault First Time Occured': { tms: 'Create Fault First Occur Time', cm: 'Create Fault First Occur Time' },
-            'Fault Level': { tms: 'Fault Severity', cm: 'Fault Severity' },
-            'Alarm ID': { tms: 'Alarm ID', cm: 'Alarm ID' },
-            'Alarm Name': { tms: 'Alarm Name', cm: 'Alarm Name' },
-            'Alarm Time': { tms: 'Alarm Time', cm: 'Alarm Time' },
-            'Priority': { tms: 'Priority', cm: 'Priority' },
-            'Access Type': { tms: 'Access Type', cm: 'Access Type' },
-            'Area': { tms: 'FM Office', cm: 'FM Office' },
-            'Power Type': { tms: 'Power Type', cm: null },
-            'Impact': { tms: 'Fault Impact Service', cm: 'Fault Impact Service' },
-            'Impact Site List': { tms: 'Impact Site List', cm: 'Impact Site List' },
-            'Initial Owner': { tms: 'OWS Initial Owner', cm: 'OWS Initial Owner' },
-            'Site Required Action': { tms: 'Site Required Action', cm: 'Site Required Action' },
-            'Linked Sites': { tms: 'Escalate Reason', cm: 'Escalate Reason' },
-            'Old PCM ID': { tms: 'Old Pcm ID', cm: 'Old Pcm ID' },
-            'Old Escalate Reason': { tms: 'Old Escalate Reason', cm: 'Old Escalate Reason' },
-            'Old Escalate Needed Action': { tms: 'Old Escalate Needed Action', cm: 'Old Escalate Needed Action' },
-            'Supplementary Information': { tms: 'Fault Root Cause', cm: 'Fault Root Cause' },
-            'Down Sites': { tms: null, cm: 'TT Type' },
-            'Fault Recovery Time': { tms: 'Fault Recovery Time', cm: 'Fault Recovery Time' },
-            'Generated By': { tms: 'Creator', cm: 'Creator' },
-            'Dispatched': { tms: null, cm: null },
-            'Delivered': { tms: null, cm: null },
-            'Accept': { tms: null, cm: null },
-            'Departed': { tms: null, cm: null },
-            'Arrived': { tms: null, cm: null },
-            'FME Request': { tms: null, cm: null },
-            'Completed': { tms: null, cm: null },
-            'User Action': { tms: null, cm: null },
-            'Updated Owner': { tms: null, cm: 'OWS Initial Owner' },
-            'Resolved Owner': { tms: 'Resolved Owner', cm: 'TT Owner' },
-            'Escalated To': { tms: 'Escalate Owner', cm: 'Escalate Owner' },
-            'Skill': { tms: null, cm: null },
-            'Sub Project': { tms: null, cm: null },
-            'extra_description': { tms: null, cm: null },
-            'pcm_status': { tms: 'Status', cm: 'Status' },
-            'canellation_reason': { tms: null, cm: null },
-            'source_name': { tms: 'Order Source', cm: 'Order Source' },
-            'connectivity_level': { tms: null, cm: null }
+            'Status': 'CM Status',
+            'Task ID': 'Order No',
+            'Order ID': 'OWS Order ID',
+            'TT ID': 'OWS TT ID',
+            'TT Type': 'OWS TT Type',
+            'Region': 'Region',
+            'Site ID': 'Site ID',
+            'Site Name': 'Site ID',
+            'Root Cause': 'Root Cause',
+            'Sub Cause': 'Sub cause',
+            'Action Taken': 'Action Taken',
+            'FME': null,
+            'Created At': 'Create Time',
+            'Last Update': 'Finish Time',
+            'SLA': 'SLA Status',
+            'Title': 'Order Title',
+            'Create Fault First Time Occured': 'Create Fault First Occur Time',
+            'Fault Level': 'Fault Severity',
+            'Alarm ID': 'Alarm ID',
+            'Alarm Name': 'Alarm Name',
+            'Alarm Time': 'Alarm Time',
+            'Priority': 'Priority',
+            'Access Type': 'Access Type',
+            'Area': 'FM Office',
+            'Power Type': null,
+            'Impact': 'Fault Impact Service',
+            'Impact Site List': 'Impact Site List',
+            'Initial Owner': 'OWS Initial Owner',
+            'Site Required Action': 'Site Required Action',
+            'Linked Sites': 'Escalate Reason',
+            'Old PCM ID': 'Old Pcm ID',
+            'Old Escalate Reason': 'Old Escalate Reason',
+            'Old Escalate Needed Action': 'Old Escalate Needed Action',
+            'Supplementary Information': 'Fault Root Cause',
+            'Down Sites': 'TT Type',
+            'Fault Recovery Time': 'Fault Recovery Time',
+            'Generated By': 'Creator',
+            'Dispatched': null,
+            'Delivered': null,
+            'Accept': null,
+            'Departed': null,
+            'Arrived': null,
+            'FME Request': null,
+            'Completed': 'Finish Time',
+            'User Action': null,
+            'Updated Owner': 'OWS Initial Owner',
+            'Resolved Owner': 'TT Owner',
+            'Escalated To': 'Escalate Owner',
+            'Skill': null,
+            'Sub Project': null,
+            'extra_description': 'CONDITIONAL_MAPPING',
+            'pcm_status': 'Status',
+            'canellation_reason': null,
+            'source_name': 'Order Source',
+            'connectivity_level': null
         };
 
         // File input handlers
@@ -2256,17 +2247,14 @@
             // Get the API token
             const GITHUB_TOKEN = reconstructCredentials();
 
-            // Validate the token
-            if (!GITHUB_TOKEN || GITHUB_TOKEN.length < 20) {
-                console.warn('API credentials not available');
-            }
+            // Validate the token (silently)
+            // Token validation happens internally
 
             // Function to get GitHub file metadata
             async function getGitHubFileInfo(fileType) {
                 try {
                     // Check if token is available
                     if (!GITHUB_TOKEN) {
-                        console.warn(`GitHub token not available for ${fileType}`);
                         return null;
                     }
 
@@ -2285,16 +2273,11 @@
                             headers: headers
                         });
 
-                        console.log(`Contents API response status for ${fileType}:`, contentsResponse.status);
-
                         if (contentsResponse.ok) {
                             fileData = await contentsResponse.json();
-                            console.log(`Contents API response for ${fileType}:`, fileData);
-                        } else {
-                            console.error(`Contents API failed for ${fileType}:`, contentsResponse.status, contentsResponse.statusText);
                         }
                     } catch (contentsError) {
-                        console.warn(`Contents API failed for ${fileType}:`, contentsError);
+                        // Silently handle error
                     }
 
                     // Try to get commit info for last modified date
@@ -2303,19 +2286,14 @@
                             headers: headers
                         });
 
-                        console.log(`Commits API response status for ${fileType}:`, commitsResponse.status);
-
                         if (commitsResponse.ok) {
                             const commits = await commitsResponse.json();
                             if (commits && commits.length > 0) {
                                 commitData = commits[0];
-                                console.log(`Commits API response for ${fileType}:`, commitData);
                             }
-                        } else {
-                            console.error(`Commits API failed for ${fileType}:`, commitsResponse.status, commitsResponse.statusText);
                         }
                     } catch (commitsError) {
-                        console.warn(`Commits API failed for ${fileType}:`, commitsError);
+                        // Silently handle error
                     }
 
                     // Determine last modified date
@@ -2336,7 +2314,6 @@
                         downloadUrl: (fileData && fileData.download_url) || (fileData && fileData.html_url) || ''
                     };
                 } catch (error) {
-                    console.warn(`Could not fetch GitHub metadata for ${fileType}:`, error);
                     return null;
                 }
             }
@@ -2405,7 +2382,6 @@
 
                     return { success: true, fileType, filename: url.split('/').pop() };
                 } catch (error) {
-                    console.error(`Error loading ${fileType}:`, error);
                     return { success: false, fileType, error: error.message };
                 }
             });
@@ -2534,7 +2510,6 @@
 
                 return null;
             } catch (error) {
-                console.warn('Error extracting year:', error);
                 return null;
             }
         }
@@ -2581,7 +2556,6 @@
 
                 return null;
             } catch (error) {
-                console.warn('Error extracting month name:', error);
                 return null;
             }
         }
@@ -2615,7 +2589,6 @@
                 // For any other format, return as-is to avoid any timezone conversion
                 return stringValue;
             } catch (error) {
-                console.warn('Error formatting date string:', error);
                 return value;
             }
         }
@@ -3113,17 +3086,26 @@
                 if (hasCmData) {
                     const cmRow = cmMap.get(owsOrderId);
                     Object.keys(columnMapping).forEach(netaskCol => {
-                        const cmCol = columnMapping[netaskCol].cm;
-                        if (cmCol && cmRow[cmCol] !== null && cmRow[cmCol] !== undefined && cmRow[cmCol] !== '') {
+                        const cmCol = columnMapping[netaskCol];
+
+                        // Handle conditional mapping for extra_description
+                        if (netaskCol === 'extra_description' && cmCol === 'CONDITIONAL_MAPPING') {
+                            const cmStatus = String(cmRow['CM Status'] || '').trim();
+                            if (cmStatus === 'Escalated') {
+                                // Use 'remark' column when CM Status is "Escalated"
+                                if (cmRow['remark'] !== null && cmRow['remark'] !== undefined && cmRow['remark'] !== '') {
+                                    convertedRow[netaskCol] = cmRow['remark'];
+                                }
+                            } else {
+                                // Use 'reason' column when CM Status is not "Escalated"
+                                if (cmRow['reason'] !== null && cmRow['reason'] !== undefined && cmRow['reason'] !== '') {
+                                    convertedRow[netaskCol] = cmRow['reason'];
+                                }
+                            }
+                        } else if (cmCol && cmRow[cmCol] !== null && cmRow[cmCol] !== undefined && cmRow[cmCol] !== '') {
                             convertedRow[netaskCol] = cmRow[cmCol];
                         }
                     });
-
-                    // Special handling for Status column: use CM Status
-                    const cmStatus = cmRow['CM Status'];
-                    if (cmStatus !== null && cmStatus !== undefined && cmStatus !== '') {
-                        convertedRow['Status'] = cmStatus;
-                    }
                 }
 
                 // Replace Region_5_H with Region_5
@@ -3617,7 +3599,7 @@
             tableHTML += '</thead><tbody>';
 
             // Render data rows
-            let rowIdCounter = 0;
+            let rowIdCounter = { value: 0 };
             tableHTML += renderTreeRows(rowTree, 0, '', null, columnKeys, rowIdCounter);
 
             // Grand total row
@@ -3642,7 +3624,7 @@
                 const node = tree[key];
                 const data = node._data;
                 const children = node._children;
-                const currentRowId = `row-${rowIdCounter++}`;
+                const currentRowId = `row-${rowIdCounter.value++}`;
 
                 // Calculate totals for this row
                 let rowTotal = 0;
@@ -3657,14 +3639,25 @@
                 const isCategory = Object.keys(children).length > 0;
                 let rowClass = isCategory ? 'category-row' : 'subcategory-row';
 
-                // Apply parent class or determine new class
+                // Apply parent class or determine new class based on first row field
                 if (level === 0) {
+                    // For PCM Owner categories
                     if (key === 'Running under FLM') {
                         rowClass += ' running-under-flm';
                         parentClass = 'running-under-flm';
                     } else if (key === 'Updated out of FLM') {
                         rowClass += ' updated-out-of-flm';
                         parentClass = 'updated-out-of-flm';
+                    } else {
+                        // For other first-level categories, use alternating colors
+                        const keyIndex = keys.indexOf(key);
+                        if (keyIndex % 2 === 0) {
+                            rowClass += ' running-under-flm';
+                            parentClass = 'running-under-flm';
+                        } else {
+                            rowClass += ' updated-out-of-flm';
+                            parentClass = 'updated-out-of-flm';
+                        }
                     }
                 } else if (parentClass) {
                     rowClass += ' ' + parentClass;
@@ -3721,7 +3714,7 @@
         }
 
         // Toggle row expand/collapse functionality
-        function toggleRow(rowId) {
+        window.toggleRow = function toggleRow(rowId) {
             const row = document.getElementById(rowId);
             if (!row) return;
 
@@ -4090,20 +4083,47 @@
         }
 
         // Download input file by type
-        function downloadInputFile(fileType) {
+        async function downloadInputFile(fileType) {
             if (!uploadedFiles[fileType]) return;
 
-            const workbook = uploadedFiles[fileType];
-            const filename = getInputFilename(fileType);
+            try {
+                // Get the original file URLs for direct download instead of re-processing
+                const fileUrls = {
+                    'netask': 'https://decosaro.github.io/shabakkat/Nextask_PCMs.xlsx',
+                    'cmOperation': 'https://decosaro.github.io/shabakkat/TMS_PCMs.xlsx',
+                    'owsFrt': 'https://decosaro.github.io/shabakkat/OWS_FRT.xlsx',
+                    'manualFrt': 'https://decosaro.github.io/shabakkat/Manual_FRT.xlsx'
+                };
 
-            workbook.xlsx.writeBuffer().then(function (buffer) {
-                const blob = new Blob([buffer], {
-                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                });
-                const url = URL.createObjectURL(blob);
-                downloadFile(url, filename);
-                URL.revokeObjectURL(url);
-            });
+                const url = fileUrls[fileType];
+                if (url) {
+                    // Download original file directly from source
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch original file: ${response.status}`);
+                    }
+
+                    const blob = await response.blob();
+                    const filename = getInputFilename(fileType);
+                    const downloadUrl = URL.createObjectURL(blob);
+                    downloadFile(downloadUrl, filename);
+                    URL.revokeObjectURL(downloadUrl);
+                } else {
+                    // Fallback to re-processing if URL not found
+                    const workbook = uploadedFiles[fileType];
+                    const filename = getInputFilename(fileType);
+
+                    const buffer = await workbook.xlsx.writeBuffer();
+                    const blob = new Blob([buffer], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    });
+                    const downloadUrl = URL.createObjectURL(blob);
+                    downloadFile(downloadUrl, filename);
+                    URL.revokeObjectURL(downloadUrl);
+                }
+            } catch (error) {
+                showMessage(`Error downloading ${fileType}: ${error.message}`, 'error');
+            }
         }
 
         // Generic file download function
@@ -4978,7 +4998,6 @@
                         async function getGitHubFileInfo(fileType) {
                             try {
                                 if (!GITHUB_TOKEN) {
-                                    console.warn(`GitHub token not available for ${fileType}`);
                                     return null;
                                 }
 
@@ -4997,7 +5016,7 @@
                                         fileData = await contentsResponse.json();
                                     }
                                 } catch (contentsError) {
-                                    console.warn(`Contents API failed for ${fileType}:`, contentsError);
+                                    // Silently handle error
                                 }
 
                                 try {
@@ -5009,7 +5028,7 @@
                                         }
                                     }
                                 } catch (commitsError) {
-                                    console.warn(`Commits API failed for ${fileType}:`, commitsError);
+                                    // Silently handle error
                                 }
 
                                 let lastModified = new Date();
@@ -5251,7 +5270,6 @@
                         showMessage(`Dashboard refreshed successfully! (${successCount}/${results.length} files loaded)`, 'success');
 
                     } catch (error) {
-                        console.error('Refresh error:', error);
                         showMessage(`Error refreshing dashboard: ${error.message}`, 'error');
                     } finally {
                         // Always restore button state
@@ -5622,7 +5640,6 @@
                 await handleCapturedImage(canvas);
 
             } catch (error) {
-                console.error('Screenshot error:', error);
                 showMessage('Failed to capture screenshot: ' + error.message, 'error');
             } finally {
                 btn.innerHTML = originalText;
@@ -5661,7 +5678,6 @@
                     ]);
                     showMessage('Screenshot copied to clipboard! 📋', 'success');
                 } catch (clipboardError) {
-                    console.error('Clipboard error:', clipboardError);
                     downloadScreenshot(blob);
                     showMessage('Clipboard not supported. Screenshot downloaded instead.', 'warning');
                 }
