@@ -792,7 +792,6 @@
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             border: 1px solid rgba(0, 0, 0, 0.05);
-            visibility: hidden;
         }
 
         .floating-footer:hover {
@@ -1666,17 +1665,14 @@
             // Get the API token
             const GITHUB_TOKEN = reconstructCredentials();
 
-            // Validate the token
-            if (!GITHUB_TOKEN || GITHUB_TOKEN.length < 20) {
-                console.warn('API credentials not available');
-            }
+            // Validate the token (silently)
+            // Token validation happens internally
 
             // Function to get GitHub file metadata
             async function getGitHubFileInfo(fileType) {
                 try {
                     // Check if token is available
                     if (!GITHUB_TOKEN) {
-                        console.warn(`GitHub token not available for ${fileType}`);
                         return null;
                     }
 
@@ -1695,16 +1691,11 @@
                             headers: headers
                         });
 
-                        console.log(`Contents API response status for ${fileType}:`, contentsResponse.status);
-
                         if (contentsResponse.ok) {
                             fileData = await contentsResponse.json();
-                            console.log(`Contents API response for ${fileType}:`, fileData);
-                        } else {
-                            console.error(`Contents API failed for ${fileType}:`, contentsResponse.status, contentsResponse.statusText);
                         }
                     } catch (contentsError) {
-                        console.warn(`Contents API failed for ${fileType}:`, contentsError);
+                        // Silently handle error
                     }
 
                     // Try to get commit info for last modified date
@@ -1713,19 +1704,14 @@
                             headers: headers
                         });
 
-                        console.log(`Commits API response status for ${fileType}:`, commitsResponse.status);
-
                         if (commitsResponse.ok) {
                             const commits = await commitsResponse.json();
                             if (commits && commits.length > 0) {
                                 commitData = commits[0];
-                                console.log(`Commits API response for ${fileType}:`, commitData);
                             }
-                        } else {
-                            console.error(`Commits API failed for ${fileType}:`, commitsResponse.status, commitsResponse.statusText);
                         }
                     } catch (commitsError) {
-                        console.warn(`Commits API failed for ${fileType}:`, commitsError);
+                        // Silently handle error
                     }
 
                     // Determine last modified date
@@ -1746,7 +1732,6 @@
                         downloadUrl: (fileData && fileData.download_url) || (fileData && fileData.html_url) || ''
                     };
                 } catch (error) {
-                    console.warn(`Could not fetch GitHub metadata for ${fileType}:`, error);
                     return null;
                 }
             }
@@ -1815,7 +1800,6 @@
 
                     return { success: true, fileType, filename: url.split('/').pop() };
                 } catch (error) {
-                    console.error(`Error loading ${fileType}:`, error);
                     return { success: false, fileType, error: error.message };
                 }
             });
@@ -1944,7 +1928,6 @@
 
                 return null;
             } catch (error) {
-                console.warn('Error extracting year:', error);
                 return null;
             }
         }
@@ -1991,7 +1974,6 @@
 
                 return null;
             } catch (error) {
-                console.warn('Error extracting month name:', error);
                 return null;
             }
         }
@@ -2025,7 +2007,6 @@
                 // For any other format, return as-is to avoid any timezone conversion
                 return stringValue;
             } catch (error) {
-                console.warn('Error formatting date string:', error);
                 return value;
             }
         }
@@ -3638,7 +3619,6 @@
             const regionContainer = document.getElementById('region-filters');
 
             if (!yearContainer || !monthContainer || !skillContainer || !regionContainer) {
-                console.warn('Filter containers not found');
                 return;
             }
 
@@ -4138,8 +4118,6 @@
 
                                 showMessage('Screenshot copied to clipboard! 📋', 'success');
                             } catch (clipboardError) {
-                                console.error('Clipboard error:', clipboardError);
-
                                 // Fallback: Download the image if clipboard fails
                                 const url = URL.createObjectURL(blob);
                                 const link = document.createElement('a');
@@ -4156,7 +4134,6 @@
                         });
 
                     } catch (error) {
-                        console.error('Screenshot error:', error);
                         showMessage('Failed to capture screenshot: ' + error.message, 'error');
                     } finally {
                         // Restore button state
