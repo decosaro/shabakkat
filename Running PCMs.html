@@ -1614,26 +1614,26 @@
             showMessage('Loading default files...', 'info');
 
             const fileUrls = {
-                netask: 'https://decosaro.github.io/shabakkat/Nextask_PCMs.xlsx',
-                cmOperation: 'https://decosaro.github.io/shabakkat/TMS_PCMs.xlsx',
-                owsFrt: 'https://decosaro.github.io/shabakkat/OWS_FRT.xlsx',
-                manualFrt: 'https://decosaro.github.io/shabakkat/Manual_FRT.xlsx'
+                netask: 'https://decosaro.github.io/nextask_running/Nextask_PCMs.xlsx',
+                cmOperation: 'https://decosaro.github.io/tms_running/TMS_PCMs.xlsx',
+                owsFrt: 'https://decosaro.github.io/ows_frt/OWS_FRT.xlsx',
+                manualFrt: 'https://decosaro.github.io/manual_frt/Manual_FRT.xlsx'
             };
 
             // GitHub API URLs for file metadata
             const githubApiUrls = {
-                netask: 'https://api.github.com/repos/decosaro/shabakkat/contents/Nextask_PCMs.xlsx',
-                cmOperation: 'https://api.github.com/repos/decosaro/shabakkat/contents/TMS_PCMs.xlsx',
-                owsFrt: 'https://api.github.com/repos/decosaro/shabakkat/contents/OWS_FRT.xlsx',
-                manualFrt: 'https://api.github.com/repos/decosaro/shabakkat/contents/Manual_FRT.xlsx'
+                netask: 'https://api.github.com/repos/decosaro/nextask_running/contents/Nextask_PCMs.xlsx',
+                cmOperation: 'https://api.github.com/repos/decosaro/tms_running/contents/TMS_PCMs.xlsx',
+                owsFrt: 'https://api.github.com/repos/decosaro/ows_frt/contents/OWS_FRT.xlsx',
+                manualFrt: 'https://api.github.com/repos/decosaro/manual_frt/contents/Manual_FRT.xlsx'
             };
 
             // Alternative: Use commits API to get file info
             const githubCommitsUrls = {
-                netask: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=Nextask_PCMs.xlsx&per_page=1',
-                cmOperation: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=TMS_PCMs.xlsx&per_page=1',
-                owsFrt: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=OWS_FRT.xlsx&per_page=1',
-                manualFrt: 'https://api.github.com/repos/decosaro/shabakkat/commits?path=Manual_FRT.xlsx&per_page=1'
+                netask: 'https://api.github.com/repos/decosaro/nextask_running/commits?path=Nextask_PCMs.xlsx&per_page=1',
+                cmOperation: 'https://api.github.com/repos/decosaro/tms_running/commits?path=TMS_PCMs.xlsx&per_page=1',
+                owsFrt: 'https://api.github.com/repos/decosaro/ows_frt/commits?path=OWS_FRT.xlsx&per_page=1',
+                manualFrt: 'https://api.github.com/repos/decosaro/manual_frt/commits?path=Manual_FRT.xlsx&per_page=1'
             };
 
             // Service configuration
