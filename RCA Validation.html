@@ -1,0 +1,4259 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCM Process Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 3px solid #e9ecef;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            background: #ffffff;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: #fafbfc;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #adb5bd;
+            background: #f1f3f5;
+        }
+
+        .upload-area.dragover {
+            border-color: #495057;
+            background: #e9ecef;
+            transform: scale(1.02);
+        }
+
+        .upload-area.success {
+            border-color: #28a745;
+            background: #f0f8f0;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .upload-btn:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #495057;
+        }
+
+        .worksheets-container {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .worksheet-item {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .worksheet-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: #adb5bd;
+        }
+
+        .worksheet-info {
+            margin-bottom: 15px;
+        }
+
+        .worksheet-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .filename-preview {
+            color: #666;
+            font-size: 0.9rem;
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin-top: 10px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 5px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .download-btn.not-matched {
+            background: #dc3545;
+        }
+
+        .download-btn.not-matched:hover {
+            background: #c82333;
+        }
+
+        .process-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff3742 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 10px;
+            font-weight: 500;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .process-btn:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #d63031 50%, #e84118 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .process-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+            margin-top: 25px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            color: #495057;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 4px 20px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .loading .spinner {
+            border: 3px solid rgba(0, 123, 255, 0.1);
+            border-top: 3px solid #007bff;
+            border-right: 3px solid rgba(0, 123, 255, 0.3);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            margin: 0 auto 25px;
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15), 0 4px 10px rgba(0, 123, 255, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            position: relative;
+            z-index: 1;
+        }
+
+        .loading p {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 0;
+            color: #495057;
+            letter-spacing: 0.5px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* Column Selection Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .modal-header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            margin-top: -5px;
+        }
+
+        .close:hover,
+        .close:focus {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .column-selection {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .column-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 2px solid #e0e6ff;
+            border-radius: 8px;
+            background: #f8f9ff;
+            transition: all 0.2s ease;
+        }
+
+        .column-item:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .column-item input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: #667eea;
+        }
+
+        .column-item label {
+            flex: 1;
+            cursor: pointer;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .column-preview {
+            font-size: 0.8rem;
+            color: #666;
+            margin-left: auto;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .modal-actions {
+            padding: 20px 30px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn.cancel {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .modal-btn.cancel:hover {
+            background: #e9ecef;
+        }
+
+        .modal-btn.download {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .modal-btn.download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .select-all-controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border: 1px solid #e0e6ff;
+        }
+
+        .select-all-controls button {
+            margin-right: 10px;
+            padding: 8px 15px;
+            border: 1px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .select-all-controls button:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Floating notification container */
+        #messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+            pointer-events: none;
+        }
+
+        .notification {
+            margin-bottom: 10px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+            pointer-events: auto;
+            position: relative;
+            font-weight: 500;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification.hide {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .notification .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: currentColor;
+            opacity: 0.7;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification .close-btn:hover {
+            opacity: 1;
+        }
+
+        .style-info {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .filename-preview {
+            background: #e8f5e8;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #155724;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .filename-preview.not-matched {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .closure-section {
+            border-color: #ff6b6b;
+        }
+
+        .closure-section h2 {
+            color: #ff6b6b;
+        }
+
+        .file-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status-pending {
+            background: #ffeaa7;
+            color: #856404;
+        }
+
+        .status-uploaded {
+            background: #81ecec;
+            color: #00b894;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-item.warning {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-number.warning {
+            color: #dc3545;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Reference section styles removed - files now auto-load from URLs */
+
+        .reference-status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .reference-loaded {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .reference-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        /* Modern Floating Footer Styles */
+        .floating-footer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: default;
+            visibility: hidden;
+        }
+
+        .floating-footer:hover {
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            transform: translateX(-50%) translateY(-2px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PCM Process Management</h1>
+
+        </div>
+
+        <div class="content">
+            <!-- Reference files are automatically downloaded from URLs when the page loads -->
+
+            <!-- Regular File Processing Section -->
+            <div class="section">
+                <h2>📋 Regular Worksheet Separator</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <h3>Drop your Excel file here or click to browse</h3>
+                    <p>Supports .xlsx files</p>
+                    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                        Choose File
+                    </button>
+                    <input type="file" id="fileInput" class="file-input" accept=".xlsx">
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Processing your Excel file...</p>
+                </div>
+
+                <div id="fileInfo" class="file-info" style="display: none;">
+                    <h4 id="fileName"></h4>
+                    <p id="fileDetails"></p>
+                </div>
+
+                <div id="worksheets" class="worksheets-container"></div>
+            </div>
+
+            <!-- Enhanced Closure Processing Section -->
+            <div class="section closure-section">
+                <h2>Closure Validation</h2>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <!-- Region FB Upload -->
+                    <div>
+                        <h3>Region FB File <span class="file-status status-pending" id="regionStatus">Pending</span>
+                        </h3>
+                        <div class="upload-area" id="regionUploadArea">
+                            <h4>Region FB Excel File</h4>
+                            <button class="upload-btn" onclick="document.getElementById('regionFileInput').click()">
+                                Choose File
+                            </button>
+                            <input type="file" id="regionFileInput" class="file-input" accept=".xlsx">
+                        </div>
+                        <div id="regionFileInfo" class="file-info" style="display: none;">
+                            <h4 id="regionFileName"></h4>
+                            <p id="regionFileDetails"></p>
+                        </div>
+                    </div>
+
+                    <!-- Running PCMs Upload -->
+                    <div>
+                        <h3>Running PCMs File <span class="file-status status-pending" id="pcmStatus">Pending</span>
+                        </h3>
+                        <div class="upload-area" id="pcmUploadArea">
+                            <h4>Running PCMs Excel File</h4>
+                            <button class="upload-btn" onclick="document.getElementById('pcmFileInput').click()">
+                                Choose File
+                            </button>
+                            <input type="file" id="pcmFileInput" class="file-input" accept=".xlsx">
+                        </div>
+                        <div id="pcmFileInfo" class="file-info" style="display: none;">
+                            <h4 id="pcmFileName"></h4>
+                            <p id="pcmFileDetails"></p>
+                        </div>
+                    </div>
+
+                    <!-- OWS FRT Upload -->
+                    <div>
+                        <h3>OWS FRT File <span class="file-status status-pending" id="owsFrtStatus">Optional</span></h3>
+                        <div class="upload-area" id="owsFrtUploadArea">
+                            <h4>OWS FRT Excel File (Optional)</h4>
+                            <button class="upload-btn" onclick="document.getElementById('owsFrtFileInput').click()">
+                                Choose File
+                            </button>
+                            <input type="file" id="owsFrtFileInput" class="file-input" accept=".xlsx">
+                        </div>
+                        <div id="owsFrtFileInfo" class="file-info" style="display: none;">
+                            <h4 id="owsFrtFileName"></h4>
+                            <p id="owsFrtFileDetails"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="process-btn" id="processBtn" onclick="processEnhancedClosureData()" disabled="">
+                        🚀 Process Closure Validation
+                    </button>
+                </div>
+
+                <div id="closureResults" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalRecords">0</div>
+                            <div class="stat-label">Total PCMs</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="matchedRecords">0</div>
+                            <div class="stat-label">RCA Matched PCMs</div>
+                        </div>
+                        <div class="stat-item warning">
+                            <div class="stat-number warning" id="notMatchedRecords">0</div>
+                            <div class="stat-label">RCA Not Matched PCMs</div>
+                        </div>
+                        <div class="stat-item warning">
+                            <div class="stat-number warning" id="rcaValidated">0</div>
+                            <div class="stat-label">FRT Issue PCMs</div>
+                        </div>
+                        <div class="stat-item warning">
+                            <div class="stat-number warning" id="ownerMatched">0</div>
+                            <div class="stat-label">Exceeded Hurdle SLA PCMs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <div class="download-section" id="downloadSection" style="display: none;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: center; gap: 15px; margin: 20px 0;">
+                            <select id="downloadTypeSelect"
+                                style="padding: 10px 15px; border: 2px solid #667eea; border-radius: 8px; background: white; font-size: 14px; min-width: 300px;">
+                                <option value="">Select Report to Download</option>
+                                <option value="closure">✅ Validated PCMs</option>
+                                <option value="notMatched">❌ Non-Validated PCMs</option>
+                                <option value="frtIssues" id="frtIssuesOption" style="display: none;">⚠️ FRT Issue PCMs
+                                </option>
+                                <option value="frtIssuesWithoutMissed" id="frtIssuesWithoutMissedOption"
+                                    style="display: none;">🔍 Non-Missed FRT PCMs</option>
+                                <option value="withinSLA" id="withinSLAOption" style="display: none;">✅ Within SLA PCMs
+                                </option>
+                                <option value="exceededTargetSLA" id="exceededTargetSLAOption" style="display: none;">🎯
+                                    Exceeded Target SLA PCMs</option>
+                                <option value="exceededHurdleSLA" id="exceededHurdleSLAOption" style="display: none;">🚨
+                                    Exceeded Hurdle SLA PCMs</option>
+                                <option value="owsFrtMatched" id="owsFrtMatchedOption" style="display: none;">🔗 OWS-FRT
+                                    Matched PCMs</option>
+                                <option value="owsFrtNotMatched" id="owsFrtNotMatchedOption" style="display: none;">🔗
+                                    OWS-FRT Non-Matched PCMs</option>
+                            </select>
+                            <button class="download-btn" id="downloadSelectedBtn" onclick="downloadSelected()"
+                                style="padding: 10px 20px;">
+                                📥 Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="loading" id="closureLoading">
+                    <div class="spinner"></div>
+                    <p id="closureLoadingText">Processing closure data...</p>
+                </div>
+
+
+            </div>
+
+            <div id="messages"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ========================================
+           CONFIGURATION & CONSTANTS
+           ======================================== */
+
+        const REFERENCE_URLS = {
+            rcScAtNextask: 'https://tarek-mahran.github.io/shabakkat/RC_SC_AT-%20List%20of%20Nextask%20Owners.xlsx',
+            rcScAtTMS: 'https://tarek-mahran.github.io/shabakkat/RC_SC_AT-%20List%20of%20TMS%20Owners.xlsx',
+            sitesOwner: 'https://tarek-mahran.github.io/shabakkat/Sites%20Owner.xlsx'
+        };
+
+        /* ========================================
+           GLOBAL VARIABLES
+           ======================================== */
+
+        // Main workbook variables
+        let currentWorkbook = null;
+        let inputFileName = '';
+
+        // Region and PCM workbooks
+        let regionWorkbook = null;
+        let pcmWorkbook = null;
+        let regionFileName = '';
+        let pcmFileName = '';
+
+        // Closure workbooks
+        let closureWorkbook = null;
+        let notMatchedClosureWorkbook = null;
+
+        // OWS FRT workbooks
+        let owsFrtWorkbook = null;
+        let owsFrtFileName = '';
+        let owsFrtMatchedWorkbook = null;
+        let owsFrtNotMatchedWorkbook = null;
+
+        // Reference data for enhanced processing
+        let rcScAtDataNextask = null;
+        let ownersDataNextask = null;
+        let rcScAtDataTMS = null;
+        let ownersDataTMS = null;
+        let sitesOwnerData = null;
+
+        /* ========================================
+           DOM ELEMENT REFERENCES
+           ======================================== */
+
+        // Main file upload elements
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const loading = document.getElementById('loading');
+        const fileInfo = document.getElementById('fileInfo');
+        const worksheetsContainer = document.getElementById('worksheets');
+        const messages = document.getElementById('messages');
+
+        // Region file elements
+        const regionFileInput = document.getElementById('regionFileInput');
+        const regionUploadArea = document.getElementById('regionUploadArea');
+        const regionFileInfo = document.getElementById('regionFileInfo');
+        const regionStatus = document.getElementById('regionStatus');
+
+        // PCM file elements
+        const pcmFileInput = document.getElementById('pcmFileInput');
+        const pcmUploadArea = document.getElementById('pcmUploadArea');
+        const pcmFileInfo = document.getElementById('pcmFileInfo');
+        const pcmStatus = document.getElementById('pcmStatus');
+
+        // Processing elements
+        const processBtn = document.getElementById('processBtn');
+        const closureLoading = document.getElementById('closureLoading');
+        const closureResults = document.getElementById('closureResults');
+
+        // OWS FRT file elements
+        const owsFrtFileInput = document.getElementById('owsFrtFileInput');
+        const owsFrtUploadArea = document.getElementById('owsFrtUploadArea');
+        const owsFrtFileInfo = document.getElementById('owsFrtFileInfo');
+        const owsFrtStatus = document.getElementById('owsFrtStatus');
+
+        // Initialize event handlers
+        fileInput.addEventListener('change', handleFileSelect);
+        setupDragDrop(uploadArea, handleFile);
+
+        regionFileInput.addEventListener('change', (e) => handleRegionFileSelect(e.target.files[0]));
+        setupDragDrop(regionUploadArea, handleRegionFile);
+
+        pcmFileInput.addEventListener('change', (e) => handlePcmFileSelect(e.target.files[0]));
+        setupDragDrop(pcmUploadArea, handlePcmFile);
+
+        /* ========================================
+           EVENT HANDLERS SETUP
+           ======================================== */
+
+        // OWS FRT file handlers
+        owsFrtFileInput.addEventListener('change', (e) => handleOwsFrtFileSelect(e.target.files[0]));
+        setupDragDrop(owsFrtUploadArea, handleOwsFrtFile);
+
+        /* ========================================
+           REFERENCE FILE LOADING FUNCTIONS
+           ======================================== */
+
+        // Auto-load reference files from URLs
+        async function loadReferenceFile(type) {
+            try {
+                const response = await fetch(REFERENCE_URLS[type]);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = new ExcelJS.Workbook();
+                await workbook.xlsx.load(arrayBuffer);
+
+                if (type === 'rcScAtNextask') {
+                    await processRcScAtWorkbook(workbook, 'nextask');
+                    showMessage('Nextask reference file loaded successfully from URL', 'success');
+                } else if (type === 'rcScAtTMS') {
+                    await processRcScAtWorkbook(workbook, 'tms');
+                    showMessage('TMS reference file loaded successfully from URL', 'success');
+                } else {
+                    await processSitesOwnerWorkbook(workbook);
+                    showMessage(`Reference file ${type} loaded successfully from URL`, 'success');
+                }
+
+                checkEnhancedProcessingReady();
+
+            } catch (error) {
+                showMessage(`Failed to auto-load ${type}: ${error.message}`, 'error');
+            }
+        }
+
+        // Reference files are automatically loaded from URLs - no manual upload functions needed
+
+        async function processRcScAtWorkbook(workbook, type) {
+            // Process RC_SC_AT sheet
+            const rcScAtSheet = workbook.worksheets.find(ws => ws.name === 'RC_SC_AT');
+            if (!rcScAtSheet) {
+                throw new Error('RC_SC_AT sheet not found in the workbook');
+            }
+
+            const rcScAtDataArray = [];
+            const headerRow = rcScAtSheet.getRow(1);
+            const headers = [];
+            headerRow.eachCell((cell, colNumber) => {
+                headers[colNumber] = (cell.value || '').toString().toLowerCase();
+            });
+
+            const rootCauseCol = findColumnIndex(headers, ['root cause', 'rootcause']);
+            const subCauseCol = findColumnIndex(headers, ['sub cause', 'subcause']);
+            const actionTakenCol = findColumnIndex(headers, ['action taken', 'actiontaken']);
+
+            for (let rowNum = 2; rowNum <= rcScAtSheet.actualRowCount; rowNum++) {
+                const row = rcScAtSheet.getRow(rowNum);
+                if (row.hasValues) {
+                    rcScAtDataArray.push({
+                        rootCause: getCellValue(row, rootCauseCol),
+                        subCause: getCellValue(row, subCauseCol),
+                        actionTaken: getCellValue(row, actionTakenCol)
+                    });
+                }
+            }
+
+            // Process Owners sheet
+            const ownersSheet = workbook.worksheets.find(ws => ws.name === 'Owners');
+            if (!ownersSheet) {
+                throw new Error('Owners sheet not found in the workbook');
+            }
+
+            const ownersDataArray = [];
+            const ownersHeaderRow = ownersSheet.getRow(1);
+            const ownersHeaders = [];
+            ownersHeaderRow.eachCell((cell, colNumber) => {
+                ownersHeaders[colNumber] = (cell.value || '').toString().toLowerCase();
+            });
+
+            const ownerCol = findColumnIndex(ownersHeaders, ['closure/ update owner', 'closure/update owner', 'owner']);
+
+            for (let rowNum = 2; rowNum <= ownersSheet.actualRowCount; rowNum++) {
+                const row = ownersSheet.getRow(rowNum);
+                if (row.hasValues) {
+                    const owner = getCellValue(row, ownerCol);
+                    if (owner) {
+                        ownersDataArray.push(owner);
+                    }
+                }
+            }
+
+            // Store data in appropriate global variables based on type
+            if (type === 'nextask') {
+                rcScAtDataNextask = rcScAtDataArray;
+                ownersDataNextask = ownersDataArray;
+            } else if (type === 'tms') {
+                rcScAtDataTMS = rcScAtDataArray;
+                ownersDataTMS = ownersDataArray;
+            }
+        }
+
+        async function processSitesOwnerWorkbook(workbook) {
+            const sheet = workbook.worksheets[0]; // Assume first sheet
+            if (!sheet) {
+                throw new Error('No worksheet found in Sites Owner file');
+            }
+
+            sitesOwnerData = {};
+            const headerRow = sheet.getRow(1);
+            const headers = [];
+            headerRow.eachCell((cell, colNumber) => {
+                headers[colNumber] = (cell.value || '').toString().toLowerCase();
+            });
+
+            // Column A should be the lookup column (Hub site), Column B should be the return column (Owner)
+            const hubSiteCol = 1; // Column A
+            const ownerCol = 2; // Column B
+
+            for (let rowNum = 2; rowNum <= sheet.actualRowCount; rowNum++) {
+                const row = sheet.getRow(rowNum);
+                if (row.hasValues) {
+                    const hubSite = getCellValue(row, hubSiteCol);
+                    const owner = getCellValue(row, ownerCol);
+                    if (hubSite && owner) {
+                        // Store hubSite key in lowercase for case-insensitive lookups
+                        sitesOwnerData[hubSite.toString().trim().toLowerCase()] = owner;
+                    }
+                }
+            }
+        }
+
+        /* ========================================
+           UTILITY FUNCTIONS
+           ======================================== */
+
+        function checkEnhancedProcessingReady() {
+            // Check if basic files are uploaded
+            if (regionWorkbook && pcmWorkbook) {
+                processBtn.disabled = false;
+
+                if ((rcScAtDataNextask && ownersDataNextask) && (rcScAtDataTMS && ownersDataTMS) && sitesOwnerData) {
+                    processBtn.textContent = '🚀 Process Closure Validation';
+                    processBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff3742 100%)';
+                    processBtn.style.boxShadow = '0 5px 20px rgba(255, 107, 107, 0.3)';
+                } else {
+                    processBtn.textContent = '🚀 Process Closure Data (Basic)';
+                    processBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff3742 100%)';
+                    processBtn.style.boxShadow = '0 5px 20px rgba(255, 107, 107, 0.3)';
+                }
+            }
+        }
+
+        function setupDragDrop(area, handler) {
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.classList.add('dragover');
+            });
+
+            area.addEventListener('dragleave', () => {
+                area.classList.remove('dragover');
+            });
+
+            area.addEventListener('drop', (e) => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handler(files[0]);
+                }
+            });
+        }
+
+        /* ========================================
+           FILE HANDLING FUNCTIONS
+           ======================================== */
+
+        // Regular file processing functions
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            if (!file.name.match(/\.xlsx$/i)) {
+                showMessage('Please select a valid Excel file (.xlsx).', 'error');
+                return;
+            }
+
+            showLoading(true);
+            clearMessages();
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                processExcelFile(e.target.result, file.name);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        async function processExcelFile(arrayBuffer, fileName) {
+            try {
+                inputFileName = fileName.replace(/\.xlsx$/i, '');
+                currentWorkbook = new ExcelJS.Workbook();
+                await currentWorkbook.xlsx.load(arrayBuffer);
+
+                showLoading(false);
+                displayFileInfo(fileName);
+                displayWorksheets();
+                showMessage('File processed successfully!', 'success');
+
+            } catch (error) {
+                showLoading(false);
+                showMessage('Error processing file: ' + error.message, 'error');
+            }
+        }
+
+        function displayFileInfo(fileName) {
+            const fileNameEl = document.getElementById('fileName');
+            const fileDetailsEl = document.getElementById('fileDetails');
+            if (fileNameEl) fileNameEl.textContent = `📄 ${fileName}`;
+            if (fileDetailsEl) fileDetailsEl.textContent = `Contains ${currentWorkbook.worksheets.length} worksheet(s)`;
+            if (fileInfo) fileInfo.style.display = 'block';
+        }
+
+        function displayWorksheets() {
+            worksheetsContainer.innerHTML = '';
+
+            currentWorkbook.worksheets.forEach((worksheet, index) => {
+                const rowCount = worksheet.actualRowCount;
+                const columnCount = worksheet.columnCount;
+
+                let nonEmptyRows = 0;
+                worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+                    const hasData = row.values.some(cell => cell !== null && cell !== undefined && cell !== '');
+                    if (hasData) nonEmptyRows++;
+                });
+
+                const safeSheetName = worksheet.name.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
+                const safeInputName = inputFileName.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
+                const previewFilename = `${safeInputName} - ${safeSheetName}.xlsx`;
+
+                const worksheetDiv = document.createElement('div');
+                worksheetDiv.className = 'worksheet-item';
+
+                worksheetDiv.innerHTML = `
+                    <div class="worksheet-info">
+                        <h3>📋 ${worksheet.name}</h3>
+                        <div class="filename-preview">📁 ${previewFilename}</div>
+                    </div>
+                    <button class="download-btn" onclick="showColumnSelectionModal(${index})">
+                        ⬇️ Download
+                    </button>
+                `;
+
+                worksheetsContainer.appendChild(worksheetDiv);
+            });
+        }
+
+        // Region FB and PCM file handling
+        function handleRegionFileSelect(file) {
+            if (file) {
+                handleRegionFile(file);
+            }
+        }
+
+        function handleRegionFile(file) {
+            if (!file.name.match(/\.xlsx$/i)) {
+                showMessage('Please select a valid Excel file (.xlsx) for Region FB.', 'error');
+                return;
+            }
+
+            regionFileName = file.name;
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                try {
+                    regionWorkbook = new ExcelJS.Workbook();
+                    await regionWorkbook.xlsx.load(e.target.result);
+
+                    regionUploadArea.classList.add('success');
+                    regionStatus.textContent = 'Uploaded';
+                    regionStatus.className = 'file-status status-uploaded';
+
+                    const regionFileNameEl = document.getElementById('regionFileName');
+                    const regionFileDetailsEl = document.getElementById('regionFileDetails');
+
+                    if (regionFileNameEl) regionFileNameEl.textContent = `📄 ${file.name}`;
+                    if (regionFileDetailsEl) regionFileDetailsEl.textContent = `Contains ${regionWorkbook.worksheets.length} worksheet(s)`;
+                    if (regionFileInfo) regionFileInfo.style.display = 'block';
+
+                    checkEnhancedProcessingReady();
+                    showMessage('Region FB file uploaded successfully!', 'success');
+                } catch (error) {
+                    showMessage('Error processing Region FB file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function handlePcmFileSelect(file) {
+            if (file) {
+                handlePcmFile(file);
+            }
+        }
+
+        function handlePcmFile(file) {
+            if (!file.name.match(/\.xlsx$/i)) {
+                showMessage('Please select a valid Excel file (.xlsx) for Running PCMs.', 'error');
+                return;
+            }
+
+            pcmFileName = file.name;
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                try {
+                    pcmWorkbook = new ExcelJS.Workbook();
+                    await pcmWorkbook.xlsx.load(e.target.result);
+
+                    pcmUploadArea.classList.add('success');
+                    pcmStatus.textContent = 'Uploaded';
+                    pcmStatus.className = 'file-status status-uploaded';
+
+                    const pcmFileNameEl = document.getElementById('pcmFileName');
+                    const pcmFileDetailsEl = document.getElementById('pcmFileDetails');
+
+                    if (pcmFileNameEl) pcmFileNameEl.textContent = `📄 ${file.name}`;
+                    if (pcmFileDetailsEl) pcmFileDetailsEl.textContent = `Contains ${pcmWorkbook.worksheets.length} worksheet(s)`;
+                    if (pcmFileInfo) pcmFileInfo.style.display = 'block';
+
+                    checkEnhancedProcessingReady();
+                    showMessage('Running PCMs file uploaded successfully!', 'success');
+                } catch (error) {
+                    showMessage('Error processing Running PCMs file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // OWS FRT file handling
+        function handleOwsFrtFileSelect(file) {
+            if (file) {
+                handleOwsFrtFile(file);
+            }
+        }
+
+        function handleOwsFrtFile(file) {
+            if (!file.name.match(/\.xlsx$/i)) {
+                showMessage('Please select a valid Excel file (.xlsx) for OWS FRT.', 'error');
+                return;
+            }
+
+            owsFrtFileName = file.name;
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                try {
+                    owsFrtWorkbook = new ExcelJS.Workbook();
+                    await owsFrtWorkbook.xlsx.load(e.target.result);
+
+                    owsFrtUploadArea.classList.add('success');
+                    owsFrtStatus.textContent = 'Uploaded';
+                    owsFrtStatus.className = 'file-status status-uploaded';
+
+                    const owsFrtFileNameEl = document.getElementById('owsFrtFileName');
+                    const owsFrtFileDetailsEl = document.getElementById('owsFrtFileDetails');
+
+                    if (owsFrtFileNameEl) owsFrtFileNameEl.textContent = `📄 ${file.name}`;
+                    if (owsFrtFileDetailsEl) owsFrtFileDetailsEl.textContent = `Contains ${owsFrtWorkbook.worksheets.length} worksheet(s)`;
+                    if (owsFrtFileInfo) owsFrtFileInfo.style.display = 'block';
+
+                    checkEnhancedProcessingReady();
+                    showMessage('OWS FRT file uploaded successfully!', 'success');
+                } catch (error) {
+                    showMessage('Error processing OWS FRT file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Enhanced closure data processing
+        async function processEnhancedClosureData() {
+            try {
+                // Validate that workbooks are loaded
+                if (!regionWorkbook) {
+                    alert('Please upload the Region FB file first.');
+                    return;
+                }
+
+                if (!pcmWorkbook) {
+                    alert('Please upload the PCM file first.');
+                    return;
+                }
+
+                // Show loading indicator
+                closureLoading.style.display = 'block';
+                closureResults.style.display = 'none';
+
+                const downloadSectionEl = document.getElementById('downloadSection');
+                const closureLoadingTextEl = document.getElementById('closureLoadingText');
+
+                if (downloadSectionEl) downloadSectionEl.style.display = 'none';
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Processing...';
+
+                // Add delay to ensure UI updates are rendered
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Identifying closure sheet...';
+
+                // Find closure sheet in Region FB
+                let closureSheet = null;
+                for (const worksheet of regionWorkbook.worksheets) {
+                    if (worksheet.name.toLowerCase().includes('closure')) {
+                        closureSheet = worksheet;
+                        break;
+                    }
+                }
+
+                // If not found by name, look for required columns
+                if (!closureSheet) {
+                    for (const worksheet of regionWorkbook.worksheets) {
+                        const headerRow = worksheet.getRow(1);
+                        const headers = [];
+                        headerRow.eachCell((cell) => {
+                            headers.push((cell.value || '').toString().toLowerCase());
+                        });
+
+                        if (headers.includes('frt') && headers.includes('root cause') &&
+                            headers.includes('sub cause') && headers.includes('action taken')) {
+                            closureSheet = worksheet;
+                            break;
+                        }
+                    }
+                }
+
+                if (!closureSheet) {
+                    throw new Error('Could not find Closure sheet or sheet with required columns (FRT/Recovery Time, Root Cause, Sub Cause, Action Taken)');
+                }
+
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Extracting closure data...';
+
+                // Extract data from closure sheet
+                const closureData = extractClosureData(closureSheet);
+
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Processing PCM data...';
+
+                // Extract data from PCM sheet (assume first sheet)
+                const pcmData = extractPcmData(pcmWorkbook.worksheets[0]);
+
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Merging data and creating enhanced reports...';
+
+                // Merge data and create new workbook with enhanced columns
+                const mergedData = mergeEnhancedData(closureData, pcmData);
+
+                // Separate matched and not matched records
+                const matchedData = mergedData.filter(record => isRCAMatched(record));
+                const notMatchedData = mergedData.filter(record => !isRCAMatched(record));
+
+                // Create separate Excel files
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating matched closure report...';
+                closureWorkbook = await createEnhancedClosureReport(matchedData, 'Validated PCMs');
+
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating not matched RCA report...';
+                notMatchedClosureWorkbook = await createEnhancedClosureReport(notMatchedData, 'Non-Validated PCMs');
+
+                // Create FRT issues report from matched data
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating FRT issues report...';
+                const frtIssuesData = filterRecordsWithFRTIssues(matchedData);
+                if (frtIssuesData.length > 0) {
+                    window.frtIssuesWorkbook = await createFRTIssuesReport(frtIssuesData, 'Closure With FRT Issues');
+                } else {
+                    window.frtIssuesWorkbook = null;
+                }
+
+                // Create FRT issues report without Missed FRT values
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating FRT issues report without Missed FRT...';
+                const frtIssuesWithoutMissedData = filterRecordsWithoutMissedFRT(matchedData);
+                if (frtIssuesWithoutMissedData.length > 0) {
+                    window.frtIssuesWithoutMissedWorkbook = await createFRTIssuesReportWithoutRemarks(frtIssuesWithoutMissedData, 'Closure With FRT Issues (No Missed FRT)');
+                } else {
+                    window.frtIssuesWithoutMissedWorkbook = null;
+                }
+
+                // Perform SLA analysis on ALL matched data (not just FRT issues)
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Performing SLA analysis...';
+                const slaAnalyzedData = performSLAAnalysis(matchedData);
+
+                // Create SLA-filtered reports
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating Within SLA report...';
+                const withinSLAData = slaAnalyzedData.filter(record => record.slaRemarks === 'Within SLA');
+                if (withinSLAData.length > 0) {
+                    window.withinSLAWorkbook = await createSLAReport(withinSLAData, 'Within SLA PCMs');
+                } else {
+                    window.withinSLAWorkbook = null;
+                }
+
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating Exceeded Target SLA report...';
+                const exceededTargetSLAData = slaAnalyzedData.filter(record =>
+                    record.slaRemarks === 'Exceeded Target SLA'
+                );
+                if (exceededTargetSLAData.length > 0) {
+                    window.exceededTargetSLAWorkbook = await createSLAReport(exceededTargetSLAData, 'Exceeded Target SLA PCMs');
+                } else {
+                    window.exceededTargetSLAWorkbook = null;
+                }
+
+                if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Creating Exceeded Hurdle SLA report...';
+                const exceededHurdleSLAData = slaAnalyzedData.filter(record =>
+                    record.slaRemarks === 'Exceeded Hurdle SLA'
+                );
+                if (exceededHurdleSLAData.length > 0) {
+                    window.exceededHurdleSLAWorkbook = await createSLAReport(exceededHurdleSLAData, 'Exceeded Hurdle SLA PCMs');
+                } else {
+                    window.exceededHurdleSLAWorkbook = null;
+                }
+
+                // Show results
+                closureLoading.style.display = 'none';
+                closureResults.style.display = 'block';
+                if (downloadSectionEl) downloadSectionEl.style.display = 'block';
+
+                // Update stats with null checks
+                const totalRecordsEl = document.getElementById('totalRecords');
+                const matchedRecordsEl = document.getElementById('matchedRecords');
+                const notMatchedRecordsEl = document.getElementById('notMatchedRecords');
+
+                if (totalRecordsEl) totalRecordsEl.textContent = mergedData.length;
+                if (matchedRecordsEl) matchedRecordsEl.textContent = matchedData.length;
+                if (notMatchedRecordsEl) notMatchedRecordsEl.textContent = notMatchedData.length;
+
+                // Update FRT Issue PCMs and Exceeded Hurdle SLA PCMs counts
+                const rcaValidatedEl = document.getElementById('rcaValidated');
+                const ownerMatchedEl = document.getElementById('ownerMatched');
+
+                if (rcaValidatedEl) rcaValidatedEl.textContent = frtIssuesData ? frtIssuesData.length : 0;
+                if (ownerMatchedEl) ownerMatchedEl.textContent = exceededHurdleSLAData ? exceededHurdleSLAData.length : 0;
+
+                // Show filenames
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const matchedFilename = `Closure - ${day} ${month}.xlsx`;
+                const notMatchedFilename = `Closure Not Matched RCA - ${day} ${month}.xlsx`;
+
+
+
+                // Show/hide download buttons based on data availability
+                // Control dropdown option visibility based on data availability
+                const frtIssuesOptionEl = document.getElementById('frtIssuesOption');
+                const frtIssuesWithoutMissedOptionEl = document.getElementById('frtIssuesWithoutMissedOption');
+                const withinSLAOptionEl = document.getElementById('withinSLAOption');
+                const exceededTargetSLAOptionEl = document.getElementById('exceededTargetSLAOption');
+                const exceededHurdleSLAOptionEl = document.getElementById('exceededHurdleSLAOption');
+
+                if (frtIssuesOptionEl) frtIssuesOptionEl.style.display = (frtIssuesData.length > 0) ? 'block' : 'none';
+                if (frtIssuesWithoutMissedOptionEl) frtIssuesWithoutMissedOptionEl.style.display = (frtIssuesWithoutMissedData.length > 0) ? 'block' : 'none';
+                if (withinSLAOptionEl) withinSLAOptionEl.style.display = (withinSLAData.length > 0) ? 'block' : 'none';
+                if (exceededTargetSLAOptionEl) exceededTargetSLAOptionEl.style.display = (exceededTargetSLAData.length > 0) ? 'block' : 'none';
+                if (exceededHurdleSLAOptionEl) exceededHurdleSLAOptionEl.style.display = (exceededHurdleSLAData.length > 0) ? 'block' : 'none';
+
+                // Process OWS FRT matching - check if Running PCMs has OWS FRT column or if OWS FRT file is uploaded
+                const owsFrtMatchedOptionEl = document.getElementById('owsFrtMatchedOption');
+                const owsFrtNotMatchedOptionEl = document.getElementById('owsFrtNotMatchedOption');
+
+                // Check if Running PCMs file has OWS FRT column
+                const hasOwsFrtInPcm = matchedData.length > 0 && matchedData[0].hasOwsFrtInPcm;
+
+                if (hasOwsFrtInPcm) {
+                    // Use OWS FRT data from Running PCMs file
+                    if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Processing OWS FRT matching from Running PCMs...';
+
+                    const { owsFrtMatched, owsFrtNotMatched } = performOwsFrtMatchingFromPcm(matchedData);
+
+                    if (owsFrtMatched.length > 0) {
+                        owsFrtMatchedWorkbook = await createOwsFrtReport(owsFrtMatched, 'OWS-FRT Matched PCMs');
+                        if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'block';
+                    } else {
+                        if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'none';
+                    }
+
+                    if (owsFrtNotMatched.length > 0) {
+                        owsFrtNotMatchedWorkbook = await createOwsFrtReport(owsFrtNotMatched, 'OWS-FRT Non-Matched PCMs');
+                        if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'block';
+                    } else {
+                        if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'none';
+                    }
+
+                    showMessage('OWS FRT matching completed using data from Running PCMs file', 'success');
+                } else if (owsFrtWorkbook) {
+                    // Use OWS FRT data from separate OWS FRT file
+                    if (closureLoadingTextEl) closureLoadingTextEl.textContent = 'Processing OWS FRT matching from OWS FRT file...';
+
+                    const owsFrtData = extractOwsFrtData(owsFrtWorkbook.worksheets[0]);
+                    const { owsFrtMatched, owsFrtNotMatched } = performOwsFrtMatching(matchedData, owsFrtData);
+
+                    if (owsFrtMatched.length > 0) {
+                        owsFrtMatchedWorkbook = await createOwsFrtReport(owsFrtMatched, 'OWS-FRT Matched PCMs');
+                        if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'block';
+                    } else {
+                        if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'none';
+                    }
+
+                    if (owsFrtNotMatched.length > 0) {
+                        owsFrtNotMatchedWorkbook = await createOwsFrtReport(owsFrtNotMatched, 'OWS-FRT Non-Matched PCMs');
+                        if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'block';
+                    } else {
+                        if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'none';
+                    }
+
+                    showMessage('OWS FRT matching completed using separate OWS FRT file', 'success');
+                } else {
+                    // No OWS FRT data available
+                    if (owsFrtMatchedOptionEl) owsFrtMatchedOptionEl.style.display = 'none';
+                    if (owsFrtNotMatchedOptionEl) owsFrtNotMatchedOptionEl.style.display = 'none';
+                }
+
+                showMessage('Closure Validation processed successfully!', 'success');
+
+            } catch (error) {
+                closureLoading.style.display = 'none';
+                closureResults.style.display = 'none';
+
+                let errorMessage = 'Error processing closure data: ' + error.message;
+
+                // Provide more specific error messages
+                if (error.message.includes('Cannot read properties')) {
+                    errorMessage = 'Error: Unable to read data from uploaded files. Please ensure both files are valid Excel files and try again.';
+                } else if (error.message.includes('Closure sheet')) {
+                    errorMessage = 'Error: Could not find a closure sheet in the Region FB file. Please ensure the file contains a sheet with "closure" in the name or the required columns (FRT/Recovery Time, Root Cause, Sub Cause, Action Taken).';
+                } else if (error.message.includes('worksheets')) {
+                    errorMessage = 'Error: Unable to access worksheet data. Please ensure the uploaded files are not corrupted and contain valid data.';
+                }
+
+                showMessage(errorMessage, 'error');
+            }
+        }
+
+        /* ========================================
+           DATA PROCESSING & VALIDATION FUNCTIONS
+           ======================================== */
+
+        function isRCAMatched(record) {
+            // A record is considered "RCA matched" if ALL validation columns are matched
+            const rcaMatchingValid = !record.rcaMatching ||
+                record.rcaMatching === 'N/A - Reference data not loaded' ||
+                (!record.rcaMatching.includes('Not Matched') && record.rcaMatching !== 'Error in calculation');
+
+            const ownerMatchingValid = record.ownerMatching === 'Matched' ||
+                record.ownerMatching === 'N/A - Reference data not loaded';
+
+            const rcaValidationValid = record.rcaValidation === 'Matched' ||
+                record.rcaValidation === 'N/A - Reference data not loaded';
+
+            return rcaMatchingValid && ownerMatchingValid && rcaValidationValid;
+        }
+
+        function validateFRTIssues(record) {
+            const remarks = [];
+            const frt = record.frt;
+            const createFaultTime = record.createFaultFirstTime;
+
+            // Condition 1: If "-" & empty values in "FRT" column, add "Missed FRT"
+            if (!frt || frt === '-' || frt.toString().trim() === '') {
+                remarks.push('Missed FRT');
+            } else {
+                try {
+                    const frtDate = new Date(frt);
+                    const createFaultDate = new Date(createFaultTime);
+                    const now = new Date();
+
+                    // Condition 2: if FRT happens before Create Fault First Time Occurred, add "FRT before occurred time"
+                    if (!isNaN(frtDate.getTime()) && !isNaN(createFaultDate.getTime())) {
+                        const timeDiff = frtDate.getTime() - createFaultDate.getTime();
+                        if (timeDiff < 0) {
+                            remarks.push('FRT before occurred time');
+                        }
+                    }
+
+                    // Condition 3: if value from "NOW() - FRT" > 0, add "FRT in future"
+                    if (!isNaN(frtDate.getTime())) {
+                        const nowDiff = now.getTime() - frtDate.getTime();
+                        if (nowDiff < 0) {
+                            remarks.push('FRT in future');
+                        }
+                    }
+                } catch (error) {
+                    if (remarks.length === 0) {
+                        remarks.push('Missed FRT');
+                    }
+                }
+            }
+
+            return remarks.join(', ');
+        }
+
+        function filterRecordsWithFRTIssues(data) {
+            const filteredData = data.filter(record => {
+                const remarks = validateFRTIssues(record);
+                return remarks && remarks.trim() !== '';
+            }).map(record => ({
+                ...record,
+                remarks: validateFRTIssues(record)
+            }));
+            return filteredData;
+        }
+
+        function filterRecordsWithoutMissedFRT(data) {
+            return data.filter(record => {
+                const remarks = validateFRTIssues(record);
+                // Only include records that have FRT issues other than just "Missed FRT"
+                return remarks && remarks.trim() !== '' && remarks !== 'Missed FRT';
+            }).map(record => ({
+                ...record,
+                remarks: validateFRTIssues(record)
+            }));
+        }
+
+        function filterWithinSLARecords(data) {
+            return data.filter(record => {
+                return record.slaRemarks === 'Within SLA';
+            });
+        }
+
+        function filterExceededSLARecords(data) {
+            return data.filter(record => {
+                return record.slaRemarks === 'Exceeded Target SLA' || record.slaRemarks === 'Exceeded Hurdle SLA';
+            });
+        }
+
+        function extractClosureData(sheet) {
+            const data = [];
+            const headerRow = sheet.getRow(1);
+            const headers = [];
+            const originalHeaders = [];
+
+            // Get headers (both original and lowercase for comparison)
+            headerRow.eachCell((cell, colNumber) => {
+                const originalValue = (cell.value || '').toString();
+                originalHeaders[colNumber] = originalValue;
+                headers[colNumber] = originalValue.toLowerCase();
+            });
+
+
+
+            // Find column indices
+            const orderIdCol = findColumnIndex(headers, ['order id', 'orderid']);
+            const frtCol = findColumnIndex(headers, ['frt', 'recovery time', 'recovey time', 'fault recovery time', 'recovery', 'recover time']);
+            const rootCauseCol = findColumnIndex(headers, ['root cause', 'rootcause']);
+            const subCauseCol = findColumnIndex(headers, ['sub cause', 'subcause']);
+            const actionTakenCol = findColumnIndex(headers, ['action taken', 'actiontaken']);
+            const ownerCol = findColumnIndex(headers, ['owner']);
+
+            // Find Extra Description column - look for any column containing "extra"
+            let extraDescCol = null;
+            for (let i = 0; i < headers.length; i++) {
+                if (headers[i] && typeof headers[i] === 'string') {
+                    const headerLower = headers[i].toLowerCase();
+                    if (headerLower.includes('extra')) {
+                        extraDescCol = i;
+                        break;
+                    }
+                }
+            }
+
+            // Fallback to original method if no "extra" column found
+            if (extraDescCol === null) {
+                extraDescCol = findColumnIndex(headers, ['extra description', 'extradescription', 'description']);
+            }
+
+            // Extract data
+            for (let rowNum = 2; rowNum <= sheet.actualRowCount; rowNum++) {
+                const row = sheet.getRow(rowNum);
+                if (row.hasValues) {
+                    const record = {
+                        orderId: getCellValue(row, orderIdCol),
+                        frt: getCellValue(row, frtCol),
+                        rootCause: getCellValue(row, rootCauseCol),
+                        subCause: getCellValue(row, subCauseCol),
+                        actionTaken: getCellValue(row, actionTakenCol),
+                        owner: getCellValue(row, ownerCol),
+                        extraDescription: getCellValue(row, extraDescCol)
+                    };
+
+                    if (record.orderId) {
+                        data.push(record);
+                    }
+                }
+            }
+
+            return data;
+        }
+
+        function extractPcmData(sheet) {
+            const data = {};
+            const headerRow = sheet.getRow(1);
+            const headers = [];
+
+            // Get headers
+            headerRow.eachCell((cell, colNumber) => {
+                headers[colNumber] = (cell.value || '').toString().toLowerCase();
+            });
+
+            // Find column indices
+            const orderIdCol = findColumnIndex(headers, ['order id', 'orderid']);
+            const statusCol = findColumnIndex(headers, ['status']);
+            const taskIdCol = findColumnIndex(headers, ['task id', 'taskid']);
+            const titleCol = findColumnIndex(headers, ['title']);
+            const createFaultCol = findColumnIndex(headers, ['create fault first time occured', 'create fault first time occurred', 'createfault']);
+            const siteNameCol = findColumnIndex(headers, ['site name', 'sitename']);
+            const subProjectCol = findColumnIndex(headers, ['sub project', 'subproject']);
+            const regionCol = findColumnIndex(headers, ['region']);
+            const faultLevelCol = findColumnIndex(headers, ['fault level', 'faultlevel']);
+            const pcmSourceCol = findColumnIndex(headers, ['pcm source', 'pcmsource']);
+            const owsFrtCol = findColumnIndex(headers, ['ows frt', 'owsfrt']);
+
+            // Check if OWS FRT column exists
+            const hasOwsFrtColumn = owsFrtCol !== null && owsFrtCol !== -1;
+            if (hasOwsFrtColumn) {
+                showMessage('Running PCMs file contains "OWS FRT" column - OWS FRT file is optional', 'success');
+            }
+
+            // Extract data
+            for (let rowNum = 2; rowNum <= sheet.actualRowCount; rowNum++) {
+                const row = sheet.getRow(rowNum);
+                if (row.hasValues) {
+                    const orderId = getCellValue(row, orderIdCol);
+                    if (orderId) {
+                        data[orderId] = {
+                            status: getCellValue(row, statusCol),
+                            taskId: getCellValue(row, taskIdCol),
+                            title: getCellValue(row, titleCol),
+                            createFaultFirstTime: getCellValue(row, createFaultCol),
+                            siteName: getCellValue(row, siteNameCol),
+                            subProject: getCellValue(row, subProjectCol),
+                            region: getCellValue(row, regionCol),
+                            faultLevel: getCellValue(row, faultLevelCol),
+                            pcmSource: getCellValue(row, pcmSourceCol),
+                            owsFrt: hasOwsFrtColumn ? getCellValue(row, owsFrtCol) : null,
+                            hasOwsFrtInPcm: hasOwsFrtColumn
+                        };
+                    }
+                }
+            }
+
+            return data;
+        }
+
+        function mergeEnhancedData(closureData, pcmData) {
+            return closureData.map(closureRecord => {
+                // Ensure Order ID is treated as string for lookup
+                const orderIdKey = closureRecord.orderId ? closureRecord.orderId.toString().trim() : '';
+                const pcmRecord = pcmData[orderIdKey] || {};
+
+                const baseRecord = {
+                    ...closureRecord,
+                    ...pcmRecord,
+                    hubSite: pcmRecord.siteName || '', // Hub site = Site Name
+                    matched: !!pcmData[orderIdKey]
+                };
+
+                // Determine PCM source (default to "Nextask" if not found)
+                const pcmSource = pcmRecord.pcmSource ? pcmRecord.pcmSource.toString().toLowerCase().trim() : 'nextask';
+
+                // Calculate enhanced fields if reference data is available
+                if ((rcScAtDataNextask && ownersDataNextask && rcScAtDataTMS && ownersDataTMS) && sitesOwnerData) {
+                    baseRecord.rcaMatching = calculateRcaMatching(closureRecord, pcmSource);
+                    baseRecord.ownerMatching = calculateOwnerMatching(closureRecord.owner, pcmSource);
+                    baseRecord.siteOwner = calculateSiteOwner(baseRecord.hubSite);
+                    baseRecord.rcaValidation = calculateRcaValidation(baseRecord);
+                } else {
+                    baseRecord.rcaMatching = 'N/A - Reference data not loaded';
+                    baseRecord.ownerMatching = 'N/A - Reference data not loaded';
+                    baseRecord.siteOwner = 'N/A - Reference data not loaded';
+                    baseRecord.rcaValidation = 'N/A - Reference data not loaded';
+                }
+
+                return baseRecord;
+            });
+        }
+
+        function calculateRcaMatching(record, pcmSource) {
+            // Select appropriate reference data based on PCM source
+            let rcScAtData;
+            if (pcmSource === 'tms') {
+                rcScAtData = rcScAtDataTMS;
+            } else {
+                rcScAtData = rcScAtDataNextask; // Default to Nextask
+            }
+
+            if (!rcScAtData) return 'N/A';
+
+            try {
+                // SC Matching: Check if Sub Cause matches Root Cause (case-insensitive)
+                const scMatch = rcScAtData.find(ref =>
+                    ref.rootCause && record.rootCause &&
+                    ref.rootCause.toString().toLowerCase() === record.rootCause.toString().toLowerCase() &&
+                    ref.subCause && record.subCause &&
+                    ref.subCause.toString().toLowerCase() === record.subCause.toString().toLowerCase()
+                );
+                const scResult = scMatch ? 'SC Matched' : 'SC Not Matched';
+
+                // AT Matching: Check if Action Taken matches Sub Cause (case-insensitive)
+                const atMatch = rcScAtData.find(ref =>
+                    ref.subCause && record.subCause &&
+                    ref.subCause.toString().toLowerCase() === record.subCause.toString().toLowerCase() &&
+                    ref.actionTaken && record.actionTaken &&
+                    ref.actionTaken.toString().toLowerCase() === record.actionTaken.toString().toLowerCase()
+                );
+                const atResult = atMatch ? 'AT Matched' : 'AT Not Matched';
+
+                return `${scResult} // ${atResult}`;
+            } catch (error) {
+                return 'Error in calculation';
+            }
+        }
+
+        function calculateOwnerMatching(owner, pcmSource) {
+            // Select appropriate owners data based on PCM source
+            let ownersData;
+            if (pcmSource === 'tms') {
+                ownersData = ownersDataTMS;
+            } else {
+                ownersData = ownersDataNextask; // Default to Nextask
+            }
+
+            if (!ownersData || !owner) return 'Not Matched';
+
+            const ownerTrimmed = owner.toString().trim().toLowerCase();
+            const ownerExists = ownersData.some(refOwner =>
+                refOwner && refOwner.toString().trim().toLowerCase() === ownerTrimmed
+            );
+            return ownerExists ? 'Matched' : 'Not Matched';
+        }
+
+        function calculateSiteOwner(hubSite) {
+            if (!sitesOwnerData || !hubSite) return '';
+
+            const hubSiteTrimmed = hubSite.toString().trim().toLowerCase();
+            // Direct lookup since keys are already stored in lowercase
+            return sitesOwnerData[hubSiteTrimmed] || '';
+        }
+
+        function calculateRcaValidation(record) {
+            // If subProject is missing, return 'Not Matched'
+            if (!record.subProject) return 'Not Matched';
+
+            try {
+                // Apply the business logic (case-insensitive)
+                // Convert all fields to lowercase for case-insensitive comparison
+                const siteOwner = record.siteOwner ? record.siteOwner.toString().toLowerCase() : '';
+                const subProject = record.subProject.toString().toLowerCase();
+                const rootCause = record.rootCause ? record.rootCause.toString().toLowerCase() : '';
+
+                // Handle case where Site Owner is not available
+                // Note: "Zain" and "LATIS" are case-insensitive (handles ZAIN, zain, Zain, LATIS, latis, Latis, etc.)
+                if (!record.siteOwner || siteOwner === '') {
+                    if (subProject === 'zain' && rootCause !== 'enviroment') {
+                        return 'Matched';
+                    }
+                    if (subProject === 'latis' && rootCause === 'enviroment') {
+                        return 'Matched';
+                    }
+                    return 'Not Matched';
+                }
+
+                // Original logic when Site Owner is available
+                if (siteOwner === 'latis' && subProject === 'latis' && rootCause === 'enviroment') {
+                    return 'Matched';
+                }
+                if (siteOwner === 'latis' && subProject === 'zain' && rootCause !== 'enviroment') {
+                    return 'Matched';
+                }
+                if (siteOwner === 'zain') {
+                    return 'Matched';
+                }
+                return 'Not Matched';
+            } catch (error) {
+                return 'Error in calculation';
+            }
+        }
+
+        /* ========================================
+           REPORT GENERATION FUNCTIONS
+           ======================================== */
+
+        async function createEnhancedClosureReport(data, sheetName, includeRcaValidation = true) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(sheetName);
+
+            // Define base columns
+            const baseColumns = [
+                'Status', 'Task ID', 'Order ID', 'Title', 'Create Fault First Time Occured',
+                'FRT', 'Root Cause', 'Sub Cause', 'Action Taken', 'Owner', 'Extra Description',
+                'Hub site', 'Sub Project', 'Region'
+            ];
+
+            // Add RCA validation columns only if requested and only for not matched reports
+            const rcaValidationColumns = ['RCA Matching', 'Owner Matching', 'Site Owner', 'RCA Validation'];
+            const isMatchedReport = sheetName === 'Matched Closure Report';
+            const columns = (includeRcaValidation && !isMatchedReport) ? [...baseColumns, ...rcaValidationColumns] : baseColumns;
+
+            // Set headers
+            const headerRow = worksheet.addRow(columns);
+
+            // Add data
+            data.forEach(record => {
+                const baseData = [
+                    record.status || '',
+                    record.taskId || '',
+                    record.orderId || '',
+                    record.title || '',
+                    record.createFaultFirstTime || '',
+                    record.frt || '',
+                    record.rootCause || '',
+                    record.subCause || '',
+                    record.actionTaken || '',
+                    record.owner || '',
+                    record.extraDescription || '',
+                    record.hubSite || '',
+                    record.subProject || '',
+                    record.region || ''
+                ];
+
+                const rcaData = (includeRcaValidation && !isMatchedReport) ? [
+                    record.rcaMatching || '',
+                    record.ownerMatching || '',
+                    record.siteOwner || '',
+                    record.rcaValidation || ''
+                ] : [];
+
+                worksheet.addRow([...baseData, ...rcaData]);
+            });
+
+            // Style headers - only for columns with values
+            headerRow.font = { bold: true };
+            headerRow.eachCell((cell, colNumber) => {
+                if (cell.value) { // Only style cells with values
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FF4472C4' }
+                    };
+                    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                    cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' }
+                    };
+                    // Center align all headers
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                }
+            });
+
+            // Apply text alignment to all data cells
+            const titleColumnIndex = columns.indexOf('Title') + 1; // Excel columns are 1-indexed
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                for (let colIndex = 1; colIndex <= columns.length; colIndex++) {
+                    const cell = worksheet.getCell(rowIndex, colIndex);
+                    if (colIndex === titleColumnIndex) {
+                        // Left align Title column data
+                        cell.alignment = { horizontal: 'left', vertical: 'middle' };
+                    } else {
+                        // Center align all other columns
+                        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                    }
+                }
+            }
+
+            // Apply date formatting to specific columns
+            const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
+            const frtColumnIndex = columns.indexOf('FRT') + 1;
+
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
+                if (createFaultColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, createFaultColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+
+                // Format FRT column - format to YYYY-MM-DD HH:mm:ss
+                if (frtColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, frtColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+            }
+
+            // Auto-fit columns
+            worksheet.columns.forEach((column, index) => {
+                let maxLength = columns[index] ? columns[index].length : 0;
+                data.forEach(record => {
+                    const baseValues = [
+                        record.status, record.taskId, record.orderId, record.title, record.createFaultFirstTime,
+                        record.frt, record.rootCause, record.subCause, record.actionTaken, record.owner,
+                        record.extraDescription, record.hubSite, record.subProject, record.region
+                    ];
+
+                    const rcaValues = (includeRcaValidation && !isMatchedReport) ? [
+                        record.rcaMatching, record.ownerMatching, record.siteOwner, record.rcaValidation
+                    ] : [];
+
+                    const allValues = [...baseValues, ...rcaValues];
+                    const cellValue = allValues[index];
+                    if (cellValue) {
+                        maxLength = Math.max(maxLength, cellValue.toString().length);
+                    }
+                });
+                column.width = Math.max(10, Math.min(35, maxLength + 2));
+            });
+
+            // Style the enhanced columns differently (only if they are included)
+            if (includeRcaValidation && !isMatchedReport) {
+                const enhancedColumnStart = baseColumns.length + 1; // Start after base columns
+                const enhancedColumnEnd = enhancedColumnStart + rcaValidationColumns.length - 1;
+
+                for (let colIndex = enhancedColumnStart; colIndex <= enhancedColumnEnd; colIndex++) {
+                    for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                        const cell = worksheet.getCell(rowIndex, colIndex);
+                        const cellValue = cell.value ? cell.value.toString() : '';
+
+                        // Highlight "Not Matched" values with red background
+                        if (cellValue.includes('Not Matched')) {
+                            cell.fill = {
+                                type: 'pattern',
+                                pattern: 'solid',
+                                fgColor: { argb: 'FFFF9999' } // Light red background
+                            };
+                        } else {
+                            cell.fill = {
+                                type: 'pattern',
+                                pattern: 'solid',
+                                fgColor: { argb: 'FFF0F8FF' } // Light blue background for other values
+                            };
+                        }
+                    }
+                }
+            }
+
+            return workbook;
+        }
+
+        async function createFRTIssuesReport(data, sheetName) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(sheetName);
+
+            // Define columns including the new Remarks column
+            const columns = [
+                'Status', 'Task ID', 'Order ID', 'Title', 'Create Fault First Time Occured',
+                'FRT', 'Root Cause', 'Sub Cause', 'Action Taken', 'Owner', 'Extra Description',
+                'Hub site', 'Sub Project', 'Region', 'Remarks'
+            ];
+
+            // Set headers
+            const headerRow = worksheet.addRow(columns);
+
+            // Add data
+            data.forEach(record => {
+                const rowData = [
+                    record.status || '',
+                    record.taskId || '',
+                    record.orderId || '',
+                    record.title || '',
+                    record.createFaultFirstTime || '',
+                    record.frt || '',
+                    record.rootCause || '',
+                    record.subCause || '',
+                    record.actionTaken || '',
+                    record.owner || '',
+                    record.extraDescription || '',
+                    record.hubSite || '',
+                    record.subProject || '',
+                    record.region || '',
+                    record.remarks || ''
+                ];
+
+                worksheet.addRow(rowData);
+            });
+
+            // Style headers
+            headerRow.font = { bold: true };
+            headerRow.eachCell((cell, colNumber) => {
+                if (cell.value) {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FF4472C4' }
+                    };
+                    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                    cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' }
+                    };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                }
+            });
+
+            // Apply text alignment to all data cells
+            const titleColumnIndex = columns.indexOf('Title') + 1;
+            const remarksColumnIndex = columns.indexOf('Remarks') + 1;
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                for (let colIndex = 1; colIndex <= columns.length; colIndex++) {
+                    const cell = worksheet.getCell(rowIndex, colIndex);
+                    if (colIndex === titleColumnIndex) {
+                        // Left align Title column
+                        cell.alignment = { horizontal: 'left', vertical: 'middle' };
+                    } else {
+                        // Center align all other columns
+                        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                    }
+                }
+            }
+
+            // Apply date formatting to specific columns
+            const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
+            const frtColumnIndex = columns.indexOf('FRT') + 1;
+
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
+                if (createFaultColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, createFaultColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+
+                // Format FRT column - format to YYYY-MM-DD HH:mm:ss
+                if (frtColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, frtColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+            }
+
+            // Auto-fit columns
+            worksheet.columns.forEach((column, index) => {
+                let maxLength = columns[index] ? columns[index].length : 0;
+                data.forEach(record => {
+                    const values = [
+                        record.status, record.taskId, record.orderId, record.title, record.createFaultFirstTime,
+                        record.frt, record.rootCause, record.subCause, record.actionTaken, record.owner,
+                        record.extraDescription, record.hubSite, record.subProject, record.region, record.remarks
+                    ];
+
+                    const cellValue = values[index];
+                    if (cellValue) {
+                        maxLength = Math.max(maxLength, cellValue.toString().length);
+                    }
+                });
+                column.width = Math.max(10, Math.min(35, maxLength + 2));
+            });
+
+            // Highlight the Remarks column with a different background
+            if (remarksColumnIndex > 0) {
+                for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                    const cell = worksheet.getCell(rowIndex, remarksColumnIndex);
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FFFFCC99' } // Light orange background for remarks
+                    };
+                }
+            }
+
+            return workbook;
+        }
+
+        async function createFRTIssuesReportWithoutRemarks(data, sheetName) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(sheetName);
+
+            // Define columns WITHOUT the Remarks column
+            const columns = [
+                'Status', 'Task ID', 'Order ID', 'Title', 'Create Fault First Time Occured',
+                'FRT', 'Root Cause', 'Sub Cause', 'Action Taken', 'Owner', 'Extra Description',
+                'Hub site', 'Sub Project', 'Region'
+            ];
+
+            // Set headers
+            const headerRow = worksheet.addRow(columns);
+
+            // Add data
+            data.forEach(record => {
+                const rowData = [
+                    record.status || '',
+                    record.taskId || '',
+                    record.orderId || '',
+                    record.title || '',
+                    record.createFaultFirstTime || '',
+                    record.frt || '',
+                    record.rootCause || '',
+                    record.subCause || '',
+                    record.actionTaken || '',
+                    record.owner || '',
+                    record.extraDescription || '',
+                    record.hubSite || '',
+                    record.subProject || '',
+                    record.region || ''
+                ];
+
+                worksheet.addRow(rowData);
+            });
+
+            // Style headers
+            headerRow.font = { bold: true };
+            headerRow.eachCell((cell, colNumber) => {
+                if (cell.value) {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FF4472C4' }
+                    };
+                    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                    cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' }
+                    };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                }
+            });
+
+            // Apply text alignment to all data cells
+            const titleColumnIndex = columns.indexOf('Title') + 1;
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                for (let colIndex = 1; colIndex <= columns.length; colIndex++) {
+                    const cell = worksheet.getCell(rowIndex, colIndex);
+                    if (colIndex === titleColumnIndex) {
+                        // Left align Title column
+                        cell.alignment = { horizontal: 'left', vertical: 'middle' };
+                    } else {
+                        // Center align all other columns
+                        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                    }
+                }
+            }
+
+            // Apply date formatting to specific columns
+            const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
+            const frtColumnIndex = columns.indexOf('FRT') + 1;
+
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
+                if (createFaultColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, createFaultColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+
+                // Format FRT column - format to YYYY-MM-DD HH:mm:ss
+                if (frtColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, frtColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+            }
+
+            // Auto-fit columns
+            worksheet.columns.forEach((column, index) => {
+                let maxLength = columns[index] ? columns[index].length : 0;
+                data.forEach(record => {
+                    const values = [
+                        record.status, record.taskId, record.orderId, record.title, record.createFaultFirstTime,
+                        record.frt, record.rootCause, record.subCause, record.actionTaken, record.owner,
+                        record.extraDescription, record.hubSite, record.subProject, record.region
+                    ];
+
+                    const cellValue = values[index];
+                    if (cellValue) {
+                        maxLength = Math.max(maxLength, cellValue.toString().length);
+                    }
+                });
+                column.width = Math.max(10, Math.min(35, maxLength + 2));
+            });
+
+            return workbook;
+        }
+
+        function findColumnIndex(headers, possibleNames) {
+            for (const name of possibleNames) {
+                const nameLower = name.toLowerCase();
+                const index = headers.findIndex((h, i) => {
+                    if (!h || typeof h !== 'string') return false;
+                    const headerLower = h.toLowerCase();
+                    return headerLower === nameLower || headerLower.includes(nameLower) || headerLower.replace(/\s+/g, '') === nameLower.replace(/\s+/g, '');
+                });
+                if (index !== -1) {
+                    return index;
+                }
+            }
+            return null;
+        }
+
+        function getCellValue(row, colIndex) {
+            if (!colIndex || colIndex < 1) return '';
+            try {
+                const cell = row.getCell(colIndex);
+                const value = cell.value;
+                if (value === null || value === undefined) return '';
+
+                // Handle different cell value types
+                if (typeof value === 'object' && value.text) {
+                    return value.text.toString().trim();
+                }
+
+                return value.toString().trim();
+            } catch (error) {
+                return '';
+            }
+        }
+
+        // Helper function to format date strings to YYYY-MM-DD HH:mm:ss without changing the actual time
+        function formatDateStringToStandard(value) {
+            if (!value || value === '' || value === '-') return value;
+
+            try {
+                const stringValue = value.toString().trim();
+
+                // If already in YYYY-MM-DD HH:mm:ss format, return as is
+                if (stringValue.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
+                    return stringValue;
+                }
+
+                // Handle MM/DD/YYYY HH:mm:ss format (like 08/06/2025 15:54:05)
+                const mmddyyyyMatch = stringValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$/);
+                if (mmddyyyyMatch) {
+                    const [, month, day, year, hours, minutes, seconds] = mmddyyyyMatch;
+                    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hours.padStart(2, '0')}:${minutes}:${seconds}`;
+                }
+
+                // Handle DD/MM/YYYY HH:mm:ss format
+                const ddmmyyyyMatch = stringValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$/);
+                if (ddmmyyyyMatch) {
+                    const [, day, month, year, hours, minutes, seconds] = ddmmyyyyMatch;
+                    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hours.padStart(2, '0')}:${minutes}:${seconds}`;
+                }
+
+                // Handle Excel serial numbers (like 45908.8253125)
+                const numericValue = parseFloat(stringValue);
+                if (!isNaN(numericValue) && numericValue > 1 && numericValue < 100000) {
+                    // Excel serial number conversion with precise time handling
+                    let adjustedValue = numericValue;
+                    if (numericValue > 59) { // After Feb 28, 1900 (Excel leap year bug)
+                        adjustedValue = numericValue - 1;
+                    }
+
+                    // Split into day and time parts for more precise calculation
+                    const dayPart = Math.floor(adjustedValue);
+                    const timePart = adjustedValue - dayPart;
+
+                    // Calculate base date (Excel epoch: January 1, 1900 is serial number 1)
+                    const baseDate = new Date(1900, 0, 1);
+                    baseDate.setDate(baseDate.getDate() + dayPart - 1);
+
+                    // Calculate time components from fractional part
+                    const totalSeconds = Math.round(timePart * 24 * 60 * 60);
+                    const hours = Math.floor(totalSeconds / 3600);
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
+                    const seconds = totalSeconds % 60;
+
+                    // Set the time components
+                    baseDate.setHours(hours, minutes, seconds, 0);
+
+                    if (!isNaN(baseDate.getTime())) {
+                        const year = baseDate.getFullYear();
+                        const month = String(baseDate.getMonth() + 1).padStart(2, '0');
+                        const day = String(baseDate.getDate()).padStart(2, '0');
+                        const hoursStr = String(baseDate.getHours()).padStart(2, '0');
+                        const minutesStr = String(baseDate.getMinutes()).padStart(2, '0');
+                        const secondsStr = String(baseDate.getSeconds()).padStart(2, '0');
+
+                        return `${year}-${month}-${day} ${hoursStr}:${minutesStr}:${secondsStr}`;
+                    }
+                }
+
+                // Handle other date formats by parsing and preserving the exact time components
+                const date = new Date(stringValue);
+                if (!isNaN(date.getTime())) {
+                    // Extract components from the original string to preserve exact time
+                    const timeMatch = stringValue.match(/(\d{1,2}):(\d{2}):(\d{2})/);
+                    if (timeMatch) {
+                        const [, hours, minutes, seconds] = timeMatch;
+                        // Use the date from parsing but keep original time
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+
+                        return `${year}-${month}-${day} ${hours.padStart(2, '0')}:${minutes}:${seconds}`;
+                    }
+
+                    // Fallback to UTC formatting if no time pattern found
+                    const year = date.getUTCFullYear();
+                    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                    const day = String(date.getUTCDate()).padStart(2, '0');
+                    const hours = String(date.getUTCHours()).padStart(2, '0');
+                    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+                    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                }
+
+                // If parsing fails, return original value
+                return stringValue;
+            } catch (error) {
+                return value;
+            }
+        }
+
+        // SLA Analysis Functions
+        function performSLAAnalysis(data) {
+            const result = data.map((record) => {
+                // Calculate duration between FRT and Created At
+                const duration = calculateDuration(record.frt, record.createFaultFirstTime);
+
+                // Calculate SLA remarks based on duration and fault level
+                const slaRemarks = duration ? calculateSLARemarks(duration, record.faultLevel) : 'N/A';
+
+                return {
+                    ...record,
+                    duration: duration || 'N/A',
+                    slaRemarks: slaRemarks
+                };
+            });
+
+            return result;
+        }
+
+        async function createSLAReport(data, sheetName) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(sheetName);
+
+            // Define columns including Duration and SLA Remarks
+            const columns = [
+                'Status', 'Task ID', 'Order ID', 'Title', 'Create Fault First Time Occured',
+                'FRT', 'Root Cause', 'Sub Cause', 'Action Taken', 'Owner',
+                'Extra Description', 'Hub site', 'Sub Project', 'Region', 'Fault Level', 'Duration', 'SLA Remarks'
+            ];
+
+            // Set headers
+            const headerRow = worksheet.addRow(columns);
+
+            // Add data
+            data.forEach(record => {
+                const rowData = [
+                    record.status || '',
+                    record.taskId || '',
+                    record.orderId || '',
+                    record.title || '',
+                    record.createFaultFirstTime || '',
+                    record.frt || '',
+                    record.rootCause || '',
+                    record.subCause || '',
+                    record.actionTaken || '',
+                    record.owner || '',
+                    record.extraDescription || '',
+                    record.hubSite || '',
+                    record.subProject || '',
+                    record.region || '',
+                    record.faultLevel || '',
+                    record.duration || '',
+                    record.slaRemarks || ''
+                ];
+
+                worksheet.addRow(rowData);
+            });
+
+            // Style headers
+            headerRow.font = { bold: true };
+            headerRow.eachCell((cell, colNumber) => {
+                if (cell.value) {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FF4472C4' }
+                    };
+                    cell.font = { color: { argb: 'FFFFFFFF' }, bold: true };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                    cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' }
+                    };
+                }
+            });
+
+            // Apply text alignment to all data cells
+            const titleColumnIndex = columns.indexOf('Title') + 1;
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                for (let colIndex = 1; colIndex <= columns.length; colIndex++) {
+                    const cell = worksheet.getCell(rowIndex, colIndex);
+                    if (colIndex === titleColumnIndex) {
+                        // Left align Title column
+                        cell.alignment = { horizontal: 'left', vertical: 'middle' };
+                    } else {
+                        // Center align all other columns
+                        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                    }
+                }
+            }
+
+            // Apply date formatting to specific columns
+            const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
+            const frtColumnIndex = columns.indexOf('FRT') + 1;
+
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
+                if (createFaultColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, createFaultColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+
+                // Format FRT column - format to YYYY-MM-DD HH:mm:ss
+                if (frtColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, frtColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+            }
+
+            // Auto-fit columns
+            worksheet.columns.forEach(column => {
+                let maxLength = 0;
+                column.eachCell({ includeEmpty: true }, (cell) => {
+                    const columnLength = cell.value ? cell.value.toString().length : 10;
+                    if (columnLength > maxLength) {
+                        maxLength = columnLength;
+                    }
+                });
+                column.width = Math.min(Math.max(maxLength + 2, 10), 50);
+            });
+
+            // Highlight SLA Remarks column based on status
+            const slaRemarksColIndex = columns.indexOf('SLA Remarks') + 1;
+            for (let rowNum = 2; rowNum <= worksheet.actualRowCount; rowNum++) {
+                const cell = worksheet.getCell(rowNum, slaRemarksColIndex);
+                const value = cell.value ? cell.value.toString() : '';
+
+                if (value === 'Within SLA') {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FF90EE90' } // Light green
+                    };
+                } else if (value === 'Exceeded Target SLA') {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FFFFA500' } // Orange
+                    };
+                } else if (value === 'Exceeded Hurdle SLA') {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FFFF6B6B' } // Light red
+                    };
+                }
+            }
+
+            return workbook;
+        }
+
+        function calculateDuration(frtTime, createdAtTime) {
+            if (!frtTime || !createdAtTime || frtTime === '-' || frtTime.toString().trim() === '') {
+                return null;
+            }
+
+            try {
+                const frtDate = new Date(frtTime);
+                const createdDate = new Date(createdAtTime);
+
+                if (isNaN(frtDate.getTime()) || isNaN(createdDate.getTime())) {
+                    return null;
+                }
+
+                const durationMs = frtDate.getTime() - createdDate.getTime();
+
+                // Convert to hours, minutes, seconds (properly handling negative values)
+                const totalSeconds = Math.floor(durationMs / 1000);
+                const isNegative = totalSeconds < 0;
+                const absSeconds = Math.abs(totalSeconds);
+                const hours = Math.floor(absSeconds / 3600);
+                const minutes = Math.floor((absSeconds % 3600) / 60);
+                const remainingSeconds = absSeconds % 60;
+
+                // Format as [h]:mm:ss with negative sign if needed
+                const duration = `${isNegative ? '-' : ''}${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+
+                return duration;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function calculateSLARemarks(durationStr, faultLevel) {
+            if (!durationStr || !faultLevel) {
+                return 'N/A';
+            }
+
+            try {
+                // Check if duration is negative (starts with -)
+                const isNegative = durationStr.startsWith('-');
+                const cleanDurationStr = isNegative ? durationStr.substring(1) : durationStr;
+
+                // Parse duration string [h]:mm:ss
+                const parts = cleanDurationStr.split(':');
+                if (parts.length !== 3) {
+                    return 'Invalid Duration';
+                }
+
+                const hours = parseInt(parts[0]);
+                const minutes = parseInt(parts[1]);
+                const seconds = parseInt(parts[2]);
+
+                if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
+                    return 'Invalid Duration';
+                }
+
+                // If duration is negative, FRT occurred before create fault time
+                if (isNegative) {
+                    return 'Within SLA';
+                }
+
+                // Convert to total seconds for comparison (positive durations only)
+                const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+                const faultLevelLower = faultLevel.toString().toLowerCase();
+
+                // SLA thresholds in seconds
+                const thresholds = {
+                    'minor': { hurdle: 23 * 3600 + 59 * 60 + 59, target: 11 * 3600 + 59 * 60 + 59 },
+                    'major': { hurdle: 11 * 3600 + 59 * 60 + 59, target: 7 * 3600 + 59 * 60 + 59 },
+                    'critical': { hurdle: 5 * 3600 + 59 * 60 + 59, target: 3 * 3600 + 59 * 60 + 59 },
+                    'emergency': { hurdle: 3 * 3600 + 59 * 60 + 59, target: 1 * 3600 + 59 * 60 + 59 }
+                };
+
+                const threshold = thresholds[faultLevelLower];
+                if (!threshold) {
+                    return 'Unknown Fault Level';
+                }
+
+                // Check SLA status
+                if (totalSeconds > threshold.hurdle) {
+                    return 'Exceeded Hurdle SLA';
+                } else if (totalSeconds > threshold.target) {
+                    return 'Exceeded Target SLA';
+                } else {
+                    return 'Within SLA';
+                }
+            } catch (error) {
+                return 'Error in calculation';
+            }
+        }
+
+        // Global variables for column selection
+        let selectedWorksheetIndex = null;
+        let currentWorksheetColumns = [];
+
+        // Global variables for enhanced closure column selection
+        let selectedEnhancedReportType = null;
+        let currentEnhancedWorkbook = null;
+        let currentEnhancedColumns = [];
+
+        // Column Selection Modal Functions
+        function showColumnSelectionModal(worksheetIndex) {
+            try {
+                // Validate inputs
+                if (!currentWorkbook) {
+                    showMessage('No workbook loaded. Please upload an Excel file first.', 'error');
+                    return;
+                }
+
+                // Convert to number if string and validate
+                const index = typeof worksheetIndex === 'string' ? parseInt(worksheetIndex, 10) : worksheetIndex;
+
+                if (isNaN(index) || index < 0 || index >= currentWorkbook.worksheets.length) {
+                    showMessage(`Invalid worksheet selected. Index: ${index}`, 'error');
+                    return;
+                }
+
+                const worksheet = currentWorkbook.worksheets[index];
+
+                if (!worksheet) {
+                    showMessage('Worksheet not found.', 'error');
+                    return;
+                }
+
+                // Set the selected index only after all validations pass
+                selectedWorksheetIndex = index;
+
+                // Get column headers
+                currentWorksheetColumns = [];
+                const headerRow = worksheet.getRow(1);
+
+                // Check if worksheet has any data
+                if (!headerRow || worksheet.actualRowCount === 0) {
+                    showMessage('This worksheet appears to be empty.', 'error');
+                    selectedWorksheetIndex = null; // Reset if worksheet is empty
+                    return;
+                }
+
+                headerRow.eachCell((cell, colNumber) => {
+                    const headerValue = (cell.value || `Column ${colNumber}`).toString();
+                    const sampleValue = getSampleValue(worksheet, colNumber);
+                    currentWorksheetColumns.push({
+                        index: colNumber,
+                        header: headerValue,
+                        sample: sampleValue
+                    });
+                });
+
+                // If no columns found, try to detect columns from data
+                if (currentWorksheetColumns.length === 0) {
+                    for (let col = 1; col <= worksheet.columnCount; col++) {
+                        const headerValue = `Column ${col}`;
+                        const sampleValue = getSampleValue(worksheet, col);
+                        currentWorksheetColumns.push({
+                            index: col,
+                            header: headerValue,
+                            sample: sampleValue
+                        });
+                    }
+                }
+
+                // Populate the modal with column checkboxes
+                populateColumnSelection();
+
+                // Final validation before showing modal
+                if (currentWorksheetColumns.length === 0) {
+                    showMessage('No columns found in this worksheet.', 'error');
+                    selectedWorksheetIndex = null;
+                    return;
+                }
+
+                // Show modal only if everything is ready
+                document.getElementById('columnSelectionModal').style.display = 'block';
+
+            } catch (error) {
+                showMessage('Error opening column selection: ' + error.message, 'error');
+                // Reset state on error
+                selectedWorksheetIndex = null;
+                currentWorksheetColumns = [];
+            }
+        }
+
+        function closeColumnSelectionModal() {
+            document.getElementById('columnSelectionModal').style.display = 'none';
+            selectedWorksheetIndex = null;
+            currentWorksheetColumns = [];
+        }
+
+        function populateColumnSelection() {
+            const columnList = document.getElementById('columnSelectionList');
+            columnList.innerHTML = '';
+
+            currentWorksheetColumns.forEach((column, index) => {
+                const columnItem = document.createElement('div');
+                columnItem.className = 'column-item';
+
+                columnItem.innerHTML = `
+                    <input type="checkbox" id="col_${column.index}" checked>
+                    <label for="col_${column.index}">${column.header}</label>
+                `;
+
+                columnList.appendChild(columnItem);
+            });
+        }
+
+        function getSampleValue(worksheet, colNumber) {
+            try {
+                // Get a sample value from the first few data rows
+                const maxRows = Math.min(5, worksheet.actualRowCount || 1);
+                for (let rowNum = 2; rowNum <= maxRows; rowNum++) {
+                    try {
+                        const row = worksheet.getRow(rowNum);
+                        if (row) {
+                            const cell = row.getCell(colNumber);
+                            if (cell && cell.value && cell.value.toString().trim() !== '') {
+                                let value = cell.value.toString().trim();
+                                return value.length > 20 ? value.substring(0, 20) + '...' : value;
+                            }
+                        }
+                    } catch (rowError) {
+                        continue;
+                    }
+                }
+                return 'No data preview';
+            } catch (error) {
+                return 'Preview unavailable';
+            }
+        }
+
+        function selectAllColumns() {
+            const checkboxes = document.querySelectorAll('#columnSelectionList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        }
+
+        function deselectAllColumns() {
+            const checkboxes = document.querySelectorAll('#columnSelectionList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        function downloadWithSelectedColumns() {
+            try {
+                // Validate prerequisites
+                if (selectedWorksheetIndex === null || selectedWorksheetIndex === undefined) {
+                    showMessage('No worksheet selected for download. Please try opening the column selection again.', 'error');
+                    closeColumnSelectionModal(); // Close modal to prevent confusion
+                    return;
+                }
+
+                // Double-check workbook and worksheet still exist
+                if (!currentWorkbook) {
+                    showMessage('Workbook no longer available. Please reload the file.', 'error');
+                    closeColumnSelectionModal();
+                    return;
+                }
+
+                if (selectedWorksheetIndex < 0 || selectedWorksheetIndex >= currentWorkbook.worksheets.length) {
+                    showMessage('Selected worksheet is no longer valid. Please try again.', 'error');
+                    closeColumnSelectionModal();
+                    return;
+                }
+
+                if (!currentWorksheetColumns || currentWorksheetColumns.length === 0) {
+                    showMessage('No columns available for selection. Please try again.', 'error');
+                    closeColumnSelectionModal();
+                    return;
+                }
+
+                const selectedColumns = [];
+                const checkboxes = document.querySelectorAll('#columnSelectionList input[type="checkbox"]');
+
+                if (checkboxes.length === 0) {
+                    showMessage('No column checkboxes found. Please try again.', 'error');
+                    return;
+                }
+
+                checkboxes.forEach((checkbox, index) => {
+                    if (checkbox.checked && currentWorksheetColumns[index]) {
+                        selectedColumns.push(currentWorksheetColumns[index].index);
+                    }
+                });
+
+                if (selectedColumns.length === 0) {
+                    showMessage('Please select at least one column to download.', 'error');
+                    return;
+                }
+
+                // Store the worksheet index before closing modal (which resets it to null)
+                const worksheetIndexToDownload = selectedWorksheetIndex;
+
+                // Close modal and start download
+                closeColumnSelectionModal();
+                downloadWorksheetWithColumns(worksheetIndexToDownload, selectedColumns);
+
+            } catch (error) {
+                showMessage('Error preparing column selection: ' + error.message, 'error');
+            }
+        }
+
+        // Close modal when clicking outside of it or pressing Escape
+        window.onclick = function (event) {
+            const modal = document.getElementById('columnSelectionModal');
+            if (event.target === modal) {
+                closeColumnSelectionModal();
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('columnSelectionModal');
+                if (modal && modal.style.display === 'block') {
+                    closeColumnSelectionModal();
+                }
+            }
+        });
+
+        // Enhanced Closure Column Selection Functions
+        function showEnhancedColumnSelectionModal(reportType) {
+            try {
+                selectedEnhancedReportType = reportType;
+                currentEnhancedWorkbook = getEnhancedWorkbook(reportType);
+
+                if (!currentEnhancedWorkbook) {
+                    showMessage(`${getReportDisplayName(reportType)} is not available. Please process the data first.`, 'error');
+                    return;
+                }
+
+                const worksheet = currentEnhancedWorkbook.worksheets[0]; // Enhanced reports typically have one worksheet
+
+                if (!worksheet) {
+                    showMessage('No worksheet found in the report.', 'error');
+                    return;
+                }
+
+                // Get column headers from enhanced report
+                currentEnhancedColumns = [];
+                const headerRow = worksheet.getRow(1);
+
+                // Check if worksheet has any data
+                if (!headerRow || worksheet.actualRowCount === 0) {
+                    showMessage('This report appears to be empty.', 'error');
+                    selectedEnhancedReportType = null;
+                    return;
+                }
+
+                headerRow.eachCell((cell, colNumber) => {
+                    const headerValue = (cell.value || `Column ${colNumber}`).toString();
+                    const sampleValue = getSampleValue(worksheet, colNumber);
+                    currentEnhancedColumns.push({
+                        index: colNumber,
+                        header: headerValue,
+                        sample: sampleValue
+                    });
+                });
+
+                // If no columns found, try to detect columns from data
+                if (currentEnhancedColumns.length === 0) {
+                    for (let col = 1; col <= worksheet.columnCount; col++) {
+                        const headerValue = `Column ${col}`;
+                        const sampleValue = getSampleValue(worksheet, col);
+                        currentEnhancedColumns.push({
+                            index: col,
+                            header: headerValue,
+                            sample: sampleValue
+                        });
+                    }
+                }
+
+                // Populate the modal with column checkboxes
+                populateEnhancedColumnSelection();
+
+                // Final validation before showing modal
+                if (currentEnhancedColumns.length === 0) {
+                    showMessage('No columns found in this report.', 'error');
+                    selectedEnhancedReportType = null;
+                    return;
+                }
+
+                // Update modal title for enhanced reports
+                const modalTitle = document.querySelector('#columnSelectionModal .modal-header h2');
+                const modalSubtitle = document.querySelector('#columnSelectionModal .modal-header p');
+                if (modalTitle) modalTitle.textContent = `📋 Select Columns to Download`;
+                if (modalSubtitle) modalSubtitle.textContent = 'Uncheck the columns you want to exclude from the download file';
+
+                // Show modal only if everything is ready
+                document.getElementById('columnSelectionModal').style.display = 'block';
+
+            } catch (error) {
+                showMessage('Error opening column selection: ' + error.message, 'error');
+                // Reset state on error
+                selectedEnhancedReportType = null;
+                currentEnhancedWorkbook = null;
+                currentEnhancedColumns = [];
+            }
+        }
+
+        function getEnhancedWorkbook(reportType) {
+            const workbooks = {
+                'closure': closureWorkbook,
+                'notMatched': notMatchedClosureWorkbook,
+                'frtIssues': window.frtIssuesWorkbook,
+                'frtIssuesWithoutMissed': window.frtIssuesWithoutMissedWorkbook,
+                'withinSLA': window.withinSLAWorkbook,
+                'exceededTargetSLA': window.exceededTargetSLAWorkbook,
+                'exceededHurdleSLA': window.exceededHurdleSLAWorkbook,
+                'owsFrtMatched': owsFrtMatchedWorkbook,
+                'owsFrtNotMatched': owsFrtNotMatchedWorkbook
+            };
+            return workbooks[reportType];
+        }
+
+        function getReportDisplayName(reportType) {
+            const names = {
+                'closure': 'Validated PCMs',
+                'notMatched': 'Non-Validated PCMs',
+                'frtIssues': 'FRT Issue PCMs',
+                'frtIssuesWithoutMissed': 'Non-Missed FRT PCMs',
+                'withinSLA': 'Within SLA PCMs',
+                'exceededTargetSLA': 'Exceeded Target SLA PCMs',
+                'exceededHurdleSLA': 'Exceeded Hurdle SLA PCMs',
+                'owsFrtMatched': 'OWS-FRT Matched PCMs',
+                'owsFrtNotMatched': 'OWS-FRT Non-Matched PCMs'
+            };
+            return names[reportType] || reportType;
+        }
+
+        function populateEnhancedColumnSelection() {
+            const columnList = document.getElementById('columnSelectionList');
+            columnList.innerHTML = '';
+
+            currentEnhancedColumns.forEach((column, index) => {
+                const columnItem = document.createElement('div');
+                columnItem.className = 'column-item';
+
+                columnItem.innerHTML = `
+                    <input type="checkbox" id="enhanced_col_${column.index}" checked>
+                    <label for="enhanced_col_${column.index}">${column.header}</label>
+                `;
+
+                columnList.appendChild(columnItem);
+            });
+        }
+
+        // Update the existing downloadWithSelectedColumns function to handle enhanced reports
+        function downloadWithSelectedColumns() {
+            try {
+                // Check if this is for enhanced reports or regular worksheets
+                if (selectedEnhancedReportType !== null) {
+                    downloadEnhancedWithSelectedColumns();
+                    return;
+                }
+
+                // Original logic for regular worksheet downloads
+
+                // Validate prerequisites
+                if (selectedWorksheetIndex === null || selectedWorksheetIndex === undefined) {
+                    showMessage('No worksheet selected for download. Please try opening the column selection again.', 'error');
+                    closeColumnSelectionModal(); // Close modal to prevent confusion
+                    return;
+                }
+
+                // Double-check workbook and worksheet still exist
+                if (!currentWorkbook) {
+                    showMessage('Workbook no longer available. Please reload the file.', 'error');
+                    closeColumnSelectionModal();
+                    return;
+                }
+
+                if (selectedWorksheetIndex < 0 || selectedWorksheetIndex >= currentWorkbook.worksheets.length) {
+                    showMessage('Selected worksheet is no longer valid. Please try again.', 'error');
+                    closeColumnSelectionModal();
+                    return;
+                }
+
+                if (!currentWorksheetColumns || currentWorksheetColumns.length === 0) {
+                    showMessage('No columns available for selection. Please try again.', 'error');
+                    closeColumnSelectionModal();
+                    return;
+                }
+
+                const selectedColumns = [];
+                const checkboxes = document.querySelectorAll('#columnSelectionList input[type="checkbox"]');
+
+                if (checkboxes.length === 0) {
+                    showMessage('No column checkboxes found. Please try again.', 'error');
+                    return;
+                }
+
+                checkboxes.forEach((checkbox, index) => {
+                    if (checkbox.checked && currentWorksheetColumns[index]) {
+                        selectedColumns.push(currentWorksheetColumns[index].index);
+                    }
+                });
+
+                if (selectedColumns.length === 0) {
+                    showMessage('Please select at least one column to download.', 'error');
+                    return;
+                }
+
+                // Store the worksheet index before closing modal (which resets it to null)
+                const worksheetIndexToDownload = selectedWorksheetIndex;
+
+                // Close modal and start download
+                closeColumnSelectionModal();
+                downloadWorksheetWithColumns(worksheetIndexToDownload, selectedColumns);
+
+            } catch (error) {
+                showMessage('Error preparing column selection: ' + error.message, 'error');
+            }
+        }
+
+        function downloadEnhancedWithSelectedColumns() {
+            try {
+                // Validate prerequisites for enhanced reports
+                if (selectedEnhancedReportType === null || selectedEnhancedReportType === undefined) {
+                    showMessage('No report selected for download. Please try again.', 'error');
+                    closeColumnSelectionModal();
+                    return;
+                }
+
+                if (!currentEnhancedWorkbook) {
+                    showMessage('Report no longer available. Please process the data again.', 'error');
+                    closeColumnSelectionModal();
+                    return;
+                }
+
+                if (!currentEnhancedColumns || currentEnhancedColumns.length === 0) {
+                    showMessage('No columns available for selection. Please try again.', 'error');
+                    closeColumnSelectionModal();
+                    return;
+                }
+
+                const selectedColumns = [];
+                const checkboxes = document.querySelectorAll('#columnSelectionList input[type="checkbox"]');
+
+                if (checkboxes.length === 0) {
+                    showMessage('No column checkboxes found. Please try again.', 'error');
+                    return;
+                }
+
+                checkboxes.forEach((checkbox, index) => {
+                    if (checkbox.checked && currentEnhancedColumns[index]) {
+                        selectedColumns.push(currentEnhancedColumns[index].index);
+                    }
+                });
+
+                if (selectedColumns.length === 0) {
+                    showMessage('Please select at least one column to download.', 'error');
+                    return;
+                }
+
+                // Store values before closing modal
+                const reportTypeToDownload = selectedEnhancedReportType;
+                const workbookToDownload = currentEnhancedWorkbook;
+
+                // Close modal and start download
+                closeColumnSelectionModal();
+                downloadEnhancedReportWithColumns(reportTypeToDownload, workbookToDownload, selectedColumns);
+
+            } catch (error) {
+                showMessage('Error preparing enhanced column selection: ' + error.message, 'error');
+            }
+        }
+
+        // Update closeColumnSelectionModal to reset enhanced variables
+        function closeColumnSelectionModal() {
+            document.getElementById('columnSelectionModal').style.display = 'none';
+            selectedWorksheetIndex = null;
+            currentWorksheetColumns = [];
+            // Reset enhanced variables
+            selectedEnhancedReportType = null;
+            currentEnhancedWorkbook = null;
+            currentEnhancedColumns = [];
+        }
+
+        async function downloadEnhancedReportWithColumns(reportType, workbook, selectedColumns) {
+            try {
+                showMessage('Preparing download...', 'success');
+
+                // Validate inputs
+                if (!workbook) {
+                    throw new Error('No report workbook available');
+                }
+
+                const originalWorksheet = workbook.worksheets[0];
+
+                if (!originalWorksheet) {
+                    throw new Error('No worksheet found in the report');
+                }
+
+                const newWorkbook = new ExcelJS.Workbook();
+
+                // Copy workbook properties
+                newWorkbook.creator = workbook.creator || 'Closure Validation';
+                newWorkbook.lastModifiedBy = workbook.lastModifiedBy;
+                newWorkbook.created = workbook.created || new Date();
+                newWorkbook.modified = new Date();
+
+                const newWorksheet = newWorkbook.addWorksheet(originalWorksheet.name);
+
+                // Copy worksheet properties
+                if (originalWorksheet.properties) {
+                    newWorksheet.properties = { ...originalWorksheet.properties };
+                }
+                if (originalWorksheet.pageSetup) {
+                    newWorksheet.pageSetup = { ...originalWorksheet.pageSetup };
+                }
+                if (originalWorksheet.headerFooter) {
+                    newWorksheet.headerFooter = { ...originalWorksheet.headerFooter };
+                }
+
+                // Sort selected columns to maintain order
+                const sortedColumns = [...selectedColumns].sort((a, b) => a - b);
+
+                // Copy column widths for selected columns
+                sortedColumns.forEach((originalColIndex, newColIndex) => {
+                    const originalColumn = originalWorksheet.getColumn(originalColIndex);
+                    const newColumn = newWorksheet.getColumn(newColIndex + 1);
+                    if (originalColumn.width) {
+                        newColumn.width = originalColumn.width;
+                    }
+                });
+
+                // Copy data for selected columns only
+                for (let rowNumber = 1; rowNumber <= originalWorksheet.rowCount; rowNumber++) {
+                    const originalRow = originalWorksheet.getRow(rowNumber);
+                    const newRow = newWorksheet.getRow(rowNumber);
+
+                    if (originalRow.height) {
+                        newRow.height = originalRow.height;
+                    }
+
+                    newRow.hidden = originalRow.hidden;
+                    newRow.outlineLevel = originalRow.outlineLevel;
+
+                    // Copy only selected columns
+                    sortedColumns.forEach((originalColIndex, newColIndex) => {
+                        const originalCell = originalRow.getCell(originalColIndex);
+                        const newCell = newRow.getCell(newColIndex + 1);
+
+                        if (originalCell.value !== null && originalCell.value !== undefined) {
+                            newCell.value = originalCell.value;
+                        }
+
+                        if (originalCell.style && Object.keys(originalCell.style).length > 0) {
+                            try {
+                                newCell.style = JSON.parse(JSON.stringify(originalCell.style));
+                            } catch (styleError) {
+                                // Style copy error - skip
+                            }
+                        }
+
+                        if (originalCell.dataValidation) {
+                            try {
+                                newCell.dataValidation = { ...originalCell.dataValidation };
+                            } catch (validationError) {
+                                // Data validation copy error - skip
+                            }
+                        }
+
+                        if (originalCell.hyperlink) {
+                            newCell.hyperlink = originalCell.hyperlink;
+                        }
+
+                        if (originalCell.comment) {
+                            newCell.comment = originalCell.comment;
+                        }
+                    });
+
+                    newRow.commit();
+                }
+
+                // Generate enhanced report filename
+                const buffer = await newWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+
+                const reportDisplayName = getReportDisplayName(reportType);
+                const filename = getEnhancedReportFilename(reportType, day, month);
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+
+            } catch (error) {
+                showMessage('Error downloading enhanced report: ' + error.message, 'error');
+            }
+        }
+
+        function getEnhancedReportFilename(reportType, day, month) {
+            const filenames = {
+                'closure': `Closure - ${day} ${month}.xlsx`,
+                'notMatched': `Closure Not Matched RCA - ${day} ${month}.xlsx`,
+                'frtIssues': `FRT Issue PCMs - ${day} ${month}.xlsx`,
+                'frtIssuesWithoutMissed': `Non-Missed FRT PCMs - ${day} ${month}.xlsx`,
+                'withinSLA': `Within SLA PCMs - ${day} ${month}.xlsx`,
+                'exceededTargetSLA': `Exceeded Target SLA PCMs - ${day} ${month}.xlsx`,
+                'exceededHurdleSLA': `Exceeded Hurdle SLA PCMs - ${day} ${month}.xlsx`,
+                'owsFrtMatched': `OWS-FRT Matched PCMs - ${day} ${month}.xlsx`,
+                'owsFrtNotMatched': `OWS-FRT Non-Matched PCMs - ${day} ${month}.xlsx`
+            };
+            return filenames[reportType] || `Enhanced Report - ${day} ${month}.xlsx`;
+        }
+
+        // Download functions
+        async function downloadWorksheet(worksheetIndex) {
+            try {
+                showMessage('Preparing download with full formatting...', 'success');
+
+                const originalWorksheet = currentWorkbook.worksheets[worksheetIndex];
+                const newWorkbook = new ExcelJS.Workbook();
+
+                // Copy workbook properties
+                newWorkbook.creator = currentWorkbook.creator || 'Excel Worksheet Separator';
+                newWorkbook.lastModifiedBy = currentWorkbook.lastModifiedBy;
+                newWorkbook.created = currentWorkbook.created || new Date();
+                newWorkbook.modified = new Date();
+
+                const newWorksheet = newWorkbook.addWorksheet(originalWorksheet.name);
+
+                // Copy worksheet properties
+                if (originalWorksheet.properties) {
+                    newWorksheet.properties = { ...originalWorksheet.properties };
+                }
+                if (originalWorksheet.pageSetup) {
+                    newWorksheet.pageSetup = { ...originalWorksheet.pageSetup };
+                }
+                if (originalWorksheet.headerFooter) {
+                    newWorksheet.headerFooter = { ...originalWorksheet.headerFooter };
+                }
+
+                // Copy column widths
+                for (let i = 1; i <= originalWorksheet.columnCount; i++) {
+                    const originalColumn = originalWorksheet.getColumn(i);
+                    const newColumn = newWorksheet.getColumn(i);
+                    if (originalColumn.width) {
+                        newColumn.width = originalColumn.width;
+                    }
+                }
+
+                // Copy all data and formatting
+                for (let rowNumber = 1; rowNumber <= originalWorksheet.rowCount; rowNumber++) {
+                    const originalRow = originalWorksheet.getRow(rowNumber);
+                    const newRow = newWorksheet.getRow(rowNumber);
+
+                    if (originalRow.height) {
+                        newRow.height = originalRow.height;
+                    }
+
+                    newRow.hidden = originalRow.hidden;
+                    newRow.outlineLevel = originalRow.outlineLevel;
+
+                    for (let colNumber = 1; colNumber <= originalWorksheet.columnCount; colNumber++) {
+                        const originalCell = originalRow.getCell(colNumber);
+                        const newCell = newRow.getCell(colNumber);
+
+                        if (originalCell.value !== null && originalCell.value !== undefined) {
+                            newCell.value = originalCell.value;
+                        }
+
+                        if (originalCell.style && Object.keys(originalCell.style).length > 0) {
+                            try {
+                                newCell.style = JSON.parse(JSON.stringify(originalCell.style));
+                            } catch (styleError) {
+                                // Style copy error - skip
+                            }
+                        }
+
+                        if (originalCell.dataValidation) {
+                            try {
+                                newCell.dataValidation = { ...originalCell.dataValidation };
+                            } catch (validationError) {
+                                // Data validation copy error - skip
+                            }
+                        }
+
+                        if (originalCell.hyperlink) {
+                            newCell.hyperlink = originalCell.hyperlink;
+                        }
+
+                        if (originalCell.comment) {
+                            newCell.comment = originalCell.comment;
+                        }
+                    }
+
+                    newRow.commit();
+                }
+
+                // Copy merged cells
+                try {
+                    if (originalWorksheet.model && originalWorksheet.model.merges) {
+                        originalWorksheet.model.merges.forEach(merge => {
+                            try {
+                                newWorksheet.mergeCells(merge);
+                            } catch (mergeError) {
+                                // Merge cells error - skip
+                            }
+                        });
+                    }
+                } catch (mergeError) {
+                    // Error copying merged cells - skip
+                }
+
+                // Copy auto filter
+                try {
+                    if (originalWorksheet.autoFilter) {
+                        newWorksheet.autoFilter = originalWorksheet.autoFilter;
+                    }
+                } catch (filterError) {
+                    // Error copying auto filter - skip
+                }
+
+                // Generate and download
+                const buffer = await newWorkbook.xlsx.writeBuffer();
+                const safeSheetName = originalWorksheet.name.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
+                const safeInputName = inputFileName.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
+                const filename = `${safeInputName} - ${safeSheetName}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename} with formatting preserved!`, 'success');
+
+            } catch (error) {
+                showMessage('Error downloading worksheet: ' + error.message, 'error');
+            }
+        }
+
+        async function downloadWorksheetWithColumns(worksheetIndex, selectedColumns) {
+            try {
+                showMessage('Preparing download...', 'success');
+
+                // Validate inputs - null/undefined check first
+                if (worksheetIndex === null || worksheetIndex === undefined) {
+                    throw new Error('No worksheet index provided. Please try selecting the worksheet again.');
+                }
+
+                if (!currentWorkbook) {
+                    throw new Error('No workbook loaded');
+                }
+
+                if (worksheetIndex < 0 || worksheetIndex >= currentWorkbook.worksheets.length) {
+                    throw new Error(`Invalid worksheet index: ${worksheetIndex}. Available: 0-${currentWorkbook.worksheets.length - 1}`);
+                }
+
+                const originalWorksheet = currentWorkbook.worksheets[worksheetIndex];
+
+                if (!originalWorksheet) {
+                    throw new Error('Worksheet not found at index ' + worksheetIndex);
+                }
+
+                const newWorkbook = new ExcelJS.Workbook();
+
+                // Copy workbook properties
+                newWorkbook.creator = currentWorkbook.creator || 'Excel Worksheet Separator';
+                newWorkbook.lastModifiedBy = currentWorkbook.lastModifiedBy;
+                newWorkbook.created = currentWorkbook.created || new Date();
+                newWorkbook.modified = new Date();
+
+                const newWorksheet = newWorkbook.addWorksheet(originalWorksheet.name);
+
+                // Copy worksheet properties
+                if (originalWorksheet.properties) {
+                    newWorksheet.properties = { ...originalWorksheet.properties };
+                }
+                if (originalWorksheet.pageSetup) {
+                    newWorksheet.pageSetup = { ...originalWorksheet.pageSetup };
+                }
+                if (originalWorksheet.headerFooter) {
+                    newWorksheet.headerFooter = { ...originalWorksheet.headerFooter };
+                }
+
+                // Sort selected columns to maintain order
+                const sortedColumns = [...selectedColumns].sort((a, b) => a - b);
+
+                // Copy column widths for selected columns
+                sortedColumns.forEach((originalColIndex, newColIndex) => {
+                    const originalColumn = originalWorksheet.getColumn(originalColIndex);
+                    const newColumn = newWorksheet.getColumn(newColIndex + 1);
+                    if (originalColumn.width) {
+                        newColumn.width = originalColumn.width;
+                    }
+                });
+
+                // Copy data for selected columns only
+                for (let rowNumber = 1; rowNumber <= originalWorksheet.rowCount; rowNumber++) {
+                    const originalRow = originalWorksheet.getRow(rowNumber);
+                    const newRow = newWorksheet.getRow(rowNumber);
+
+                    if (originalRow.height) {
+                        newRow.height = originalRow.height;
+                    }
+
+                    newRow.hidden = originalRow.hidden;
+                    newRow.outlineLevel = originalRow.outlineLevel;
+
+                    // Copy only selected columns
+                    sortedColumns.forEach((originalColIndex, newColIndex) => {
+                        const originalCell = originalRow.getCell(originalColIndex);
+                        const newCell = newRow.getCell(newColIndex + 1);
+
+                        if (originalCell.value !== null && originalCell.value !== undefined) {
+                            newCell.value = originalCell.value;
+                        }
+
+                        if (originalCell.style && Object.keys(originalCell.style).length > 0) {
+                            try {
+                                newCell.style = JSON.parse(JSON.stringify(originalCell.style));
+                            } catch (styleError) {
+                                // Style copy error - skip
+                            }
+                        }
+
+                        if (originalCell.dataValidation) {
+                            try {
+                                newCell.dataValidation = { ...originalCell.dataValidation };
+                            } catch (validationError) {
+                                // Data validation copy error - skip
+                            }
+                        }
+
+                        if (originalCell.hyperlink) {
+                            newCell.hyperlink = originalCell.hyperlink;
+                        }
+
+                        if (originalCell.comment) {
+                            newCell.comment = originalCell.comment;
+                        }
+                    });
+
+                    newRow.commit();
+                }
+
+                // Handle merged cells - only include those that are within selected columns
+                try {
+                    if (originalWorksheet.model && originalWorksheet.model.merges) {
+                        originalWorksheet.model.merges.forEach(merge => {
+                            try {
+                                // Parse merge range (e.g., "A1:C3")
+                                const range = merge.split(':');
+                                if (range.length === 2) {
+                                    const startCell = parseCell(range[0]);
+                                    const endCell = parseCell(range[1]);
+
+                                    // Check if merge is within selected columns
+                                    const startColInSelected = selectedColumns.indexOf(startCell.col);
+                                    const endColInSelected = selectedColumns.indexOf(endCell.col);
+
+                                    if (startColInSelected !== -1 && endColInSelected !== -1) {
+                                        // Create new merge range with adjusted column positions
+                                        const newStartCol = startColInSelected + 1;
+                                        const newEndCol = endColInSelected + 1;
+                                        const newMerge = `${columnToLetter(newStartCol)}${startCell.row}:${columnToLetter(newEndCol)}${endCell.row}`;
+                                        newWorksheet.mergeCells(newMerge);
+                                    }
+                                }
+                            } catch (mergeError) {
+                                // Merge cells error - skip
+                            }
+                        });
+                    }
+                } catch (mergeError) {
+                    // Error copying merged cells - skip
+                }
+
+                // Generate and download
+                const buffer = await newWorkbook.xlsx.writeBuffer();
+
+                // Safe name generation with validation
+                const worksheetName = originalWorksheet.name || `Worksheet_${worksheetIndex + 1}`;
+                const safeSheetName = worksheetName.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
+
+                const fileName = inputFileName || 'Excel_File';
+                const safeInputName = fileName.replace(/[^a-zA-Z0-9\s\-]/g, '_').replace(/\s+/g, '_');
+
+                const selectedColumnCount = selectedColumns.length;
+                const filename = `${safeInputName} - ${safeSheetName}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+
+            } catch (error) {
+                showMessage('Error downloading worksheet: ' + error.message, 'error');
+            }
+        }
+
+        // Utility functions for column selection
+        function parseCell(cellRef) {
+            const match = cellRef.match(/([A-Z]+)(\d+)/);
+            if (match) {
+                return {
+                    col: letterToColumn(match[1]),
+                    row: parseInt(match[2])
+                };
+            }
+            return null;
+        }
+
+        function letterToColumn(letters) {
+            let column = 0;
+            for (let i = 0; i < letters.length; i++) {
+                column = column * 26 + (letters.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+            }
+            return column;
+        }
+
+        function columnToLetter(column) {
+            let result = '';
+            while (column > 0) {
+                column--;
+                result = String.fromCharCode(column % 26 + 'A'.charCodeAt(0)) + result;
+                column = Math.floor(column / 26);
+            }
+            return result;
+        }
+
+        async function downloadEnhancedClosureFile() {
+            try {
+                const buffer = await closureWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const filename = `Closure - ${day} ${month}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+            } catch (error) {
+                showMessage('Error downloading closure validation file: ' + error.message, 'error');
+            }
+        }
+
+        async function downloadNotMatchedClosureFile() {
+            try {
+                const buffer = await notMatchedClosureWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const filename = `Closure Not Matched RCA - ${day} ${month}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+            } catch (error) {
+                showMessage('Error downloading not matched closure file: ' + error.message, 'error');
+            }
+        }
+
+        async function downloadFRTIssuesFile() {
+            try {
+                if (!window.frtIssuesWorkbook) {
+                    showMessage('No FRT issues data available for download', 'error');
+                    return;
+                }
+
+                const buffer = await window.frtIssuesWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const filename = `Closure With FRT issue - ${day} ${month}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+            } catch (error) {
+                showMessage('Error downloading FRT issues file: ' + error.message, 'error');
+            }
+        }
+
+        async function downloadFRTIssuesWithoutMissedFile() {
+            try {
+                if (!window.frtIssuesWithoutMissedWorkbook) {
+                    showMessage('No FRT issues data (without Missed FRT) available for download', 'error');
+                    return;
+                }
+
+                const buffer = await window.frtIssuesWithoutMissedWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const filename = `Closure With FRT issue (No Missed FRT) - ${day} ${month}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+            } catch (error) {
+                showMessage('Error downloading FRT issues file (without Missed FRT): ' + error.message, 'error');
+            }
+        }
+
+        async function downloadWithinSLAFile() {
+            try {
+                if (!window.withinSLAWorkbook) {
+                    showMessage('No Within SLA data available for download', 'error');
+                    return;
+                }
+
+                const buffer = await window.withinSLAWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const filename = `Within SLA PCMs - ${day} ${month}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+            } catch (error) {
+                showMessage('Error downloading Within SLA file: ' + error.message, 'error');
+            }
+        }
+
+        async function downloadExceededTargetSLAFile() {
+            try {
+                if (!window.exceededTargetSLAWorkbook) {
+                    showMessage('No Exceeded Target SLA data available for download', 'error');
+                    return;
+                }
+
+                const buffer = await window.exceededTargetSLAWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const filename = `Exceeded Target SLA PCMs - ${day} ${month}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+            } catch (error) {
+                showMessage('Error downloading Exceeded Target SLA file: ' + error.message, 'error');
+            }
+        }
+
+        async function downloadExceededHurdleSLAFile() {
+            try {
+                if (!window.exceededHurdleSLAWorkbook) {
+                    showMessage('No Exceeded Hurdle SLA data available for download', 'error');
+                    return;
+                }
+
+                const buffer = await window.exceededHurdleSLAWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const filename = `Exceeded Hurdle SLA PCMs - ${day} ${month}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+            } catch (error) {
+                showMessage('Error downloading Exceeded Hurdle SLA file: ' + error.message, 'error');
+            }
+        }
+
+        // OWS FRT processing functions
+        function performOwsFrtMatchingFromPcm(closureData) {
+            const owsFrtMatched = [];
+            const owsFrtNotMatched = [];
+
+            closureData.forEach(record => {
+                // Get OWS FRT from the PCM data
+                const owsFrt = record.owsFrt ? record.owsFrt.toString().trim() : '';
+                const closureFrt = record.frt ? record.frt.toString().trim() : '';
+
+                if (owsFrt && owsFrt !== '' && owsFrt !== '-') {
+                    // Check if FRT values match
+                    if (closureFrt === owsFrt) {
+                        owsFrtMatched.push({
+                            ...record,
+                            owsFrt: owsFrt,
+                            owsFrtMatch: 'Matched'
+                        });
+                    } else {
+                        owsFrtNotMatched.push({
+                            ...record,
+                            owsFrt: owsFrt,
+                            owsFrtMatch: 'FRT Mismatch'
+                        });
+                    }
+                } else {
+                    owsFrtNotMatched.push({
+                        ...record,
+                        owsFrt: owsFrt || '',
+                        owsFrtMatch: 'OWS FRT Not Available'
+                    });
+                }
+            });
+
+            return { owsFrtMatched, owsFrtNotMatched };
+        }
+
+        function extractOwsFrtData(sheet) {
+            const data = {};
+            const headers = [];
+
+            // Get headers from first row
+            const headerRow = sheet.getRow(1);
+            headerRow.eachCell((cell, colNumber) => {
+                headers[colNumber] = cell.value ? cell.value.toString().toLowerCase().trim() : '';
+            });
+
+            // Find required columns
+            const woIdCol = findColumnIndex(headers, ['wo id(process tt)', 'wo id', 'woid']);
+            const frtCol = findColumnIndex(headers, ['fault recovery time(process tt)', 'fault recovery time', 'frt', 'recovery time', 'recovey time', 'recovery', 'recover time']);
+
+            if (woIdCol === -1 || frtCol === -1) {
+                throw new Error('Required columns not found in OWS FRT file. Expected: WO ID and FRT/Recovery Time columns');
+            }
+
+            // Extract data
+            for (let rowNum = 2; rowNum <= sheet.actualRowCount; rowNum++) {
+                const row = sheet.getRow(rowNum);
+                if (row.hasValues) {
+                    const woId = getCellValue(row, woIdCol);
+                    const frt = getCellValue(row, frtCol);
+                    if (woId) {
+                        data[woId.toString().trim()] = {
+                            woId: woId,
+                            frt: frt
+                        };
+                    }
+                }
+            }
+
+            return data;
+        }
+
+        function performOwsFrtMatching(closureData, owsFrtData) {
+            const owsFrtMatched = [];
+            const owsFrtNotMatched = [];
+
+            closureData.forEach(record => {
+                const orderIdKey = record.orderId ? record.orderId.toString().trim() : '';
+                const owsFrtRecord = owsFrtData[orderIdKey];
+
+                if (owsFrtRecord) {
+                    // Check if FRT values match
+                    const closureFrt = record.frt ? record.frt.toString().trim() : '';
+                    const owsFrt = owsFrtRecord.frt ? owsFrtRecord.frt.toString().trim() : '';
+
+                    if (closureFrt === owsFrt) {
+                        owsFrtMatched.push({
+                            ...record,
+                            owsFrt: owsFrt,
+                            owsFrtMatch: 'Matched'
+                        });
+                    } else {
+                        owsFrtNotMatched.push({
+                            ...record,
+                            owsFrt: owsFrt,
+                            owsFrtMatch: 'FRT Mismatch'
+                        });
+                    }
+                } else {
+                    owsFrtNotMatched.push({
+                        ...record,
+                        owsFrt: '',
+                        owsFrtMatch: 'Order ID Not Found'
+                    });
+                }
+            });
+
+            return { owsFrtMatched, owsFrtNotMatched };
+        }
+
+        async function createOwsFrtReport(data, sheetName) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(sheetName);
+
+            // Define columns based on report type
+            let columns, getRowData;
+
+            if (sheetName === 'OWS-FRT Matched PCMs') {
+                // Include OWS FRT and OWS FRT Match columns for matched report
+                columns = [
+                    'Status', 'Task ID', 'Order ID', 'Title', 'Create Fault First Time Occured',
+                    'FRT', 'OWS FRT', 'OWS FRT Match', 'Root Cause', 'Sub Cause', 'Action Taken',
+                    'Owner', 'Extra Description', 'Hub site', 'Sub Project', 'Region'
+                ];
+
+                getRowData = (record) => [
+                    record.status || '',
+                    record.taskId || '',
+                    record.orderId || '',
+                    record.title || '',
+                    record.createFaultFirstTime || '',
+                    record.frt || '',
+                    record.owsFrt || '',
+                    record.owsFrtMatch || '',
+                    record.rootCause || '',
+                    record.subCause || '',
+                    record.actionTaken || '',
+                    record.owner || '',
+                    record.extraDescription || '',
+                    record.hubSite || '',
+                    record.subProject || '',
+                    record.region || ''
+                ];
+            } else {
+                // Include all columns for not matched report
+                columns = [
+                    'Status', 'Task ID', 'Order ID', 'Title', 'Create Fault First Time Occured',
+                    'FRT', 'OWS FRT', 'OWS FRT Match', 'Root Cause', 'Sub Cause', 'Action Taken',
+                    'Owner', 'Extra Description', 'Hub site', 'Sub Project', 'Region'
+                ];
+
+                getRowData = (record) => [
+                    record.status || '',
+                    record.taskId || '',
+                    record.orderId || '',
+                    record.title || '',
+                    record.createFaultFirstTime || '',
+                    record.frt || '',
+                    record.owsFrt || '',
+                    record.owsFrtMatch || '',
+                    record.rootCause || '',
+                    record.subCause || '',
+                    record.actionTaken || '',
+                    record.owner || '',
+                    record.extraDescription || '',
+                    record.hubSite || '',
+                    record.subProject || '',
+                    record.region || ''
+                ];
+            }
+
+            // Set headers
+            const headerRow = worksheet.addRow(columns);
+
+            // Add data
+            data.forEach(record => {
+                const rowData = getRowData(record);
+                worksheet.addRow(rowData);
+            });
+
+            // Style the header
+            headerRow.eachCell((cell) => {
+                cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '4472C4' } };
+                cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
+            });
+
+            // Apply text alignment to all data cells
+            const titleColumnIndex = columns.indexOf('Title') + 1; // Excel columns are 1-indexed
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                for (let colIndex = 1; colIndex <= columns.length; colIndex++) {
+                    const cell = worksheet.getCell(rowIndex, colIndex);
+                    if (colIndex === titleColumnIndex) {
+                        // Left align Title column
+                        cell.alignment = { horizontal: 'left', vertical: 'middle' };
+                    } else {
+                        // Center align all other columns
+                        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                    }
+                }
+            }
+
+            // Apply date formatting to specific columns
+            const createFaultColumnIndex = columns.indexOf('Create Fault First Time Occured') + 1;
+            const frtColumnIndex = columns.indexOf('FRT') + 1;
+            const owsFrtColumnIndex = columns.indexOf('OWS FRT') + 1;
+
+            for (let rowIndex = 2; rowIndex <= data.length + 1; rowIndex++) {
+                // Format Create Fault First Time Occured column - format to YYYY-MM-DD HH:mm:ss
+                if (createFaultColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, createFaultColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+
+                // Format FRT column - format to YYYY-MM-DD HH:mm:ss
+                if (frtColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, frtColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+
+                // Format OWS FRT column - format to YYYY-MM-DD HH:mm:ss
+                if (owsFrtColumnIndex > 0) {
+                    const cell = worksheet.getCell(rowIndex, owsFrtColumnIndex);
+                    if (cell.value) {
+                        // Format the date string to standard format without changing the actual time
+                        const formattedValue = formatDateStringToStandard(cell.value);
+                        cell.value = formattedValue;
+                        cell.numFmt = 'YYYY-MM-DD HH:mm:ss';
+                    }
+                }
+            }
+
+            // Auto-fit columns
+            worksheet.columns.forEach(column => {
+                column.width = 15;
+            });
+
+            return workbook;
+        }
+
+        async function downloadOwsFrtMatchedFile() {
+            try {
+                if (!owsFrtMatchedWorkbook) {
+                    showMessage('No OWS FRT matched data available for download', 'error');
+                    return;
+                }
+
+                const buffer = await owsFrtMatchedWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const filename = `OWS-FRT Matched PCMs - ${day} ${month}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+            } catch (error) {
+                showMessage('Error downloading OWS FRT matched file: ' + error.message, 'error');
+            }
+        }
+
+        async function downloadOwsFrtNotMatchedFile() {
+            try {
+                if (!owsFrtNotMatchedWorkbook) {
+                    showMessage('No OWS FRT not matched data available for download', 'error');
+                    return;
+                }
+
+                const buffer = await owsFrtNotMatchedWorkbook.xlsx.writeBuffer();
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = today.toLocaleString('default', { month: 'short' });
+                const filename = `OWS-FRT Non-Matched PCMs - ${day} ${month}.xlsx`;
+
+                downloadFile(buffer, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                showMessage(`✅ Downloaded: ${filename}`, 'success');
+            } catch (error) {
+                showMessage('Error downloading OWS FRT not matched file: ' + error.message, 'error');
+            }
+        }
+
+        function downloadFile(buffer, filename, mimeType) {
+            const blob = new Blob([buffer], { type: mimeType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        /* ========================================
+           UI HELPER FUNCTIONS
+           ======================================== */
+
+        function showLoading(show) {
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `notification ${type}`;
+
+            // Create message content
+            const messageContent = document.createElement('span');
+            messageContent.textContent = message;
+            messageContent.style.paddingRight = '25px'; // Space for close button
+
+            // Create close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'close-btn';
+            closeBtn.innerHTML = '×';
+            closeBtn.onclick = () => hideNotification(messageDiv);
+
+            messageDiv.appendChild(messageContent);
+            messageDiv.appendChild(closeBtn);
+            messages.appendChild(messageDiv);
+
+            // Trigger animation
+            setTimeout(() => {
+                messageDiv.classList.add('show');
+            }, 10);
+
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    hideNotification(messageDiv);
+                }, 5000);
+            }
+
+            // Auto-hide error messages after 8 seconds
+            if (type === 'error') {
+                setTimeout(() => {
+                    hideNotification(messageDiv);
+                }, 8000);
+            }
+        }
+
+        function hideNotification(messageDiv) {
+            if (messageDiv && messageDiv.parentNode) {
+                messageDiv.classList.remove('show');
+                messageDiv.classList.add('hide');
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.parentNode.removeChild(messageDiv);
+                    }
+                }, 300); // Wait for animation to complete
+            }
+        }
+
+        function clearMessages() {
+            messages.innerHTML = '';
+        }
+
+        // Auto-load reference files on page load
+        // Function to handle dropdown selection and download
+        function downloadSelected() {
+            const selectElement = document.getElementById('downloadTypeSelect');
+            const selectedValue = selectElement.value;
+
+            if (!selectedValue) {
+                showMessage('Please select a report to download.', 'error');
+                return;
+            }
+
+            // Call the existing modal function with the selected report type
+            showEnhancedColumnSelectionModal(selectedValue);
+        }
+
+        /* ========================================
+           INITIALIZATION
+           ======================================== */
+
+        window.addEventListener('load', () => {
+            // Auto-load reference files after a short delay
+            setTimeout(() => {
+                loadReferenceFile('rcScAtNextask');
+                loadReferenceFile('rcScAtTMS');
+                loadReferenceFile('sitesOwner');
+            }, 1000);
+        });
+    </script>
+
+    <!-- Column Selection Modal -->
+    <div id="columnSelectionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeColumnSelectionModal()">×</span>
+                <h2>📋 Select Columns to Download</h2>
+                <p>Uncheck the columns you want to exclude from the download file</p>
+            </div>
+            <div class="modal-body">
+                <div class="select-all-controls">
+                    <button onclick="selectAllColumns()">✅ Select All</button>
+                    <button onclick="deselectAllColumns()">❌ Deselect All</button>
+                </div>
+                <div id="columnSelectionList" class="column-selection">
+                    <!-- Column checkboxes will be populated dynamically -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeColumnSelectionModal()">Cancel</button>
+                <button class="modal-btn download" onclick="downloadWithSelectedColumns()">
+                    ⬇️ Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Footer -->
+    <div class="floating-footer">
+        Created By Tarek Mahran
+    </div>
+
+</body>
+
+</html>
+
